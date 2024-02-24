@@ -106,11 +106,12 @@ impl Client {
         Ok(res)
     }
 
-    pub async fn chunk_upload(
+    pub async fn chunk_upload<T: Serialize + ?Sized>(
         &self,
         file_path: &str,
         storage_path: &str,
         file_id: String,
+        params: &T, //TODO: attach params
         on_progress: Option<fn(UploadProgress)>,
     ) -> Result<File, Error> {
         let boundary = Uuid::new_v4();
