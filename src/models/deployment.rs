@@ -1,15 +1,15 @@
 use serde::{Deserialize, Serialize};
 
 /// Deployment
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Deployment {
     /// Deployment ID.
-    #[serde(rename = "$id")]
-    id: String,
+    // #[serde(rename = "$id")]
+    // id: String,
 
     /// Deployment creation date in ISO 8601 format.
     #[serde(rename = "$createdAt")]
-    created_at: String,
+    pub created_at: String,
 
     /// Deployment update date in ISO 8601 format.
     #[serde(rename = "$updatedAt")]

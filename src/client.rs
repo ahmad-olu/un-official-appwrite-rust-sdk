@@ -1,11 +1,11 @@
-use std::{fs, path::Path, str::FromStr};
+use std::{fs, marker::PhantomData, path::Path, str::FromStr};
 
 use reqwest::{
     header::{HeaderMap, HeaderName, HeaderValue, CONTENT_TYPE},
     multipart::{self, Form, Part},
     Response, StatusCode,
 };
-use serde::Serialize;
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::{
@@ -106,18 +106,21 @@ impl Client {
         Ok(res)
     }
 
-    pub async fn chunk_upload<T: Serialize + ?Sized>(
+    pub async fn chunk_upload<T: Serialize + ?Sized, G>(
         &self,
         file_path: &str,
         storage_path: &str,
         file_id: String,
-        params: &T, //TODO: attach params
+        params: &T,
         on_progress: Option<fn(UploadProgress)>,
-    ) -> Result<File, Error> {
+    ) -> Result<ChunksResponse<G>, Error>
+    where
+        G: DeserializeOwned + Clone,
+    {
         let boundary = Uuid::new_v4();
 
-        let file_name = match Path::new(file_path.clone()).exists() {
-            true => match Path::new(file_path.clone()).file_name() {
+        let file_name = match Path::new(file_path).exists() {
+            true => match Path::new(file_path).file_name() {
                 Some(val) => format!("{:?}", val),
                 None => Err(Error::Unknown)?,
             },
@@ -148,11 +151,11 @@ impl Client {
                     format!("multipart/form-data; boundary={}", boundary).as_str(),
                 )?,
             );
-            let params = serde_json::json!({});
+
             let file = self
                 .call(HttpMethod::POST, uri.as_str(), headers, &params, Some(form))
                 .await?
-                .json::<File>()
+                .json::<ChunksResponse<G>>()
                 .await?;
 
             if let Some(ref on_progress) = on_progress {
@@ -173,7 +176,7 @@ impl Client {
         let mut first_upload = true; // Track if it's the first upload for x-appwrite-id
         let mut x_appwrite_id: Option<String> = None;
 
-        let mut res: Option<File> = None;
+        let mut res: Option<ChunksResponse<G>> = None;
 
         if file_id != "unique()" {
             let mut headers = HeaderMap::new();
@@ -193,7 +196,7 @@ impl Client {
                     None,
                 )
                 .await?
-                .json::<File>()
+                .json::<ChunksResponse<G>>()
                 .await?;
             offset = res.chunks_uploaded * self.chunk_size
         }
@@ -226,9 +229,9 @@ impl Client {
                 );
             }
 
-            let params = serde_json::json!({
-                "permissions": &[] as &[String]
-            });
+            // let params = serde_json::json!({
+            //     "permissions": &[] as &[String]
+            // });
             let response = self
                 .call(
                     HttpMethod::POST,
@@ -243,7 +246,7 @@ impl Client {
                     response.json::<AppWriteError>().await?,
                 ));
             }
-            let file = response.json::<File>().await?;
+            let file = response.json::<ChunksResponse<G>>().await?;
             if first_upload {
                 x_appwrite_id = Some(file.clone().id);
                 first_upload = false;
@@ -265,4 +268,22 @@ impl Client {
         }
         Ok(res.unwrap())
     }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct ChunksResponse<G> {
+    /// File ID.
+    #[serde(rename = "$id")]
+    pub id: String,
+
+    /// Total number of chunks available
+    #[serde(rename = "chunksTotal")]
+    pub chunks_total: usize,
+
+    /// Total number of chunks uploaded
+    #[serde(rename = "chunksUploaded")]
+    pub chunks_uploaded: usize,
+
+    #[serde(flatten)]
+    pub extras: Option<G>,
 }

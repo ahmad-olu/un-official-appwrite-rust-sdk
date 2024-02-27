@@ -22,6 +22,7 @@ pub mod query;
 pub mod role;
 mod services;
 pub mod upload_progress;
+pub mod utils;
 
 const BASE_URL: &str = "https://cloud.appwrite.io";
 

@@ -2,16 +2,13 @@ use crate::{
     client::Client,
     enums::{HttpMethod, ResponseType},
     error::Error,
+    utils::get_content_header_value,
 };
 use reqwest::header;
 
 /// The Avatars service aims to help you complete everyday tasks related to
 /// your app image, icons, and avatars.
 struct Avatars;
-
-fn get_content_header_value<'a>(client: &'a Client, value: &'a str) -> Option<&'a str> {
-    client.header.get(value).and_then(|g| g.to_str().ok())
-}
 
 impl Avatars {
     /// Get browser icon
