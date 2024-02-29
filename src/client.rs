@@ -18,7 +18,7 @@ use crate::{
 #[derive(Debug, Clone)]
 pub struct Client {
     end_point: String,
-    end_point_realtime: Option<String>,
+    pub end_point_realtime: Option<String>, //todo set this
     pub header: HeaderMap,
     chunk_size: usize,
     self_signed: bool,

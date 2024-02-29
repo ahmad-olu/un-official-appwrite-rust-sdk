@@ -19,6 +19,7 @@ pub mod id;
 pub mod models;
 pub mod permission;
 pub mod query;
+pub mod realtime;
 pub mod role;
 mod services;
 pub mod upload_progress;
