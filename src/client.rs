@@ -109,7 +109,7 @@ impl Client {
     pub async fn chunk_upload<T: Serialize + ?Sized, G>(
         &self,
         file_path: &str,
-        storage_path: &str,
+        api_path: &str,
         file_id: String,
         params: &T,
         on_progress: Option<fn(UploadProgress)>,
@@ -133,7 +133,7 @@ impl Client {
         };
 
         let file_size = file.len();
-        let uri = format!("{}{}", self.end_point, storage_path);
+        let uri = format!("{}{}", self.end_point, api_path);
 
         // File Size Check and Upload
         if file_size <= self.chunk_size {
@@ -190,7 +190,7 @@ impl Client {
             let res = self
                 .call(
                     HttpMethod::GET,
-                    format!("{}{}/{}", self.end_point, storage_path, file_id).as_str(),
+                    format!("{}{}/{}", self.end_point, api_path, file_id).as_str(),
                     headers,
                     &params,
                     None,
