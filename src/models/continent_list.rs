@@ -4,7 +4,7 @@ use super::continent::Continent;
 
 /// Continent List
 #[derive(Debug, Serialize, Deserialize)]
-pub struct CountryList {
+pub struct ContinentList {
     /// Total number of continents documents that matched your query.
     total: u64,
     /// List of continents.

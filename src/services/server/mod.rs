@@ -4,3 +4,4 @@ pub mod databases;
 pub mod functions;
 pub mod graphql;
 pub mod health;
+pub mod locale;
