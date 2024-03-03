@@ -14,7 +14,7 @@ use crate::{
     },
 };
 use reqwest::header;
-use serde_json::Value;
+use serde_json::{json, Value};
 
 /// The Databases service allows you to create structured collections of
 /// documents, query and filter lists of documents
@@ -32,10 +32,15 @@ impl Databases {
     ) -> Result<DatabaseList, Error> {
         const API_PATH: &str = "/databases";
 
-        let api_params = serde_json::json!({
-            "queries":queries,
-            "search":search,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(queries) = queries {
+            api_params.insert("queries".to_string(), json!(queries));
+        }
+        if let Some(search) = search {
+            api_params.insert("search".to_string(), json!(search));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -59,11 +64,14 @@ impl Databases {
     ) -> Result<Database, Error> {
         const API_PATH: &str = "/databases";
 
-        let api_params = serde_json::json!({
-            "databaseId":database_id,
-            "name":name,
-            "enabled":enabled
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("databaseId".to_string(), json!(database_id));
+        api_params.insert("name".to_string(), json!(name));
+        if let Some(enabled) = enabled {
+            api_params.insert("enabled".to_string(), json!(enabled));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -111,10 +119,13 @@ impl Databases {
     ) -> Result<Database, Error> {
         let api_path = "/databases/{databaseId}".replace("{databaseId}", database_id);
 
-        let api_params = serde_json::json!({
-            "name":name,
-            "enabled":enabled,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("name".to_string(), json!(name));
+        if let Some(enabled) = enabled {
+            api_params.insert("enabled".to_string(), json!(enabled));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -171,10 +182,15 @@ impl Databases {
         //const API_PATH: &str = "/databases";
         let api_path = "/databases/{databaseId}/collections".replace("{databaseId}", database_id);
 
-        let api_params = serde_json::json!({
-            "queries":queries,
-            "search":search
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(queries) = queries {
+            api_params.insert("queries".to_string(), json!(queries));
+        }
+        if let Some(search) = search {
+            api_params.insert("search".to_string(), json!(search));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -210,13 +226,20 @@ impl Databases {
         //const API_PATH: &str = "/databases";
         let api_path = "/databases/{databaseId}/collections".replace("{databaseId}", database_id);
 
-        let api_params = serde_json::json!({
-            "collectionId":collection_id,
-            "name":name,
-            "permissions":permissions,
-            "documentSecurity":document_security,
-            "enabled":enabled,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("collectionId".to_string(), json!(collection_id));
+        api_params.insert("name".to_string(), json!(name));
+        if let Some(permissions) = permissions {
+            api_params.insert("permissions".to_string(), json!(permissions));
+        }
+        if let Some(document_security) = document_security {
+            api_params.insert("documentSecurity".to_string(), json!(document_security));
+        }
+        if let Some(enabled) = enabled {
+            api_params.insert("enabled".to_string(), json!(enabled));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -283,12 +306,19 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "name":name,
-            "permissions":permissions,
-            "documentSecurity":document_security,
-            "enabled":enabled,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("name".to_string(), json!(name));
+        if let Some(permissions) = permissions {
+            api_params.insert("permissions".to_string(), json!(permissions));
+        }
+        if let Some(document_security) = document_security {
+            api_params.insert("documentSecurity".to_string(), json!(document_security));
+        }
+        if let Some(enabled) = enabled {
+            api_params.insert("enabled".to_string(), json!(enabled));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -351,9 +381,12 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "queries":queries
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(queries) = queries {
+            api_params.insert("queries".to_string(), json!(queries));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -389,12 +422,17 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "key":key,
-            "required": x_required,
-            "default": x_default,
-            "array":array,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("key".to_string(), json!(key));
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(x_default) = x_default {
+            api_params.insert("default".to_string(), json!(x_default));
+        }
+        if let Some(array) = array {
+            api_params.insert("array".to_string(), json!(array));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -429,12 +467,13 @@ impl Databases {
                 .replace("{collectionId}", collection_id)
                 .replace("{key}", key);
 
-        let api_params = serde_json::json!({
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default) = x_default {
+            api_params.insert("default".to_string(), json!(default));
+        }
 
-            "required": x_required,
-            "default": x_default,
-
-        });
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -468,12 +507,17 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "key":key,
-            "required": x_required,
-            "default": x_default,
-            "array":array,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("key".to_string(), json!(key));
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default) = x_default {
+            api_params.insert("default".to_string(), json!(default));
+        }
+        if let Some(arr) = array {
+            api_params.insert("array".to_string(), json!(arr));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -508,12 +552,13 @@ impl Databases {
                 .replace("{collectionId}", collection_id)
                 .replace("{key}", key);
 
-        let api_params = serde_json::json!({
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default) = x_default {
+            api_params.insert("default".to_string(), json!(default));
+        }
 
-            "required": x_required,
-            "default": x_default,
-
-        });
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -549,12 +594,17 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "key":key,
-            "required": x_required,
-            "default": x_default,
-            "array":array,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("key".to_string(), json!(key));
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default) = x_default {
+            api_params.insert("default".to_string(), json!(default));
+        }
+        if let Some(array_val) = array {
+            api_params.insert("array".to_string(), json!(array_val));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -591,12 +641,13 @@ impl Databases {
             .replace("{collectionId}", collection_id)
             .replace("{key}", key);
 
-        let api_params = serde_json::json!({
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default) = x_default {
+            api_params.insert("default".to_string(), json!(default));
+        }
 
-            "required": x_required,
-            "default": x_default,
-
-        });
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -631,13 +682,18 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "key":key,
-            "elements":elements,
-            "required": x_required,
-            "default": x_default,
-            "array":array,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("key".to_string(), json!(key));
+        api_params.insert("elements".to_string(), json!(elements));
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default) = x_default {
+            api_params.insert("default".to_string(), json!(default));
+        }
+        if let Some(array_val) = array {
+            api_params.insert("array".to_string(), json!(array_val));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -675,12 +731,14 @@ impl Databases {
             .replace("{collectionId}", collection_id)
             .replace("{key}", key);
 
-        let api_params = serde_json::json!({
-            "elements":elements,
-            "required": x_required,
-            "default": x_default,
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("elements".to_string(), json!(elements));
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default) = x_default {
+            api_params.insert("default".to_string(), json!(default));
+        }
 
-        });
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -719,14 +777,23 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "key":key,
-            "required": x_required,
-            "min":min,
-            "max":max,
-            "default": x_default,
-            "array":array,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("key".to_string(), json!(key));
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(min_value) = min {
+            api_params.insert("min".to_string(), json!(min_value));
+        }
+        if let Some(max_value) = max {
+            api_params.insert("max".to_string(), json!(max_value));
+        }
+        if let Some(default_value) = x_default {
+            api_params.insert("default".to_string(), json!(default_value));
+        }
+        if let Some(is_array) = array {
+            api_params.insert("array".to_string(), json!(is_array));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -765,13 +832,19 @@ impl Databases {
             .replace("{collectionId}", collection_id)
             .replace("{key}", key);
 
-        let api_params = serde_json::json!({
-            "min":min,
-            "max":max,
-            "required": x_required,
-            "default": x_default,
+        let mut api_params = serde_json::Map::new();
+        if let Some(min_value) = min {
+            api_params.insert("min".to_string(), json!(min_value));
+        }
+        if let Some(max_value) = max {
+            api_params.insert("max".to_string(), json!(max_value));
+        }
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default_value) = x_default {
+            api_params.insert("default".to_string(), json!(default_value));
+        }
 
-        });
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -810,14 +883,23 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "key":key,
-            "required": x_required,
-            "min":min,
-            "max":max,
-            "default": x_default,
-            "array":array,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("key".to_string(), json!(key));
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(min_value) = min {
+            api_params.insert("min".to_string(), json!(min_value));
+        }
+        if let Some(max_value) = max {
+            api_params.insert("max".to_string(), json!(max_value));
+        }
+        if let Some(default_value) = x_default {
+            api_params.insert("default".to_string(), json!(default_value));
+        }
+        if let Some(array_value) = array {
+            api_params.insert("array".to_string(), json!(array_value));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -857,13 +939,19 @@ impl Databases {
                 .replace("{collectionId}", collection_id)
                 .replace("{key}", key);
 
-        let api_params = serde_json::json!({
-            "min":min,
-            "max":max,
-            "required": x_required,
-            "default": x_default,
+        let mut api_params = serde_json::Map::new();
+        if let Some(min_value) = min {
+            api_params.insert("min".to_string(), json!(min_value));
+        }
+        if let Some(max_value) = max {
+            api_params.insert("max".to_string(), json!(max_value));
+        }
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default_value) = x_default {
+            api_params.insert("default".to_string(), json!(default_value));
+        }
 
-        });
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -899,12 +987,17 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "key":key,
-            "required": x_required,
-            "default": x_default,
-            "array":array,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("key".to_string(), json!(key));
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default_value) = x_default {
+            api_params.insert("default".to_string(), json!(default_value));
+        }
+        if let Some(array_value) = array {
+            api_params.insert("array".to_string(), json!(array_value));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -941,11 +1034,13 @@ impl Databases {
             .replace("{collectionId}", collection_id)
             .replace("{key}", key);
 
-        let api_params = serde_json::json!({
-            "required": x_required,
-            "default": x_default,
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default_value) = x_default {
+            api_params.insert("default".to_string(), json!(default_value));
+        }
 
-        });
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -984,14 +1079,26 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "relatedCollectionId":related_collection_id,
-            "type":relationship_type,
-            "twoWay":two_way,
-            "key":key,
-            "twoWayKey":two_way_key,
-            "onDelete": on_delete,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert(
+            "relatedCollectionId".to_string(),
+            json!(related_collection_id),
+        );
+        api_params.insert("type".to_string(), json!(relationship_type));
+        if let Some(two_way_val) = two_way {
+            api_params.insert("twoWay".to_string(), json!(two_way_val));
+        }
+        if let Some(key_val) = key {
+            api_params.insert("key".to_string(), json!(key_val));
+        }
+        if let Some(two_way_key_val) = two_way_key {
+            api_params.insert("twoWayKey".to_string(), json!(two_way_key_val));
+        }
+        if let Some(on_delete_val) = on_delete {
+            api_params.insert("onDelete".to_string(), json!(on_delete_val));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -1029,14 +1136,21 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "key":key,
-            "size":size,
-            "required": x_required,
-            "default": x_default,
-            "array":array,
-            "encrypt":encrypt,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("key".to_string(), json!(key));
+        api_params.insert("size".to_string(), json!(size));
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default_val) = x_default {
+            api_params.insert("default".to_string(), json!(default_val));
+        }
+        if let Some(array_val) = array {
+            api_params.insert("array".to_string(), json!(array_val));
+        }
+        if let Some(encrypt_val) = encrypt {
+            api_params.insert("encrypt".to_string(), json!(encrypt_val));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -1064,7 +1178,6 @@ impl Databases {
         database_id: &str,
         collection_id: &str,
         key: &str,
-
         x_required: bool,
         x_default: Option<&str>,
     ) -> Result<AttributeString, Error> {
@@ -1074,11 +1187,13 @@ impl Databases {
             .replace("{collectionId}", collection_id)
             .replace("{key}", key);
 
-        let api_params = serde_json::json!({
-            "required": x_required,
-            "default": x_default,
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default_val) = x_default {
+            api_params.insert("default".to_string(), json!(default_val));
+        }
 
-        });
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -1114,12 +1229,17 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "key":key,
-            "required": x_required,
-            "default": x_default,
-            "array":array,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("key".to_string(), json!(key));
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default_val) = x_default {
+            api_params.insert("default".to_string(), json!(default_val));
+        }
+        if let Some(is_array) = array {
+            api_params.insert("array".to_string(), json!(is_array));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -1156,11 +1276,13 @@ impl Databases {
             .replace("{collectionId}", collection_id)
             .replace("{key}", key);
 
-        let api_params = serde_json::json!({
-            "required": x_required,
-            "default": x_default,
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("required".to_string(), json!(x_required));
+        if let Some(default_val) = x_default {
+            api_params.insert("default".to_string(), json!(default_val));
+        }
 
-        });
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -1229,7 +1351,7 @@ impl Databases {
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
 
-        let res = client
+        let _res = client
             .call(
                 HttpMethod::DELETE,
                 api_path.as_str(),
@@ -1261,9 +1383,12 @@ impl Databases {
                 .replace("{collectionId}", collection_id)
                 .replace("{key}", key);
 
-        let api_params = serde_json::json!({
-            "onDelete":on_delete,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(delete_action) = on_delete {
+            api_params.insert("onDelete".to_string(), json!(delete_action));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -1296,9 +1421,12 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "queries":queries,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(queries) = &queries {
+            api_params.insert("queries".to_string(), json!(queries));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -1335,11 +1463,14 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "documentId":document_id,
-            "data":data,
-            "permissions":permissions,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("documentId".to_string(), json!(document_id));
+        api_params.insert("data".to_string(), data);
+        if let Some(permissions) = &permissions {
+            api_params.insert("permissions".to_string(), json!(permissions));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -1374,9 +1505,12 @@ impl Databases {
             .replace("{collectionId}", collection_id)
             .replace("{documentId}", document_id);
 
-        let api_params = serde_json::json!({
-            "queries":queries,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(queries) = &queries {
+            api_params.insert("queries".to_string(), json!(queries));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -1412,10 +1546,15 @@ impl Databases {
             .replace("{collectionId}", collection_id)
             .replace("{documentId}", document_id);
 
-        let api_params = serde_json::json!({
-            "data":data,
-            "permissions":permissions,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(data) = data {
+            api_params.insert("data".to_string(), data);
+        }
+        if let Some(permissions) = &permissions {
+            api_params.insert("permissions".to_string(), json!(permissions));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -1479,9 +1618,12 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "queries": queries,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(queries) = &queries {
+            api_params.insert("queries".to_string(), json!(queries));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -1515,12 +1657,15 @@ impl Databases {
             .replace("{databaseId}", database_id)
             .replace("{collectionId}", collection_id);
 
-        let api_params = serde_json::json!({
-            "key":key,
-            "type":index_type,
-            "attributes":attributes,
-            "orders":orders,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("key".to_string(), json!(key));
+        api_params.insert("type".to_string(), json!(index_type));
+        api_params.insert("attributes".to_string(), json!(attributes));
+        if let Some(orders) = orders {
+            api_params.insert("orders".to_string(), json!(orders));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);

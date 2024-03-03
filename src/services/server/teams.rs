@@ -1,5 +1,5 @@
 use reqwest::header;
-use serde_json::{Map, Value};
+use serde_json::{json, Map, Value};
 
 use crate::{
     client::Client,
@@ -28,10 +28,15 @@ impl Teams {
         //const API_PATH: &str = "/functions";
         let api_path = "/teams";
 
-        let api_params = serde_json::json!({
-            "queries":queries,
-            "search":search,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(queries) = queries {
+            api_params.insert("queries".to_string(), json!(queries));
+        }
+        if let Some(search) = search {
+            api_params.insert("search".to_string(), json!(search));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -57,11 +62,14 @@ impl Teams {
         //const API_PATH: &str = "/functions";
         let api_path = "/teams";
 
-        let api_params = serde_json::json!({
-            "teamId": team_id,
-            "name": name,
-            "roles": roles,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("teamId".to_string(), json!(team_id));
+        api_params.insert("name".to_string(), json!(name));
+        if let Some(roles) = &roles {
+            api_params.insert("roles".to_string(), json!(roles));
+        }
+
+        let api_params = Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -164,10 +172,15 @@ impl Teams {
         //const API_PATH: &str = "/functions";
         let api_path = "/teams/{teamId}/memberships".replace("{teamId}", team_id);
 
-        let api_params = serde_json::json!({
-            "queries":queries,
-            "search":search,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(queries) = queries {
+            api_params.insert("queries".to_string(), json!(queries));
+        }
+        if let Some(search) = search {
+            api_params.insert("search".to_string(), json!(search));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -221,14 +234,25 @@ impl Teams {
         //const API_PATH: &str = "/functions";
         let api_path = "/teams/{teamId}/memberships".replace("{teamId}", team_id);
 
-        let api_params = serde_json::json!({
-            "email": email,
-            "userId": user_id,
-            "phone": phone,
-            "roles": roles,
-            "url": url,
-            "name": name,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(email) = email {
+            api_params.insert("email".to_string(), json!(email));
+        }
+        if let Some(user_id) = user_id {
+            api_params.insert("userId".to_string(), json!(user_id));
+        }
+        if let Some(phone) = phone {
+            api_params.insert("phone".to_string(), json!(phone));
+        }
+        api_params.insert("roles".to_string(), json!(roles));
+        if let Some(url) = url {
+            api_params.insert("url".to_string(), json!(url));
+        }
+        if let Some(name) = name {
+            api_params.insert("name".to_string(), json!(name));
+        }
+
+        let api_params = Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);

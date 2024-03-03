@@ -27,10 +27,15 @@ impl Users {
         //const API_PATH: &str = "/functions";
         let api_path = "/users";
 
-        let api_params = serde_json::json!({
-            "queries":queries,
-            "search":search,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(queries) = queries {
+            api_params.insert("queries".to_string(), json!(queries));
+        }
+        if let Some(search) = search {
+            api_params.insert("search".to_string(), json!(search));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -99,12 +104,15 @@ impl Users {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/argon2";
 
-        let api_params = serde_json::json!({
-        "userId": user_id,
-        "email": email,
-        "password": password,
-        "name": name,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("userId".to_string(), json!(user_id));
+        api_params.insert("email".to_string(), json!(email));
+        api_params.insert("password".to_string(), json!(password));
+        if let Some(name) = name {
+            api_params.insert("name".to_string(), json!(name));
+        }
+
+        let api_params = Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -132,12 +140,15 @@ impl Users {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/bcrypt";
 
-        let api_params = serde_json::json!({
-        "userId": user_id,
-        "email": email,
-        "password": password,
-        "name": name,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("userId".to_string(), json!(user_id));
+        api_params.insert("email".to_string(), json!(email));
+        api_params.insert("password".to_string(), json!(password));
+        if let Some(name) = name {
+            api_params.insert("name".to_string(), json!(name));
+        }
+
+        let api_params = Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -160,10 +171,15 @@ impl Users {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/identities";
 
-        let api_params = serde_json::json!({
-            "queries":queries,
-            "search":search,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(queries) = queries {
+            api_params.insert("queries".to_string(), json!(queries));
+        }
+        if let Some(search) = search {
+            api_params.insert("search".to_string(), json!(search));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -216,12 +232,15 @@ impl Users {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/md5";
 
-        let api_params = serde_json::json!({
-        "userId": user_id,
-        "email": email,
-        "password": password,
-        "name": name,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("userId".to_string(), json!(user_id));
+        api_params.insert("email".to_string(), json!(email));
+        api_params.insert("password".to_string(), json!(password));
+        if let Some(name) = name {
+            api_params.insert("name".to_string(), json!(name));
+        }
+
+        let api_params = Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -249,12 +268,15 @@ impl Users {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/phpass";
 
-        let api_params = serde_json::json!({
-        "userId": user_id,
-        "email": email,
-        "password": password,
-        "name": name,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("userId".to_string(), json!(user_id));
+        api_params.insert("email".to_string(), json!(email));
+        api_params.insert("password".to_string(), json!(password));
+        if let Some(name) = name {
+            api_params.insert("name".to_string(), json!(name));
+        }
+
+        let api_params = Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -287,17 +309,20 @@ impl Users {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/scrypt";
 
-        let api_params = serde_json::json!({
-            "userId": user_id,
-            "email": email,
-            "password": password,
-            "passwordSalt": password_salt,
-            "passwordCpu": password_cpu,
-            "passwordMemory": password_memory,
-            "passwordParallel": password_parallel,
-            "passwordLength": password_length,
-            "name": name,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("userId".to_string(), json!(user_id));
+        api_params.insert("email".to_string(), json!(email));
+        api_params.insert("password".to_string(), json!(password));
+        api_params.insert("passwordSalt".to_string(), json!(password_salt));
+        api_params.insert("passwordCpu".to_string(), json!(password_cpu));
+        api_params.insert("passwordMemory".to_string(), json!(password_memory));
+        api_params.insert("passwordParallel".to_string(), json!(password_parallel));
+        api_params.insert("passwordLength".to_string(), json!(password_length));
+        if let Some(name) = name {
+            api_params.insert("name".to_string(), json!(name));
+        }
+
+        let api_params = Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -329,15 +354,21 @@ impl Users {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/scrypt-modified";
 
-        let api_params = serde_json::json!({
-        "userId": user_id,
-        "email": email,
-        "password": password,
-        "passwordSalt": password_salt,
-        "passwordSaltSeparator": password_salt_separator,
-        "passwordSignerKey": password_signer_key,
-        "name": name,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("userId".to_string(), json!(user_id));
+        api_params.insert("email".to_string(), json!(email));
+        api_params.insert("password".to_string(), json!(password));
+        api_params.insert("passwordSalt".to_string(), json!(password_salt));
+        api_params.insert(
+            "passwordSaltSeparator".to_string(),
+            json!(password_salt_separator),
+        );
+        api_params.insert("passwordSignerKey".to_string(), json!(password_signer_key));
+        if let Some(name) = name {
+            api_params.insert("name".to_string(), json!(name));
+        }
+
+        let api_params = Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -366,13 +397,16 @@ impl Users {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/sha";
 
-        let api_params = serde_json::json!({
-        "userId": user_id,
-        "email": email,
-        "password": password,
-        "passwordVersion": password_version,
-        "name": name,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("userId".to_string(), json!(user_id));
+        api_params.insert("email".to_string(), json!(email));
+        api_params.insert("password".to_string(), json!(password));
+        api_params.insert("passwordVersion".to_string(), json!(password_version));
+        if let Some(name) = name {
+            api_params.insert("name".to_string(), json!(name));
+        }
+
+        let api_params = Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -513,9 +547,12 @@ impl Users {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/{userId}/logs".replace("{userId}", user_id);
 
-        let api_params = serde_json::json!({
-            "queries":queries,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(queries) = &queries {
+            api_params.insert("queries".to_string(), json!(queries));
+        }
+
+        let api_params = Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);

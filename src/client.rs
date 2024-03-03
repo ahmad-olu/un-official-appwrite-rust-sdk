@@ -1,4 +1,4 @@
-use std::{fs, marker::PhantomData, path::Path, str::FromStr};
+use std::{fs, path::Path, str::FromStr};
 
 use reqwest::{
     header::{HeaderMap, HeaderName, HeaderValue, CONTENT_TYPE},
@@ -11,7 +11,6 @@ use uuid::Uuid;
 use crate::{
     enums::HttpMethod,
     error::{AppWriteError, Error},
-    models::file::File,
     upload_progress::UploadProgress,
 };
 

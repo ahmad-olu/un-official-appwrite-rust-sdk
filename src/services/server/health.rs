@@ -1,4 +1,5 @@
 use reqwest::header;
+use serde_json::json;
 
 use crate::{
     client::Client,
@@ -142,9 +143,12 @@ impl Health {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/queue/builds";
 
-        let api_params = serde_json::json!({
-            "threshold": threshold,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(threshold) = threshold {
+            api_params.insert("threshold".to_string(), json!(threshold));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -168,9 +172,12 @@ impl Health {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/queue/certificates";
 
-        let api_params = serde_json::json!({
-            "threshold": threshold,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(threshold) = threshold {
+            api_params.insert("threshold".to_string(), json!(threshold));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -194,10 +201,15 @@ impl Health {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/queue/databases";
 
-        let api_params = serde_json::json!({
-            "name":name,
-            "threshold": threshold,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(name) = name {
+            api_params.insert("name".to_string(), json!(name));
+        }
+        if let Some(threshold) = threshold {
+            api_params.insert("threshold".to_string(), json!(threshold));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -220,10 +232,12 @@ impl Health {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/queue/deletes";
 
-        let api_params = serde_json::json!({
+        let mut api_params = serde_json::Map::new();
+        if let Some(threshold) = threshold {
+            api_params.insert("threshold".to_string(), json!(threshold));
+        }
 
-            "threshold": threshold,
-        });
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -244,9 +258,12 @@ impl Health {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/queue/functions";
 
-        let api_params = serde_json::json!({
-            "threshold": threshold,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(threshold) = threshold {
+            api_params.insert("threshold".to_string(), json!(threshold));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -269,9 +286,12 @@ impl Health {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/queue/logs";
 
-        let api_params = serde_json::json!({
-            "threshold": threshold,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(threshold) = threshold {
+            api_params.insert("threshold".to_string(), json!(threshold));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -294,9 +314,12 @@ impl Health {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/queue/mails";
 
-        let api_params = serde_json::json!({
-            "threshold": threshold,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(threshold) = threshold {
+            api_params.insert("threshold".to_string(), json!(threshold));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -319,9 +342,12 @@ impl Health {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/queue/messaging";
 
-        let api_params = serde_json::json!({
-            "threshold": threshold,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(threshold) = threshold {
+            api_params.insert("threshold".to_string(), json!(threshold));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -344,9 +370,12 @@ impl Health {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/queue/migrations";
 
-        let api_params = serde_json::json!({
-            "threshold": threshold,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(threshold) = threshold {
+            api_params.insert("threshold".to_string(), json!(threshold));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -369,9 +398,12 @@ impl Health {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/queue/webhooks";
 
-        let api_params = serde_json::json!({
-            "threshold": threshold,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(threshold) = threshold {
+            api_params.insert("threshold".to_string(), json!(threshold));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);

@@ -5,6 +5,7 @@ use crate::{
     utils::get_content_header_value,
 };
 use reqwest::header;
+use serde_json::json;
 
 /// The Avatars service aims to help you complete everyday tasks related to
 /// your app image, icons, and avatars.
@@ -32,13 +33,26 @@ impl Avatars {
     ) -> Result<Vec<u8>, Error> {
         let api_path = "/avatars/browsers/{code}".replace("{code}", code);
 
-        let api_params = serde_json::json!({
-            "width":width,
-            "height":height,
-            "quality": quality,
-            "project": get_content_header_value(&client, "project"),
-            "key":get_content_header_value(&client, "key"),
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(width_val) = width {
+            api_params.insert("width".to_string(), serde_json::json!(width_val));
+        }
+        if let Some(height_val) = height {
+            api_params.insert("height".to_string(), serde_json::json!(height_val));
+        }
+        if let Some(quality_val) = quality {
+            api_params.insert("quality".to_string(), serde_json::json!(quality_val));
+        }
+        api_params.insert(
+            "project".to_string(),
+            json!(get_content_header_value(&client, "project")),
+        );
+        api_params.insert(
+            "key".to_string(),
+            json!(get_content_header_value(&client, "key")),
+        );
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -76,13 +90,26 @@ impl Avatars {
     ) -> Result<Vec<u8>, Error> {
         let api_path = "/avatars/credit-card/{code}".replace("{code}", code);
 
-        let api_params = serde_json::json!({
-            "width":width,
-            "height":height,
-            "quality": quality,
-            "project": get_content_header_value(&client, "project"),
-            "key":get_content_header_value(&client, "key"),
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(width_val) = width {
+            api_params.insert("width".to_string(), serde_json::json!(width_val));
+        }
+        if let Some(height_val) = height {
+            api_params.insert("height".to_string(), serde_json::json!(height_val));
+        }
+        if let Some(quality_val) = quality {
+            api_params.insert("quality".to_string(), serde_json::json!(quality_val));
+        }
+        api_params.insert(
+            "project".to_string(),
+            json!(get_content_header_value(&client, "project")),
+        );
+        api_params.insert(
+            "key".to_string(),
+            json!(get_content_header_value(&client, "key")),
+        );
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -145,13 +172,26 @@ impl Avatars {
     ) -> Result<Vec<u8>, Error> {
         let api_path = "/avatars/flags/{code}".replace("{code}", code);
 
-        let api_params = serde_json::json!({
-            "width":width,
-            "height":height,
-            "quality": quality,
-            "project": get_content_header_value(&client, "project"),
-            "key":get_content_header_value(&client, "key"),
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(width_val) = width {
+            api_params.insert("width".to_string(), serde_json::json!(width_val));
+        }
+        if let Some(height_val) = height {
+            api_params.insert("height".to_string(), serde_json::json!(height_val));
+        }
+        if let Some(quality_val) = quality {
+            api_params.insert("quality".to_string(), serde_json::json!(quality_val));
+        }
+        api_params.insert(
+            "project".to_string(),
+            json!(get_content_header_value(&client, "project")),
+        );
+        api_params.insert(
+            "key".to_string(),
+            json!(get_content_header_value(&client, "key")),
+        );
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -189,13 +229,24 @@ impl Avatars {
     ) -> Result<Vec<u8>, Error> {
         const API_PATH: &str = "/avatars/image";
 
-        let api_params = serde_json::json!({
-            "width":width,
-            "height":height,
-            "url": url,
-            "project": get_content_header_value(&client, "project"),
-            "key":get_content_header_value(&client, "key"),
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(width_val) = width {
+            api_params.insert("width".to_string(), serde_json::json!(width_val));
+        }
+        if let Some(height_val) = height {
+            api_params.insert("height".to_string(), serde_json::json!(height_val));
+        }
+        api_params.insert("url".to_string(), serde_json::json!(url));
+        api_params.insert(
+            "project".to_string(),
+            json!(get_content_header_value(&client, "project")),
+        );
+        api_params.insert(
+            "key".to_string(),
+            json!(get_content_header_value(&client, "key")),
+        );
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -234,14 +285,29 @@ impl Avatars {
     ) -> Result<Vec<u8>, Error> {
         const API_PATH: &str = "/avatars/initials";
 
-        let api_params = serde_json::json!({
-            "width":width,
-            "height":height,
-            "name": name,
-            "background":background,
-            "project": get_content_header_value(&client, "project"),
-            "key":get_content_header_value(&client, "key"),
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(width_val) = width {
+            api_params.insert("width".to_string(), serde_json::json!(width_val));
+        }
+        if let Some(height_val) = height {
+            api_params.insert("height".to_string(), serde_json::json!(height_val));
+        }
+        if let Some(name_val) = name {
+            api_params.insert("name".to_string(), serde_json::json!(name_val));
+        }
+        if let Some(background_val) = background {
+            api_params.insert("background".to_string(), serde_json::json!(background_val));
+        }
+        api_params.insert(
+            "project".to_string(),
+            json!(get_content_header_value(&client, "project")),
+        );
+        api_params.insert(
+            "key".to_string(),
+            json!(get_content_header_value(&client, "key")),
+        );
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -267,14 +333,27 @@ impl Avatars {
     ) -> Result<Vec<u8>, Error> {
         const API_PATH: &str = "/avatars/qr";
 
-        let api_params = serde_json::json!({
-            "size":size,
-            "margin":margin,
-            "text": text,
-            "download":download,
-            "project": get_content_header_value(&client, "project"),
-            "key":get_content_header_value(&client, "key"),
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(size_val) = size {
+            api_params.insert("size".to_string(), serde_json::json!(size_val));
+        }
+        if let Some(margin_val) = margin {
+            api_params.insert("margin".to_string(), serde_json::json!(margin_val));
+        }
+        api_params.insert("text".to_string(), serde_json::json!(text));
+        if let Some(download_val) = download {
+            api_params.insert("download".to_string(), serde_json::json!(download_val));
+        }
+        api_params.insert(
+            "project".to_string(),
+            json!(get_content_header_value(&client, "project")),
+        );
+        api_params.insert(
+            "key".to_string(),
+            json!(get_content_header_value(&client, "key")),
+        );
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);

@@ -52,12 +52,15 @@ impl Account {
     ) -> Result<User, Error> {
         const API_PATH: &str = "/account";
 
-        let api_params = serde_json::json!({
-            "userId":user_id,
-            "email":email,
-            "password":password,
-            "name": name,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("userId".to_string(), serde_json::json!(user_id));
+        api_params.insert("email".to_string(), serde_json::json!(email));
+        api_params.insert("password".to_string(), serde_json::json!(password));
+        if let Some(name_val) = name {
+            api_params.insert("name".to_string(), serde_json::json!(name_val));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -106,9 +109,12 @@ impl Account {
     ) -> Result<IdentityList, Error> {
         const API_PATH: &str = "/account/identities";
 
-        let api_params = serde_json::json!({
-            "queries":queries,
-        });
+        let mut api_params = serde_json::Map::new();
+        if let Some(queries_val) = queries {
+            api_params.insert("queries".to_string(), serde_json::json!(queries_val));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -153,9 +159,13 @@ impl Account {
     pub async fn list_logs(client: &Client, queries: Option<Vec<&str>>) -> Result<LogList, Error> {
         const API_PATH: &str = "/account/logs";
 
-        let api_params = serde_json::json!({
-            "queries":queries,
-        });
+        let mut api_params = serde_json::Map::new();
+
+        if let Some(queries) = queries {
+            api_params.insert("queries".to_string(), serde_json::json!(queries));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
