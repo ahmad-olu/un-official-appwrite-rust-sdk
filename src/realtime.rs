@@ -27,15 +27,32 @@ impl RealTime {
 
         let (mut _write, mut read) = ws_stream.split();
 
-        if let Some(message) = read.next().await {
-            let msg = message.expect("Failed to read the message");
-            let msg = match msg {
-                Message::Text(s) => s,
-                _ => {
-                    panic!()
+        while let Some(message) = read.next().await {
+            // let msg = message.expect("Failed to read the message");
+            // let msg = match msg {
+            //     Message::Text(s) => s,
+            //     _ => {
+            //         panic!()
+            //     }
+            // };
+            // let parsed: Value = serde_json::from_str(&msg).expect("Unable to parse json");
+            // println!("{:#?}", parsed);
+
+            let msg = match message {
+                Ok(Message::Text(s)) => s,
+                Ok(_) => continue, // Skip non-text messages
+                Err(err) => {
+                    eprintln!("Failed to read the message: {}", err);
+                    break; // Break the loop on error
                 }
             };
-            let parsed: Value = serde_json::from_str(&msg).expect("Unable to parse json");
+            let parsed: Value = match serde_json::from_str(&msg) {
+                Ok(val) => val,
+                Err(err) => {
+                    println!("Unable to parse JSON: {}", err);
+                    break; // Break the loop on error
+                }
+            };
             println!("{:#?}", parsed);
         }
 

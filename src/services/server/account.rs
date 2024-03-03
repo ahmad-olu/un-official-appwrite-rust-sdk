@@ -19,7 +19,7 @@ impl Account {
     /// Get account
     ///
     /// Get the currently logged in user.
-    async fn get(client: &Client) -> Result<User, Error> {
+    pub async fn get(client: &Client) -> Result<User, Error> {
         const API_PATH: &str = "/account";
 
         let api_params = serde_json::json!({});
@@ -43,7 +43,7 @@ impl Account {
     // route to start verifying the user email address. To allow the new user to
     // login to their new account, you need to create a new [account
     // session](https://appwrite.io/docs/references/cloud/client-web/account#createEmailSession).
-    async fn create(
+    pub async fn create(
         client: &Client,
         user_id: &str,
         email: &str,
@@ -79,7 +79,7 @@ impl Account {
     /// This endpoint can also be used to convert an anonymous account to a normal
     /// one, by passing an email address and a new password.
     ///
-    async fn update_email(client: &Client, email: &str, password: &str) -> Result<User, Error> {
+    pub async fn update_email(client: &Client, email: &str, password: &str) -> Result<User, Error> {
         const API_PATH: &str = "/account/email";
 
         let api_params = serde_json::json!({
@@ -100,7 +100,7 @@ impl Account {
     /// List Identities
     ///
     /// Get the list of identities for the currently logged in user.
-    async fn list_identities(
+    pub async fn list_identities(
         client: &Client,
         queries: Option<&str>,
     ) -> Result<IdentityList, Error> {
@@ -123,7 +123,7 @@ impl Account {
     /// Delete Identity
     ///
     /// Delete an identity by its unique ID.
-    async fn delete_identity(client: &Client, identity_id: &str) -> Result<(), Error> {
+    pub async fn delete_identity(client: &Client, identity_id: &str) -> Result<(), Error> {
         let api_path: String = r"/account/identities/{identityId}"
             .to_owned()
             .replace("{identityId}", identity_id);
@@ -150,7 +150,7 @@ impl Account {
     ///
     /// Get the list of latest security activity logs for the currently logged in
     /// user. Each log returns user IP address, location and date and time of log.
-    async fn list_logs(client: &Client, queries: Option<Vec<&str>>) -> Result<LogList, Error> {
+    pub async fn list_logs(client: &Client, queries: Option<Vec<&str>>) -> Result<LogList, Error> {
         const API_PATH: &str = "/account/logs";
 
         let api_params = serde_json::json!({
@@ -170,7 +170,7 @@ impl Account {
     /// Update name
     ///
     /// Update currently logged in user account name.
-    async fn update_name(client: &Client, name: &str) -> Result<User, Error> {
+    pub async fn update_name(client: &Client, name: &str) -> Result<User, Error> {
         const API_PATH: &str = "/account/name";
 
         let api_params = serde_json::json!({
@@ -192,7 +192,7 @@ impl Account {
     /// Update currently logged in user password. For validation, user is required
     /// to pass in the new password, and the old password. For users created with
     /// OAuth, Team Invites and Magic URL, oldPassword is optional.
-    async fn update_password(
+    pub async fn update_password(
         client: &Client,
         password: &str,
         old_password: &str,
@@ -221,7 +221,7 @@ impl Account {
     /// SMS is not sent automatically, however you can use the [POST
     /// /account/verification/phone](https://appwrite.io/docs/references/cloud/client-web/account#createPhoneVerification)
     /// endpoint to send a confirmation SMS.
-    async fn update_phone(client: &Client, phone: &str, password: &str) -> Result<User, Error> {
+    pub async fn update_phone(client: &Client, phone: &str, password: &str) -> Result<User, Error> {
         const API_PATH: &str = "/account/name";
 
         let api_params = serde_json::json!({
@@ -242,7 +242,7 @@ impl Account {
     /// Get account preferences
     ///
     /// Get the preferences as a key-value object for the currently logged in user.
-    async fn get_preference(client: &Client) -> Result<Preferences, Error> {
+    pub async fn get_preference(client: &Client) -> Result<Preferences, Error> {
         const API_PATH: &str = "/account/prefs";
 
         let api_params = serde_json::json!({});
@@ -262,7 +262,7 @@ impl Account {
     /// Update currently logged in user account preferences. The object you pass is
     /// stored as is, and replaces any previous value. The maximum allowed prefs
     /// size is 64kB and throws error if exceeded.
-    async fn update_preference(client: &Client, preference: Value) -> Result<User, Error> {
+    pub async fn update_preference(client: &Client, preference: Value) -> Result<User, Error> {
         const API_PATH: &str = "/account/prefs";
 
         let api_params = serde_json::json!({
@@ -289,7 +289,7 @@ impl Account {
     /// /account/recovery](https://appwrite.io/docs/references/cloud/client-web/account#updateRecovery)
     /// endpoint to complete the process. The verification link sent to the user's
     /// email address is valid for 1 hour.
-    async fn create_recovery(client: &Client, email: &str, url: &str) -> Result<Token, Error> {
+    pub async fn create_recovery(client: &Client, email: &str, url: &str) -> Result<Token, Error> {
         const API_PATH: &str = "/account/recovery";
 
         let api_params = serde_json::json!({
@@ -319,7 +319,7 @@ impl Account {
     /// Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
     /// the only valid redirect URLs are the ones from domains you have set when
     /// adding your platforms in the console interface.
-    async fn update_recovery(
+    pub async fn update_recovery(
         client: &Client,
         user_id: &str,
         secret: &str,
@@ -349,7 +349,7 @@ impl Account {
     ///
     /// Get the list of active sessions across different devices for the currently
     /// logged in user.
-    async fn list_sessions(client: &Client) -> Result<SessionList, Error> {
+    pub async fn list_sessions(client: &Client) -> Result<SessionList, Error> {
         const API_PATH: &str = "/account/sessions";
 
         let api_params = serde_json::json!({});
@@ -368,7 +368,7 @@ impl Account {
     ///
     /// Delete all sessions from the user account and remove any sessions cookies
     /// from the end client.
-    async fn delete_sessions(client: &Client) -> Result<(), Error> {
+    pub async fn delete_sessions(client: &Client) -> Result<(), Error> {
         const API_PATH: &str = "/account/sessions";
 
         let api_params = serde_json::json!({});
@@ -387,7 +387,7 @@ impl Account {
     ///
     /// Use this endpoint to get a logged in user's session using a Session ID.
     /// Inputting 'current' will return the current session being used.
-    async fn get_session(client: &Client, session_id: &str) -> Result<Session, Error> {
+    pub async fn get_session(client: &Client, session_id: &str) -> Result<Session, Error> {
         let api_path: String = r"/account/sessions/{sessionId}"
             .to_owned()
             .replace("{sessionId}", session_id);
@@ -415,7 +415,7 @@ impl Account {
     /// Access tokens have limited lifespan and expire to mitigate security risks.
     /// If session was created using an OAuth provider, this route can be used to
     /// "refresh" the access token.
-    async fn update_session(client: &Client, session_id: &str) -> Result<Session, Error> {
+    pub async fn update_session(client: &Client, session_id: &str) -> Result<Session, Error> {
         let api_path: String = r"/account/sessions/{sessionId}"
             .to_owned()
             .replace("{sessionId}", session_id);
@@ -445,7 +445,7 @@ impl Account {
     /// the user on all devices, use [Delete
     /// Sessions](https://appwrite.io/docs/references/cloud/client-web/account#deleteSessions)
     /// instead.
-    async fn delete_session(client: &Client, session_id: &str) -> Result<(), Error> {
+    pub async fn delete_session(client: &Client, session_id: &str) -> Result<(), Error> {
         let api_path: String = r"/account/sessions/{sessionId}"
             .to_owned()
             .replace("{sessionId}", session_id);
@@ -505,7 +505,7 @@ impl Account {
     /// the only valid redirect URLs are the ones from domains you have set when
     /// adding your platforms in the console interface.
     ///
-    async fn create_verification(client: &Client, url: &str) -> Result<Token, Error> {
+    pub async fn create_verification(client: &Client, url: &str) -> Result<Token, Error> {
         const API_PATH: &str = "/account/verification";
 
         let api_params = serde_json::json!({
@@ -528,7 +528,7 @@ impl Account {
     /// the **userId** and **secret** parameters that were attached to your app URL
     /// to verify the user email ownership. If confirmed this route will return a
     /// 200 status code.
-    async fn update_verification(
+    pub async fn update_verification(
         client: &Client,
         user_id: &str,
         secret: &str,
@@ -560,7 +560,7 @@ impl Account {
     /// process](https://appwrite.io/docs/references/cloud/client-web/account#updatePhoneVerification).
     /// The verification code sent to the user's phone number is valid for 15
     /// minutes.
-    async fn create_phone_verification(client: &Client) -> Result<Token, Error> {
+    pub async fn create_phone_verification(client: &Client) -> Result<Token, Error> {
         const API_PATH: &str = "/account/verification/phone";
 
         let api_params = serde_json::json!({});
@@ -581,7 +581,7 @@ impl Account {
     /// **userId** and **secret** that were sent to your user's phone number to
     /// verify the user email ownership. If confirmed this route will return a 200
     /// status code.
-    async fn update_phone_verification(
+    pub async fn update_phone_verification(
         client: &Client,
         user_id: &str,
         secret: &str,

@@ -4,11 +4,11 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("file size error: {0:#?}")]
+    #[error("file size error: {0:?}")]
     Io(#[from] std::io::Error),
-    #[error("network error: {0:#?}")]
+    #[error("network error: {0:?}")]
     Network(#[from] reqwest::Error),
-    #[error("AppWrite error: {0:#?}")]
+    #[error("AppWrite error: {0:?}")]
     AppWriteError(AppWriteError),
 
     #[error("invalid header name: {0:#?}")]
@@ -26,14 +26,23 @@ pub enum Error {
 #[derive(Debug, Deserialize)]
 pub struct AppWriteError {
     /// Error message.
-    message: String,
+    pub message: String,
 
     code: Option<u64>,
-    response: String,
+    pub response: Option<String>,
     /// Error type.
     ///
     /// See [Error Types](https://appwrite.io/docs/response-codes#errorTypes)
     /// for more information.
     #[serde(rename = "type")]
-    error_type: Option<String>,
+    pub error_type: Option<String>,
+    pub version: Option<String>,
 }
+
+impl std::fmt::Display for AppWriteError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "(code: {:?}) {} ", self.code, self.message,)
+    }
+}
+
+impl std::error::Error for AppWriteError {}

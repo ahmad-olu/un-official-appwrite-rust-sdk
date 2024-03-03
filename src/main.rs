@@ -1,5 +1,7 @@
 use std::{fs, path::Path};
 
+use client::{Client, ClientBuilder};
+use error::Error;
 use reqwest::{
     header::{self, CONTENT_TYPE},
     multipart::{self, Part},
@@ -9,23 +11,92 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use futures_util::{future, pin_mut, StreamExt};
+use services::server::users::Users;
 use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
 use url::Url;
 
-mod client;
+pub mod client;
 pub mod enums;
-mod error;
+pub mod error;
 pub mod id;
 pub mod models;
 pub mod permission;
 pub mod query;
 pub mod realtime;
 pub mod role;
-mod services;
+pub mod services;
 pub mod upload_progress;
 pub mod utils;
 
 const BASE_URL: &str = "https://cloud.appwrite.io";
+
+#[tokio::main]
+async fn main() -> Result<(), Error> {
+    let  client = ClientBuilder::default()
+    .set_project("65d20d389f2b36778b8b")?
+    .set_key("ae07b88634eacfb42a2fc4c4a7f278d967d863385d677c054d5b8edddfdd6c98f0669fa0f03d2e8fa9b029024c7b2a7b69726fa1e32a68b6d11df3933a467a9b7160f5c149775e94814ea8f6ff3225ba1854fa069c6f0e130921e3e4f33d2839a54a5f618dfe7f85442458425f6fcbd090d48dd5b830f8881176caec65d0bb20")?
+    .build()?;
+
+    let create_user = Users::create(
+        &client,
+        "22222346",
+        Some("bhd35@gmail.com"),
+        None,
+        Some("password"),
+        None,
+    )
+    .await?;
+    println!("{:?}", create_user);
+
+    // let data = serde_json::json!({
+    //     "userId":"unique()",
+    //     "email":"ace2@gmail.com",
+    //     "password":"password",
+    // });
+
+    // let res = run_account_client(AccountUrl::Create, BASE_URL, Some(&data)).await?;
+    // println!("{:#?}", res);
+
+    // let res = run_account_client(AccountUrl::CreateAnonymousSession, BASE_URL, None::<&Value>)
+    //     .await
+    //     .expect("msg");
+    // println!("{:#?}", res);
+
+    //
+
+    // fn prog(p: OnProgress) {
+    //     println!("{:?}", p)
+    // }
+    // let file = create_file(Some(|p| println!("prog>>-------->{:?}", p))).await?;
+    // println!("{:#?}", file);
+
+    //realtime
+
+    // let (ws_stream, _response)= connect_async("wss://cloud.appwrite.io/v1/realtime?project=65d20d389f2b36778b8b&channels[]=documents&channels[]=databases.65d6ca3f97569a4c7ea8.collections").await.expect("Can't connect");
+
+    // // //socket.send(Message::Text("Hello, Test".into())).unwrap();
+
+    // let (mut _write, mut read) = ws_stream.split();
+
+    // if let Some(message) = read.next().await {
+    //     let msg = message.expect("Failed to read the message");
+    //     let msg = match msg {
+    //         Message::Text(s) => s,
+    //         _ => {
+    //             panic!()
+    //         }
+    //     };
+    //     let parsed: Value = serde_json::from_str(&msg).expect("Unable to parse json");
+    //     println!("{:#?}", parsed);
+    // }
+
+    // let a = Path::new(r"C:\Users\pc\Pictures\Imagine\6676892.jpg")
+    //     .file_name()
+    //     .unwrap();
+    // println!("{}", format!("{:?}", a));
+
+    Ok(())
+}
 
 enum AccountUrl {
     Create,
@@ -218,58 +289,6 @@ async fn create_file(on_progress: Option<fn(OnProgress)>) -> Result<File, AppWri
     }
 
     Ok(res.unwrap())
-}
-
-#[tokio::main]
-async fn main() -> Result<(), AppWriteError> {
-    // let data = serde_json::json!({
-    //     "userId":"unique()",
-    //     "email":"ace2@gmail.com",
-    //     "password":"password",
-    // });
-
-    // let res = run_account_client(AccountUrl::Create, BASE_URL, Some(&data)).await?;
-    // println!("{:#?}", res);
-
-    // let res = run_account_client(AccountUrl::CreateAnonymousSession, BASE_URL, None::<&Value>)
-    //     .await
-    //     .expect("msg");
-    // println!("{:#?}", res);
-
-    //
-
-    // fn prog(p: OnProgress) {
-    //     println!("{:?}", p)
-    // }
-    // let file = create_file(Some(|p| println!("prog>>-------->{:?}", p))).await?;
-    // println!("{:#?}", file);
-
-    //realtime
-
-    // let (ws_stream, _response)= connect_async("wss://cloud.appwrite.io/v1/realtime?project=65d20d389f2b36778b8b&channels[]=documents&channels[]=databases.65d6ca3f97569a4c7ea8.collections").await.expect("Can't connect");
-
-    // // //socket.send(Message::Text("Hello, Test".into())).unwrap();
-
-    // let (mut _write, mut read) = ws_stream.split();
-
-    // if let Some(message) = read.next().await {
-    //     let msg = message.expect("Failed to read the message");
-    //     let msg = match msg {
-    //         Message::Text(s) => s,
-    //         _ => {
-    //             panic!()
-    //         }
-    //     };
-    //     let parsed: Value = serde_json::from_str(&msg).expect("Unable to parse json");
-    //     println!("{:#?}", parsed);
-    // }
-
-    // let a = Path::new(r"C:\Users\pc\Pictures\Imagine\6676892.jpg")
-    //     .file_name()
-    //     .unwrap();
-    // println!("{}", format!("{:?}", a));
-
-    Ok(())
 }
 
 /// File

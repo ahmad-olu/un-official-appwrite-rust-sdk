@@ -24,55 +24,94 @@ pub struct Client {
     self_signed: bool,
 }
 
-impl Client {
-    pub fn new() -> Self {
-        let mut header = HeaderMap::new();
+#[derive(Clone)]
+pub struct ClientBuilder {
+    end_point: Option<String>,
+    pub end_point_realtime: Option<String>, //todo set this
+    pub header: HeaderMap,
+    chunk_size: Option<usize>,
+    self_signed: Option<bool>,
+}
+
+impl Default for ClientBuilder {
+    fn default() -> Self {
         Self {
-            end_point: String::from("https://cloud.appwrite.io/v1"),
+            end_point: Some(String::from("https://cloud.appwrite.io/v1")),
             end_point_realtime: None,
-            header,
-            chunk_size: 5 * 1024 * 1024,
-            self_signed: false,
+            header: HeaderMap::new(),
+            chunk_size: Some(5 * 1024 * 1024),
+            self_signed: Some(false),
         }
     }
-    pub fn set_self_signed(&mut self, status: bool) -> &mut Self {
-        self.self_signed = status;
-        self
+}
+impl ClientBuilder {
+    pub fn new() -> Self {
+        Self {
+            end_point: None,
+            ..Default::default()
+        }
     }
-    fn set_endpoint(&mut self, endpoint: &str) -> &mut Self {
-        self.end_point = String::from(endpoint);
-        self
+    pub fn set_self_signed(&mut self, status: bool) -> Result<&mut Self, Error> {
+        self.self_signed = Some(status);
+        Ok(self)
     }
-    fn add_header(&mut self, key: &str, value: &str) -> Result<&mut Self, Error> {
+    pub fn set_endpoint(&mut self, endpoint: &str) -> Result<&mut Self, Error> {
+        self.end_point = Some(String::from(endpoint));
+        if self.end_point_realtime.as_ref().is_none() {
+            self.end_point_realtime = self.end_point.clone().and_then(|val| {
+                Some(
+                    val.replace("https://", "wss://")
+                        .replace("http://", "ws://"),
+                )
+            });
+        }
+        Ok(self)
+    }
+    pub fn add_header(&mut self, key: &str, value: &str) -> Result<&mut Self, Error> {
         self.header
             .insert(HeaderName::from_str(key)?, HeaderValue::from_str(value)?);
         Ok(self)
     }
 
-    fn set_project(&mut self, value: &str) -> Result<&mut Self, Error> {
+    pub fn set_project(&mut self, value: &str) -> Result<&mut Self, Error> {
         self.header
             .insert("X-Appwrite-Project", HeaderValue::from_str(value)?);
         Ok(self)
     }
 
-    fn set_key(&mut self, value: &str) -> Result<&mut Self, Error> {
+    pub fn set_key(&mut self, value: &str) -> Result<&mut Self, Error> {
         self.header
             .insert("x-appwrite-key", HeaderValue::from_str(value)?);
         Ok(self)
     }
 
-    fn set_jwt(&mut self, value: &str) -> Result<&mut Self, Error> {
+    pub fn set_jwt(&mut self, value: &str) -> Result<&mut Self, Error> {
         self.header
             .insert("x-appwrite-jwt", HeaderValue::from_str(value)?);
         Ok(self)
     }
 
-    fn set_locale(&mut self, value: &str) -> Result<&mut Self, Error> {
+    pub fn set_locale(&mut self, value: &str) -> Result<&mut Self, Error> {
         self.header
             .insert("x-appwrite-locale", HeaderValue::from_str(value)?);
         Ok(self)
     }
 
+    pub fn build(&self) -> Result<Client, Error> {
+        let Some(endpoint) = self.end_point.as_ref() else {
+            return Err(Error::Unknown);
+        };
+        Ok(Client {
+            end_point: endpoint.to_string(),
+            end_point_realtime: self.end_point_realtime.clone(),
+            header: self.header.clone(),
+            chunk_size: self.chunk_size.clone().unwrap_or_else(|| 5 * 1024 * 1024),
+            self_signed: self.self_signed.clone().unwrap_or_else(|| false),
+        })
+    }
+}
+
+impl Client {
     pub async fn call<T: Serialize + ?Sized>(
         &self,
         method: HttpMethod,
@@ -90,20 +129,28 @@ impl Client {
             HttpMethod::PATCH => res.patch(format!("{}{}", self.end_point, path)),
         };
         let res = res
-            .query(params)
+            .json(&params)
+            //  .query(params) //Todo:: add feature to add query
             .headers(headers)
             .headers(self.header.clone());
+
         let res = if let Some(form) = form {
             res.multipart(form)
         } else {
             res
         };
         let res = res.send().await?;
-        if res.status() >= StatusCode::BAD_REQUEST {
-            return Err(Error::AppWriteError(res.json::<AppWriteError>().await?));
+        // if res.status() >= StatusCode::BAD_REQUEST {
+        //     return Err(Error::AppWriteError(res.json::<AppWriteError>().await?));
+        // }
+        match res.status().as_u16() {
+            200..=299 => Ok(res),
+            400..=599 => Err(Error::AppWriteError(res.json::<AppWriteError>().await?)),
+            _ => {
+                //TODO: Error Message: Unexpected status code:{}, response.statuscode
+                Err(Error::Unknown)
+            }
         }
-
-        Ok(res)
     }
 
     pub async fn chunk_upload<T: Serialize + ?Sized, G>(

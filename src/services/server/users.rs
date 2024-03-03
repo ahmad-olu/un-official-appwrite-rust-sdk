@@ -1,5 +1,5 @@
 use reqwest::header;
-use serde_json::{Map, Value};
+use serde_json::{json, Map, Value};
 
 use crate::{
     client::Client,
@@ -19,7 +19,7 @@ impl Users {
     ///
     /// Get a list of all the project"s users. You can use the query params to
     /// filter your results.
-    async fn list(
+    pub async fn list(
         client: &Client,
         queries: Option<Vec<&str>>,
         search: Option<&str>,
@@ -45,7 +45,7 @@ impl Users {
     /// Create user
     ///
     /// Create a new user.
-    async fn create(
+    pub async fn create(
         client: &Client,
         user_id: &str,
         email: Option<&str>,
@@ -56,13 +56,22 @@ impl Users {
         //const API_PATH: &str = "/functions";
         let api_path = "/users";
 
-        let api_params = serde_json::json!({
-        "userId": user_id,
-        "email": email,
-        "phone": phone,
-        "password": password,
-        "name": name,
-        });
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("userId".to_string(), json!(user_id));
+        if let Some(email) = email {
+            api_params.insert("email".to_string(), json!(email));
+        }
+        if let Some(phone) = phone {
+            api_params.insert("phone".to_string(), json!(phone));
+        }
+        if let Some(password) = password {
+            api_params.insert("password".to_string(), json!(password));
+        }
+        if let Some(name) = name {
+            api_params.insert("name".to_string(), json!(name));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
 
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
@@ -80,7 +89,7 @@ impl Users {
     /// [Argon2](https://en.wikipedia.org/wiki/Argon2) algorithm. Use the [POST
     /// /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to
     /// create users with a plain text password.
-    async fn create_argon2_user(
+    pub async fn create_argon2_user(
         client: &Client,
         user_id: &str,
         email: &str,
@@ -113,7 +122,7 @@ impl Users {
     /// [Bcrypt](https://en.wikipedia.org/wiki/Bcrypt) algorithm. Use the [POST
     /// /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to
     /// create users with a plain text password.
-    async fn create_bcrypt_user(
+    pub async fn create_bcrypt_user(
         client: &Client,
         user_id: &str,
         email: &str,
@@ -143,7 +152,7 @@ impl Users {
     /// List Identities
     ///
     /// Get identities for all users.
-    async fn list_identities(
+    pub async fn list_identities(
         client: &Client,
         queries: Option<Vec<&str>>,
         search: Option<&str>,
@@ -169,7 +178,7 @@ impl Users {
     /// Delete Identity
     ///
     /// Delete an identity by its unique ID.
-    async fn delete_identity(client: &Client, identity_id: &str) -> Result<(), Error> {
+    pub async fn delete_identity(client: &Client, identity_id: &str) -> Result<(), Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/identities/{identityId}".replace("{identityId}", identity_id);
 
@@ -197,7 +206,7 @@ impl Users {
     /// [MD5](https://en.wikipedia.org/wiki/MD5) algorithm. Use the [POST
     /// /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to
     /// create users with a plain text password.
-    async fn create_md5_user(
+    pub async fn create_md5_user(
         client: &Client,
         user_id: &str,
         email: &str,
@@ -230,7 +239,7 @@ impl Users {
     /// [PHPass](https://www.openwall.com/phpass/) algorithm. Use the [POST
     /// /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to
     /// create users with a plain text password.
-    async fn create_phpass_user(
+    pub async fn create_phpass_user(
         client: &Client,
         user_id: &str,
         email: &str,
@@ -263,7 +272,7 @@ impl Users {
     /// [Scrypt](https://github.com/Tarsnap/scrypt) algorithm. Use the [POST
     /// /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to
     /// create users with a plain text password.
-    async fn create_scrypt_user(
+    pub async fn create_scrypt_user(
         client: &Client,
         user_id: &str,
         email: &str,
@@ -307,7 +316,7 @@ impl Users {
     /// algorithm. Use the [POST
     /// /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to
     /// create users with a plain text password.
-    async fn create_scrypt_modified_user(
+    pub async fn create_scrypt_modified_user(
         client: &Client,
         user_id: &str,
         email: &str,
@@ -346,7 +355,7 @@ impl Users {
     /// [SHA](https://en.wikipedia.org/wiki/Secure_Hash_Algorithm) algorithm. Use
     /// the [POST /users](https://appwrite.io/docs/server/users#usersCreate)
     /// endpoint to create users with a plain text password.
-    async fn create_sha_user(
+    pub async fn create_sha_user(
         client: &Client,
         user_id: &str,
         email: &str,
@@ -378,7 +387,7 @@ impl Users {
     /// Get user
     ///
     /// Get a user by its unique ID.
-    async fn get(client: &Client, user_id: &str) -> Result<User, Error> {
+    pub async fn get(client: &Client, user_id: &str) -> Result<User, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/{userId}".replace("{userId}", user_id);
 
@@ -408,7 +417,7 @@ impl Users {
     /// ID reserved, use the
     /// [updateStatus](https://appwrite.io/docs/server/users#usersUpdateStatus)
     /// endpoint instead.
-    async fn delete(client: &Client, user_id: &str) -> Result<(), Error> {
+    pub async fn delete(client: &Client, user_id: &str) -> Result<(), Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/{userId}".replace("{userId}", user_id);
 
@@ -433,7 +442,7 @@ impl Users {
     /// Update email
     ///
     /// Update the user email by its unique ID.
-    async fn update_email(client: &Client, user_id: &str, email: &str) -> Result<User, Error> {
+    pub async fn update_email(client: &Client, user_id: &str, email: &str) -> Result<User, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/{userId}/email".replace("{userId}", user_id);
 
@@ -465,7 +474,7 @@ impl Users {
     /// user's to share access to a resource, labels can be defined by the
     /// developer to grant access without an invitation. See the [Permissions
     /// docs](https://appwrite.io/docs/permissions) for more info.
-    async fn update_labels(
+    pub async fn update_labels(
         client: &Client,
         user_id: &str,
         labels: Vec<&str>,
@@ -496,7 +505,7 @@ impl Users {
     /// List user logs
     ///
     /// Get the user activity logs list by its unique ID.
-    async fn list_logs(
+    pub async fn list_logs(
         client: &Client,
         user_id: &str,
         queries: Option<Vec<&str>>,
@@ -527,7 +536,7 @@ impl Users {
     /// List user memberships
     ///
     /// Get the user membership list by its unique ID.
-    async fn membership_list(client: &Client, user_id: &str) -> Result<MembershipList, Error> {
+    pub async fn membership_list(client: &Client, user_id: &str) -> Result<MembershipList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/{userId}/memberships".replace("{userId}", user_id);
 
@@ -552,7 +561,7 @@ impl Users {
     /// Update name
     ///
     /// Update the user name by its unique ID.
-    async fn update_name(client: &Client, user_id: &str, name: &str) -> Result<User, Error> {
+    pub async fn update_name(client: &Client, user_id: &str, name: &str) -> Result<User, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/{userId}/name".replace("{userId}", user_id);
 
@@ -579,7 +588,7 @@ impl Users {
     /// Update password
     ///
     /// Update the user password by its unique ID.
-    async fn update_password(
+    pub async fn update_password(
         client: &Client,
         user_id: &str,
         password: &str,
@@ -610,7 +619,7 @@ impl Users {
     /// Update phone
     ///
     /// Update the user phone by its unique ID.
-    async fn update_phone(client: &Client, user_id: &str, number: &str) -> Result<User, Error> {
+    pub async fn update_phone(client: &Client, user_id: &str, number: &str) -> Result<User, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/{userId}/phone".replace("{userId}", user_id);
 
@@ -637,7 +646,7 @@ impl Users {
     /// Get user preferences
     ///
     /// Get the user preferences by its unique ID.
-    async fn get_prefs(client: &Client, user_id: &str) -> Result<Preferences, Error> {
+    pub async fn get_prefs(client: &Client, user_id: &str) -> Result<Preferences, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/{userId}/prefs".replace("{userId}", user_id);
 
@@ -664,7 +673,7 @@ impl Users {
     /// Update the user preferences by its unique ID. The object you pass is stored
     /// as is, and replaces any previous value. The maximum allowed prefs size is
     /// 64kB and throws error if exceeded.
-    async fn update_prefs(
+    pub async fn update_prefs(
         client: &Client,
         user_id: &str,
         prefs: Map<String, Value>,
@@ -695,7 +704,7 @@ impl Users {
     /// List user sessions
     ///
     /// Get the user sessions list by its unique ID.
-    async fn list_sessions(client: &Client, user_id: &str) -> Result<SessionList, Error> {
+    pub async fn list_sessions(client: &Client, user_id: &str) -> Result<SessionList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/{userId}/sessions".replace("{userId}", user_id);
 
@@ -720,7 +729,7 @@ impl Users {
     /// Delete user sessions
     ///
     /// Delete all user's sessions by using the user's unique ID.
-    async fn delete_sessions(client: &Client, user_id: &str) -> Result<(), Error> {
+    pub async fn delete_sessions(client: &Client, user_id: &str) -> Result<(), Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/{userId}/sessions".replace("{userId}", user_id);
 
@@ -745,7 +754,11 @@ impl Users {
     /// Delete user session
     ///
     /// Delete a user sessions by its unique ID.
-    async fn delete_session(client: &Client, user_id: &str, session_id: &str) -> Result<(), Error> {
+    pub async fn delete_session(
+        client: &Client,
+        user_id: &str,
+        session_id: &str,
+    ) -> Result<(), Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/{userId}/sessions/{sessionId}"
             .replace("{userId}", user_id)
@@ -773,7 +786,11 @@ impl Users {
     ///
     /// Update the user status by its unique ID. Use this endpoint as an
     /// alternative to deleting a user if you want to keep user's ID reserved.
-    async fn update_status(client: &Client, user_id: &str, status: bool) -> Result<User, Error> {
+    pub async fn update_status(
+        client: &Client,
+        user_id: &str,
+        status: bool,
+    ) -> Result<User, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/{userId}/status".replace("{userId}", user_id);
 
@@ -800,7 +817,7 @@ impl Users {
     /// Update email verification
     ///
     /// Update the user email verification status by its unique ID.
-    async fn update_email_verification(
+    pub async fn update_email_verification(
         client: &Client,
         user_id: &str,
         email_verification: bool,
@@ -831,7 +848,7 @@ impl Users {
     /// Update phone verification
     ///
     /// Update the user phone verification status by its unique ID.
-    async fn update_phone_verification(
+    pub async fn update_phone_verification(
         client: &Client,
         user_id: &str,
         phone_verification: bool,
