@@ -6,7 +6,7 @@ use super::runtime::Runtime;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RuntimeList {
     /// Total number of runtimes documents that matched your query.
-    total: u64,
+    pub total: u64,
     /// List of runtimes.
-    runtimes: Vec<Runtime>,
+    pub runtimes: Vec<Runtime>,
 }

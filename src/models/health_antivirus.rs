@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct HealthAntivirus {
     /// Antivirus version.
-    version: String,
+    pub version: String,
     /// Antivirus status. Possible values can are: `disabled`, `offline`, `online`
-    status: String,
+    pub status: String,
 }

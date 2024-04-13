@@ -1,17 +1,26 @@
+//! # Users
+//!
+//! The Users service allows you to manage your project users.
+
 use reqwest::header;
 use serde_json::{json, Map, Value};
 
 use crate::{
     client::Client,
-    enums::HttpMethod,
+    enumm::HttpMethod,
+    enums::{
+        authentication_type::AuthenticationType, messaging_provider_type::MessagingProviderType,
+        password_hash::PasswordHash,
+    },
     error::Error,
     models::{
         identity_list::IdentityList, log_list::LogList, membership_list::MembershipList,
-        preferences::Preferences, session_list::SessionList, user::User, user_list::UserList,
+        mfa_factors::MfaFactors, mfa_recovery_codes::MfaRecoveryCodes, preferences::Preferences,
+        session::Session, session_list::SessionList, target::Target, target_list::TargetList,
+        token::Token, user::User, user_list::UserList,
     },
 };
 
-/// The Users service allows you to manage your project users.
 pub struct Users;
 
 impl Users {
@@ -21,7 +30,7 @@ impl Users {
     /// filter your results.
     pub async fn list(
         client: &Client,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
         search: Option<&str>,
     ) -> Result<UserList, Error> {
         //const API_PATH: &str = "/functions";
@@ -165,7 +174,7 @@ impl Users {
     /// Get identities for all users.
     pub async fn list_identities(
         client: &Client,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
         search: Option<&str>,
     ) -> Result<IdentityList, Error> {
         //const API_PATH: &str = "/functions";
@@ -391,7 +400,7 @@ impl Users {
         user_id: &str,
         email: &str,
         password: &str,
-        password_version: &str,
+        password_version: PasswordHash,
         name: Option<&str>,
     ) -> Result<User, Error> {
         //const API_PATH: &str = "/functions";
@@ -542,7 +551,7 @@ impl Users {
     pub async fn list_logs(
         client: &Client,
         user_id: &str,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
     ) -> Result<LogList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/{userId}/logs".replace("{userId}", user_id);
@@ -573,7 +582,7 @@ impl Users {
     /// List user memberships
     ///
     /// Get the user membership list by its unique ID.
-    pub async fn membership_list(client: &Client, user_id: &str) -> Result<MembershipList, Error> {
+    pub async fn list_membership(client: &Client, user_id: &str) -> Result<MembershipList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/{userId}/memberships".replace("{userId}", user_id);
 
@@ -585,6 +594,180 @@ impl Users {
         let res = client
             .call(
                 HttpMethod::GET,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Update MFA
+    ///
+    /// Enable or disable MFA on a user account.
+    pub async fn update_mfa(client: &Client, user_id: &str, mfa: bool) -> Result<User, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = "/users/{userId}/mfa".replace("{userId}", user_id);
+
+        let api_params = serde_json::json!({
+            "mfa":mfa,
+        });
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::PATCH,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Delete Authenticator
+    ///
+    /// Delete an authenticator app.
+    pub async fn delete_mfa_authenticator(
+        client: &Client,
+        user_id: &str,
+        auth_type: AuthenticationType,
+    ) -> Result<User, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = format!("/users/{}/mfa/authenticators/{}", user_id, json!(auth_type));
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::DELETE,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// List Factors
+    ///
+    /// List the factors available on the account to be used as a MFA challange.
+    pub async fn list_mfa_factors(client: &Client, user_id: &str) -> Result<MfaFactors, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = format!("/users/{}/mfa/factors", user_id);
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::GET,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Get MFA Recovery Codes
+    ///
+    /// Get recovery codes that can be used as backup for MFA flow by User ID.
+    /// Before getting codes, they must be generated using
+    /// [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes)
+    /// method.
+    pub async fn get_mfa_recovery_codes(
+        client: &Client,
+        user_id: &str,
+    ) -> Result<MfaRecoveryCodes, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = format!("/users/{}/mfa/recovery-codes", user_id);
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::GET,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Regenerate MFA Recovery Codes
+    ///
+    /// Regenerate recovery codes that can be used as backup for MFA flow by User
+    /// ID. Before regenerating codes, they must be first generated using
+    /// [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes)
+    /// method.
+    pub async fn update_mfa_recovery_codes(
+        client: &Client,
+        user_id: &str,
+    ) -> Result<MfaRecoveryCodes, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = format!("/users/{}/mfa/recovery-codes", user_id);
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::PUT,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Create MFA Recovery Codes
+    ///
+    /// Generate recovery codes used as backup for MFA flow for User ID. Recovery
+    /// codes can be used as a MFA verification type in
+    /// [createMfaChallenge](/docs/references/cloud/client-web/account#createMfaChallenge)
+    /// method by client SDK.
+    pub async fn create_mfa_recovery_codes(
+        client: &Client,
+        user_id: &str,
+    ) -> Result<MfaRecoveryCodes, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = format!("/users/{}/mfa/recovery-codes", user_id);
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
                 &api_params,
@@ -763,6 +946,36 @@ impl Users {
         Ok(res.json().await?)
     }
 
+    /// Create session
+    ///
+    /// Creates a session for a user. Returns an immediately usable session object.
+    ///
+    /// If you want to generate a token for a custom authentication flow, use the
+    /// [POST
+    /// /users/{userId}/tokens](https://appwrite.io/docs/server/users#createToken)
+    /// endpoint.
+    pub async fn create_sessions(client: &Client, user_id: &str) -> Result<Session, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = "/users/{userId}/sessions".replace("{userId}", user_id);
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::POST,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
     /// Delete user sessions
     ///
     /// Delete all user's sessions by using the user's unique ID.
@@ -841,6 +1054,229 @@ impl Users {
         let res = client
             .call(
                 HttpMethod::PATCH,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// List User Targets
+    ///
+    /// List the messaging targets that are associated with a user.
+    pub async fn list_targets(
+        client: &Client,
+        user_id: &str,
+        queries: Option<Vec<String>>,
+    ) -> Result<TargetList, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = "/users/{userId}/targets".replace("{userId}", user_id);
+
+        let mut api_params = serde_json::Map::new();
+        if let Some(queries) = queries {
+            api_params.insert("queries".to_string(), json!(queries));
+        }
+        let api_params = serde_json::Value::Object(api_params);
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::GET,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Create User Target
+    ///
+    /// Create a messaging target.
+    pub async fn create_target(
+        client: &Client,
+        user_id: &str,
+        target_id: &str,
+        provider_type: MessagingProviderType,
+        identifier: &str,
+        provider_id: Option<&str>,
+        name: Option<&str>,
+    ) -> Result<Target, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = "/users/{userId}/targets".replace("{userId}", user_id);
+
+        let mut api_params = serde_json::Map::new();
+        api_params.insert("targetId".to_string(), json!(target_id));
+        api_params.insert("providerType".to_string(), json!(provider_type));
+        api_params.insert("identifier".to_string(), json!(identifier));
+        if let Some(provider_id) = provider_id {
+            api_params.insert("providerId".to_string(), json!(provider_id));
+        }
+        if let Some(name) = name {
+            api_params.insert("name".to_string(), json!(name));
+        }
+        let api_params = serde_json::Value::Object(api_params);
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::POST,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Get User Target
+    ///
+    /// Get a user's push notification target by ID.
+    pub async fn get_target(
+        client: &Client,
+        user_id: &str,
+        target_id: &str,
+    ) -> Result<Target, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = "/users/{userId}/targets/{targetId}"
+            .replace("{userId}", user_id)
+            .replace("{targetId}", target_id);
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::GET,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Update User target
+    ///
+    /// Update a messaging target.
+    pub async fn update_target(
+        client: &Client,
+        user_id: &str,
+        target_id: &str,
+        identifier: Option<&str>,
+        provider_id: Option<&str>,
+        name: Option<&str>,
+    ) -> Result<Target, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = "/users/{userId}/targets/{targetId}"
+            .replace("{userId}", user_id)
+            .replace("{targetId}", target_id);
+
+        let mut api_params = serde_json::Map::new();
+        if let Some(identifier) = identifier {
+            api_params.insert("identifier".to_string(), json!(identifier));
+        }
+        if let Some(provider_id) = provider_id {
+            api_params.insert("providerId".to_string(), json!(provider_id));
+        }
+        if let Some(name) = name {
+            api_params.insert("name".to_string(), json!(name));
+        }
+        let api_params = serde_json::Value::Object(api_params);
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::PATCH,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Delete user target
+    ///
+    /// Delete a messaging target.
+    pub async fn delete_target(
+        client: &Client,
+        user_id: &str,
+        target_id: &str,
+    ) -> Result<(), Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = "/users/{userId}/targets/{targetId}"
+            .replace("{userId}", user_id)
+            .replace("{targetId}", target_id);
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let _res = client
+            .call(
+                HttpMethod::DELETE,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(())
+    }
+
+    /// Create token
+    ///
+    /// Returns a token with a secret key for creating a session. If the provided
+    /// user ID has not be registered, a new user will be created. Use the returned
+    /// user ID and secret and submit a request to the [PUT
+    /// /account/sessions/custom](https://appwrite.io/docs/references/cloud/client-web/account#updateCustomSession)
+    /// endpoint to complete the login process.
+    pub async fn create_token(
+        client: &Client,
+        user_id: &str,
+        length: Option<usize>,
+        expire: Option<usize>,
+    ) -> Result<Token, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = "/users/{userId}/tokens".replace("{userId}", user_id);
+
+        let mut api_params = serde_json::Map::new();
+        if let Some(length) = length {
+            api_params.insert("length".to_string(), json!(length));
+        }
+        if let Some(expire) = expire {
+            api_params.insert("expire".to_string(), json!(expire));
+        }
+        let api_params = serde_json::Value::Object(api_params);
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::POST,
                 api_path.as_str(),
                 api_headers,
                 &api_params,

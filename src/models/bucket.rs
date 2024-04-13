@@ -6,44 +6,44 @@ use serde_json::Value;
 pub struct Bucket {
     /// Bucket ID.
     #[serde(rename = "$id")]
-    id: String,
+    pub id: String,
 
     /// Bucket creation date in ISO 8601 format.
     #[serde(rename = "$createdAt")]
-    created_at: String,
+    pub created_at: String,
 
     /// Bucket update date in ISO 8601 format.
     #[serde(rename = "$updatedAt")]
-    updated_at: String,
+    pub updated_at: String,
 
     /// Bucket permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
     #[serde(rename = "$permissions")]
-    permissions: Value,
+    pub permissions: Value,
 
     /// Whether file-level security is enabled. [Learn more about permissions](https://appwrite.io/docs/permissions).
     #[serde(rename = "fileSecurity")]
-    file_security: bool,
+    pub file_security: bool,
 
     /// Bucket name.
-    name: String,
+    pub name: String,
 
     /// Bucket enabled.
-    enabled: bool,
+    pub enabled: bool,
 
     /// Maximum file size supported.
     #[serde(rename = "maximumFileSize")]
-    maximum_file_size: u64,
+    pub maximum_file_size: usize,
 
     /// Allowed file extensions.
     #[serde(rename = "allowedFileExtensions")]
-    allowed_file_extensions: Value,
+    pub allowed_file_extensions: Vec<Value>,
 
     /// Compression algorithm choosen for compression. Will be one of none, [gzip](https://en.wikipedia.org/wiki/Gzip), or [zstd](https://en.wikipedia.org/wiki/Zstd).
-    compression: String,
+    pub compression: String,
 
     /// Bucket is encrypted.
-    encryption: bool,
+    pub encryption: bool,
 
     /// Virus scanning is enabled.
-    antivirus: bool,
+    pub antivirus: bool,
 }

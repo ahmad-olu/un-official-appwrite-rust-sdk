@@ -1,5 +1,5 @@
 use reqwest::header::{InvalidHeaderName, InvalidHeaderValue};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use thiserror::Error;
 
 #[derive(Error, Debug)]

@@ -6,7 +6,7 @@ use super::country::Country;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CountryList {
     /// Total number of countries documents that matched your query.
-    total: u64,
+    pub total: u64,
     /// List of countries.
-    countries: Vec<Country>,
+    pub countries: Vec<Country>,
 }

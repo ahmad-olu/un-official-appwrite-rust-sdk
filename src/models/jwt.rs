@@ -4,5 +4,5 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JWT {
     /// JWT encoded string.
-    jwt: String,
+    pub jwt: String,
 }

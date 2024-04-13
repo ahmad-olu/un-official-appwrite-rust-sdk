@@ -1,6 +1,13 @@
+//! # Databases
+//!
+//! The Databases service allows you to create structured collections of
+//! documents, query and filter lists of documents
 use crate::{
     client::Client,
-    enums::HttpMethod,
+    enumm::HttpMethod,
+    enums::{
+        index_type::IndexType, relation_mutate::RelationMutate, relationship_type::RelationshipType,
+    },
     error::Error,
     models::{
         attribute_boolean::AttributeBoolean, attribute_datetime::AttributeDateTime,
@@ -14,21 +21,19 @@ use crate::{
     },
 };
 use reqwest::header;
-use serde_json::{json, Value};
+use serde_json::{json, Map, Value};
 
-/// The Databases service allows you to create structured collections of
-/// documents, query and filter lists of documents
-struct Databases;
+pub struct Databases;
 
 impl Databases {
     /// List databases
     ///
     /// Get a list of all databases from the current Appwrite project. You can use
     /// the search parameter to filter your results.
-    async fn list(
+    pub async fn list(
         client: &Client,
         search: Option<&str>,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
     ) -> Result<DatabaseList, Error> {
         const API_PATH: &str = "/databases";
 
@@ -56,7 +61,7 @@ impl Databases {
     ///
     /// Create a new Database.
     ///
-    async fn create(
+    pub async fn create(
         client: &Client,
         database_id: &str,
         name: &str,
@@ -87,7 +92,7 @@ impl Databases {
     ///
     /// Get a database by its unique ID. This endpoint response returns a JSON
     /// object with the database metadata.
-    async fn get(client: &Client, database_id: &str) -> Result<Database, Error> {
+    pub async fn get(client: &Client, database_id: &str) -> Result<Database, Error> {
         let api_path = "/databases/{databaseId}".replace("{databaseId}", database_id);
 
         let api_params = serde_json::json!({});
@@ -111,7 +116,7 @@ impl Databases {
     /// Update database
     ///
     /// Update a database by its unique ID.
-    async fn update(
+    pub async fn update(
         client: &Client,
         database_id: &str,
         name: &str,
@@ -147,7 +152,7 @@ impl Databases {
     ///
     /// Delete a database by its unique ID. Only API keys with with databases.write
     /// scope can delete a database.
-    async fn delete(client: &Client, database_id: &str) -> Result<(), Error> {
+    pub async fn delete(client: &Client, database_id: &str) -> Result<(), Error> {
         //const API_PATH: &str = "/databases";
         let api_path = "/databases/{databaseId}".replace("{databaseId}", database_id);
 
@@ -156,7 +161,7 @@ impl Databases {
         let mut api_headers = header::HeaderMap::new();
         api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
 
-        let res = client
+        let _res = client
             .call(
                 HttpMethod::DELETE,
                 api_path.as_str(),
@@ -166,18 +171,18 @@ impl Databases {
             )
             .await?;
 
-        Ok(res.json().await?)
+        Ok(())
     }
 
     /// List collections
     ///
     /// Get a list of all collections that belong to the provided databaseId. You
     /// can use the search parameter to filter your results.
-    async fn list_collections(
+    pub async fn list_collections(
         client: &Client,
         database_id: &str,
         search: Option<&str>,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
     ) -> Result<CollectionList, Error> {
         //const API_PATH: &str = "/databases";
         let api_path = "/databases/{databaseId}/collections".replace("{databaseId}", database_id);
@@ -214,7 +219,7 @@ impl Databases {
     /// database resource using either a [server
     /// integration](https://appwrite.io/docs/server/databases#databasesCreateCollection)
     /// API or directly from your database console.
-    async fn create_collection(
+    pub async fn create_collection(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -261,7 +266,7 @@ impl Databases {
     ///
     /// Get a collection by its unique ID. This endpoint response returns a JSON
     /// object with the collection metadata.
-    async fn get_collection(
+    pub async fn get_collection(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -292,7 +297,7 @@ impl Databases {
     /// Update collection
     ///
     /// Update a collection by its unique ID.
-    async fn update_collection(
+    pub async fn update_collection(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -340,7 +345,7 @@ impl Databases {
     ///
     /// Delete a collection by its unique ID. Only users with write permissions
     /// have access to delete this resource.
-    async fn delete_collection(
+    pub async fn delete_collection(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -370,11 +375,12 @@ impl Databases {
 
     /// List attributes
     ///
-    async fn list_attributes(
+    /// List attributes in the collection.
+    pub async fn list_attributes(
         client: &Client,
         database_id: &str,
         collection_id: &str,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
     ) -> Result<AttributeList, Error> {
         //const API_PATH: &str = "/databases";
         let api_path = "/databases/{databaseId}/collections/{collectionId}/attributes"
@@ -408,7 +414,7 @@ impl Databases {
     ///
     /// Create a boolean attribute.
     ///
-    async fn create_boolean_attribute(
+    pub async fn create_boolean_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -452,7 +458,9 @@ impl Databases {
 
     /// Update boolean attribute
     ///
-    async fn update_boolean_attribute(
+    ///  Update a boolean attribute. Changing the `default` value will not update
+    /// already existing documents.
+    pub async fn update_boolean_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -493,7 +501,8 @@ impl Databases {
 
     /// Create datetime attribute
     ///
-    async fn create_date_time_attribute(
+    ///  Create a date time attribute according to the ISO 8601 standard.
+    pub async fn create_date_time_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -537,7 +546,9 @@ impl Databases {
 
     /// Update dateTime attribute
     ///
-    async fn update_date_time_attribute(
+    ///  Update a date time attribute. Changing the `default` value will not update
+    /// already existing documents.
+    pub async fn update_date_time_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -580,13 +591,13 @@ impl Databases {
     ///
     /// Create an email attribute.
     ///
-    async fn create_email_attribute(
+    pub async fn create_email_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
         key: &str,
         x_required: bool,
-        x_default: Option<bool>,
+        x_default: Option<&str>,
         array: Option<bool>,
     ) -> Result<AttributeEmail, Error> {
         //const API_PATH: &str = "/databases";
@@ -627,13 +638,13 @@ impl Databases {
     /// Update an email attribute. Changing the `default` value will not update
     /// already existing documents.
     ///
-    async fn update_email_attribute(
+    pub async fn update_email_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
         key: &str,
         x_required: bool,
-        x_default: Option<bool>,
+        x_default: Option<&str>,
     ) -> Result<AttributeEmail, Error> {
         //const API_PATH: &str = "/databases";
         let api_path = "/databases/{databaseId}/collections/{collectionId}/attributes/email/{key}"
@@ -667,7 +678,7 @@ impl Databases {
 
     /// Create enum attribute
     ///
-    async fn create_enum_attribute(
+    pub async fn create_enum_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -716,7 +727,7 @@ impl Databases {
     /// Update an enum attribute. Changing the `default` value will not update
     /// already existing documents.
     ///
-    async fn update_enum_attribute(
+    pub async fn update_enum_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -761,7 +772,7 @@ impl Databases {
     /// Create a float attribute. Optionally, minimum and maximum values can be
     /// provided.
     ///
-    async fn create_float_attribute(
+    pub async fn create_float_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -816,7 +827,7 @@ impl Databases {
     /// Update a float attribute. Changing the `default` value will not update
     /// already existing documents.
     ///
-    async fn update_float_attribute(
+    pub async fn update_float_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -867,7 +878,7 @@ impl Databases {
     /// Create an integer attribute. Optionally, minimum and maximum values can be
     /// provided.
     ///
-    async fn create_integer_attribute(
+    pub async fn create_integer_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -922,7 +933,7 @@ impl Databases {
     /// Update an integer attribute. Changing the `default` value will not update
     /// already existing documents.
     ///
-    async fn update_integer_attribute(
+    pub async fn update_integer_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -973,7 +984,7 @@ impl Databases {
     ///
     /// Create IP address attribute.
     ///
-    async fn create_ip_attribute(
+    pub async fn create_ip_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -1020,7 +1031,7 @@ impl Databases {
     /// Update an ip attribute. Changing the `default` value will not update
     /// already existing documents.
     ///
-    async fn update_ip_attribute(
+    pub async fn update_ip_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -1063,16 +1074,16 @@ impl Databases {
     /// Create relationship attribute. [Learn more about relationship
     /// attributes](https://appwrite.io/docs/databases-relationships#relationship-attributes).
     ///
-    async fn create_relationship_attribute(
+    pub async fn create_relationship_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
         related_collection_id: &str,
-        relationship_type: &str,
+        relationship_type: RelationshipType,
         two_way: Option<bool>,
         key: Option<&str>,
         two_way_key: Option<&str>,
-        on_delete: Option<&str>,
+        on_delete: Option<RelationMutate>,
     ) -> Result<AttributeRelationship, Error> {
         //const API_PATH: &str = "/databases";
         let api_path = "/databases/{databaseId}/collections/{collectionId}/attributes/relationship"
@@ -1120,7 +1131,7 @@ impl Databases {
     ///
     /// Create a string attribute.
     ///
-    async fn create_string_attribute(
+    pub async fn create_string_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -1173,7 +1184,7 @@ impl Databases {
     /// Update a string attribute. Changing the `default` value will not update
     /// already existing documents.
     ///
-    async fn update_string_attribute(
+    pub async fn update_string_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -1215,7 +1226,7 @@ impl Databases {
     ///
     /// Create a URL attribute.
     ///
-    async fn create_url_attribute(
+    pub async fn create_url_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -1262,7 +1273,7 @@ impl Databases {
     /// Update an url attribute. Changing the `default` value will not update
     /// already existing documents.
     ///
-    async fn update_url_attribute(
+    pub async fn update_url_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -1302,7 +1313,8 @@ impl Databases {
 
     /// Get attribute
     ///
-    async fn get_attribute(
+    /// Get attribute by ID.
+    pub async fn get_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -1334,7 +1346,8 @@ impl Databases {
 
     /// Delete attribute
     ///
-    async fn delete_attribute(
+    ///  Deletes an attribute.
+    pub async fn delete_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -1369,12 +1382,12 @@ impl Databases {
     /// Update relationship attribute. [Learn more about relationship
     /// attributes](https://appwrite.io/docs/databases-relationships#relationship-attributes).
     ///
-    async fn update_relationship_attribute(
+    pub async fn update_relationship_attribute(
         client: &Client,
         database_id: &str,
         collection_id: &str,
         key: &str,
-        on_delete: Option<&str>,
+        on_delete: Option<RelationMutate>,
     ) -> Result<AttributeRelationship, Error> {
         //const API_PATH: &str = "/databases";
         let api_path =
@@ -1410,11 +1423,11 @@ impl Databases {
     ///
     /// Get a list of all the user's documents in a given collection. You can use
     /// the query params to filter your results.
-    async fn list_documents(
+    pub async fn list_documents(
         client: &Client,
         database_id: &str,
         collection_id: &str,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
     ) -> Result<DocumentList, Error> {
         //const API_PATH: &str = "/databases";
         let api_path = "/databases/{databaseId}/collections/{collectionId}/documents"
@@ -1450,12 +1463,12 @@ impl Databases {
     /// collection resource using either a [server
     /// integration](https://appwrite.io/docs/server/databases#databasesCreateCollection)
     /// API or directly from your database console.
-    async fn create_documents(
+    pub async fn create_documents(
         client: &Client,
         database_id: &str,
         collection_id: &str,
         document_id: &str,
-        data: Value,
+        data: Map<String, Value>,
         permissions: Option<Vec<&str>>,
     ) -> Result<Document, Error> {
         //const API_PATH: &str = "/databases";
@@ -1465,7 +1478,7 @@ impl Databases {
 
         let mut api_params = serde_json::Map::new();
         api_params.insert("documentId".to_string(), json!(document_id));
-        api_params.insert("data".to_string(), data);
+        api_params.insert("data".to_string(), json!(data));
         if let Some(permissions) = &permissions {
             api_params.insert("permissions".to_string(), json!(permissions));
         }
@@ -1492,12 +1505,12 @@ impl Databases {
     ///
     /// Get a document by its unique ID. This endpoint response returns a JSON
     /// object with the document data.
-    async fn get_document(
+    pub async fn get_document(
         client: &Client,
         database_id: &str,
         collection_id: &str,
         document_id: &str,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
     ) -> Result<Document, Error> {
         //const API_PATH: &str = "/databases";
         let api_path = "/databases/{databaseId}/collections/{collectionId}/documents/{documentId}"
@@ -1532,12 +1545,12 @@ impl Databases {
     ///
     /// Update a document by its unique ID. Using the patch method you can pass
     /// only specific fields that will get updated.
-    async fn update_document(
+    pub async fn update_document(
         client: &Client,
         database_id: &str,
         collection_id: &str,
         document_id: &str,
-        data: Option<Value>,
+        data: Option<Map<String, Value>>,
         permissions: Option<Vec<&str>>,
     ) -> Result<Document, Error> {
         //const API_PATH: &str = "/databases";
@@ -1548,7 +1561,7 @@ impl Databases {
 
         let mut api_params = serde_json::Map::new();
         if let Some(data) = data {
-            api_params.insert("data".to_string(), data);
+            api_params.insert("data".to_string(), json!(data));
         }
         if let Some(permissions) = &permissions {
             api_params.insert("permissions".to_string(), json!(permissions));
@@ -1575,7 +1588,7 @@ impl Databases {
     /// Delete document
     ///
     /// Delete a document by its unique ID.
-    async fn delete_document(
+    pub async fn delete_document(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -1607,11 +1620,12 @@ impl Databases {
 
     /// List indexes
     ///
-    async fn list_indexes(
+    /// List indexes in the collection.
+    pub async fn list_indexes(
         client: &Client,
         database_id: &str,
         collection_id: &str,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
     ) -> Result<IndexList, Error> {
         //const API_PATH: &str = "/databases";
         let api_path = "/databases/{databaseId}/collections/{collectionId}/indexes"
@@ -1643,12 +1657,15 @@ impl Databases {
 
     /// Create index
     ///
-    async fn create_index(
+    /// Creates an index on the attributes listed. Your index should include all
+    /// the attributes you will query in a single request.
+    /// Attributes can be `key`, `fulltext`, and `unique`.
+    pub async fn create_index(
         client: &Client,
         database_id: &str,
         collection_id: &str,
         key: &str,
-        index_type: &str,
+        index_type: IndexType,
         attributes: Vec<&str>,
         orders: Option<Vec<&str>>,
     ) -> Result<Index, Error> {
@@ -1685,7 +1702,8 @@ impl Databases {
 
     /// Get index
     ///
-    async fn get_index(
+    /// Get index by ID.
+    pub async fn get_index(
         client: &Client,
         database_id: &str,
         collection_id: &str,
@@ -1715,7 +1733,10 @@ impl Databases {
         Ok(res.json().await?)
     }
 
-    async fn delete_index(
+    /// Delete index
+    ///
+    /// Delete an index.
+    pub async fn delete_index(
         client: &Client,
         database_id: &str,
         collection_id: &str,

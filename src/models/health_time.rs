@@ -5,10 +5,10 @@ use serde::{Deserialize, Serialize};
 pub struct HealthTime {
     /// Current unix timestamp on trustful remote server.
     #[serde(rename = "remoteTime")]
-    remote_time: u64,
+   pub     remote_time: u64,
     /// Current unix timestamp of local server where Appwrite runs.
     #[serde(rename = "localTime")]
-    local_time: u64,
+   pub     local_time: u64,
     /// Difference of unix remote and local timestamps in milliseconds.
-    diff: u64,
+   pub     diff: u64,
 }

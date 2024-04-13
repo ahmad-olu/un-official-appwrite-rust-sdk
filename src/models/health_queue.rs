@@ -4,5 +4,5 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct HealthQueue {
     /// Amount of actions in the queue.
-    size: u64,
+    pub size: u64,
 }

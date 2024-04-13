@@ -1,69 +1,74 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use super::preferences::Preferences;
+use super::{preferences::Preferences, target::Target};
 
 /// User
 #[derive(Debug, Serialize, Deserialize)]
 pub struct User {
     /// User ID.
     #[serde(rename = "$id")]
-    id: String,
+    pub id: String,
 
     /// User creation date in ISO 8601 format.
     #[serde(rename = "$createdAt")]
-    created_at: String,
+    pub created_at: String,
 
     /// User update date in ISO 8601 format.
     #[serde(rename = "$updatedAt")]
-    updated_at: String,
+    pub updated_at: String,
 
     /// User name.
-    name: String,
+    pub name: String,
 
     /// Hashed user password.
-    password: Option<String>,
+    pub password: Option<String>,
 
     /// Password hashing algorithm.
-    hash: Option<String>,
+    pub hash: Option<String>,
 
     /// Password hashing algorithm configuration.
     #[serde(rename = "hashOptions")]
-    hash_options: Value,
+    pub hash_options: Value,
 
     /// User registration date in ISO 8601 format.
-    registration: String,
+    pub registration: String,
 
     /// User status. Pass `true` for enabled and `false` for disabled.
-    status: bool,
+    pub status: bool,
 
     /// Labels for the user.
-    ///! this should be a list of something /
-    labels: Value,
+    pub labels: Vec<Value>,
 
     /// Password update time in ISO 8601 format.
     #[serde(rename = "passwordUpdate")]
-    password_update: String,
+    pub password_update: String,
 
     /// User email address.
-    email: String,
+    pub email: String,
 
     /// User phone number in E.164 format.
-    phone: String,
+    pub phone: String,
 
     /// Email verification status.
     #[serde(rename = "emailVerification")]
-    email_verification: bool,
+    pub email_verification: bool,
 
     /// Phone verification status.
     #[serde(rename = "phoneVerification")]
-    phone_verification: bool,
+    pub phone_verification: bool,
+
+    /// Multi factor authentication status.
+    pub mfa: Option<bool>,
 
     /// User preferences as a key-value object
     #[serde(rename = "prefs")]
-    preferences: Preferences,
+    pub preferences: Preferences,
+
+    /// A user-owned message receiver. A single user may have multiple e.g. emails, phones, and a browser. Each target is registered with a single provider.
+    pub targets: Option<Vec<Target>>,
 
     /// Most recent access date in ISO 8601 format. This attribute is only updated again after 24 hours.
     #[serde(rename = "accessedAt")]
-    accessed_at: String,
+    pub accessed_at: String,
 }

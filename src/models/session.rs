@@ -1,101 +1,112 @@
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 /// Session
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Session {
     /// Session ID.
     #[serde(rename = "$id")]
-    id: String,
+    pub id: String,
 
     /// Session creation date in ISO 8601 format.
     #[serde(rename = "$createdAt")]
-    created_at: String,
+    pub created_at: String,
 
     /// User ID.
     #[serde(rename = "userId")]
-    user_id: String,
+    pub user_id: String,
 
     /// Session expiration date in ISO 8601 format.
-    expire: String,
+    pub expire: String,
 
     /// Session Provider.
-    provider: String,
+    pub provider: String,
 
     /// Session Provider User ID.
     #[serde(rename = "providerUid")]
-    provider_uid: String,
+    pub provider_uid: String,
 
     /// Session Provider Access Token.
     #[serde(rename = "providerAccessToken")]
-    provider_access_token: String,
+    pub provider_access_token: String,
 
     /// The date of when the access token expires in ISO 8601 format.
     #[serde(rename = "providerAccessTokenExpiry")]
-    provider_access_token_expiry: String,
+    pub provider_access_token_expiry: String,
 
     /// Session Provider Refresh Token.
     #[serde(rename = "providerRefreshToken")]
-    provider_refresh_token: String,
+    pub provider_refresh_token: String,
 
     /// IP in use when the session was created.
-    ip: String,
+    pub ip: String,
 
     /// Operating system code name. View list of [available options](https://github.com/appwrite/appwrite/blob/master/docs/lists/os.json).
     #[serde(rename = "osCode")]
-    os_code: String,
+    pub os_code: String,
 
     /// Operating system name.
     #[serde(rename = "osName")]
-    os_name: String,
+    pub os_name: String,
 
     /// Operating system version.
     #[serde(rename = "osVersion")]
-    os_version: String,
+    pub os_version: String,
 
     /// Client type.
     #[serde(rename = "clientType")]
-    client_type: String,
+    pub client_type: String,
 
     /// Client code name. View list of [available options](https://github.com/appwrite/appwrite/blob/master/docs/lists/clients.json).
     #[serde(rename = "clientCode")]
-    client_code: String,
+    pub client_code: String,
 
     /// Client name.
     #[serde(rename = "clientName")]
-    client_name: String,
+    pub client_name: String,
 
     /// Client version.
     #[serde(rename = "clientVersion")]
-    client_version: String,
+    pub client_version: String,
 
     /// Client engine name.
     #[serde(rename = "clientEngine")]
-    client_engine: String,
+    pub client_engine: String,
 
     /// Client engine version.
     #[serde(rename = "clientEngineVersion")]
-    client_engine_version: String,
+    pub client_engine_version: String,
 
     /// Device name.
     #[serde(rename = "deviceName")]
-    device_name: String,
+    pub device_name: String,
 
     /// Device brand name.
     #[serde(rename = "deviceBrand")]
-    device_brand: String,
+    pub device_brand: String,
 
     /// Device model name.
     #[serde(rename = "deviceModel")]
-    device_model: String,
+    pub device_model: String,
 
     /// Country two-character ISO 3166-1 alpha code.
     #[serde(rename = "countryCode")]
-    country_code: String,
+    pub country_code: String,
 
     /// Country name.
     #[serde(rename = "countryName")]
-    country_name: String,
+    pub country_name: String,
 
     /// Returns true if this is the current user session.
-    current: bool,
+    pub current: bool,
+
+    /// Returns a list of active session factors.
+    pub factors: Vec<Value>,
+
+    /// Secret used to authenticate the user. Only included if the request was made with an API key
+    pub secret: String,
+
+    /// Most recent date in ISO 8601 format when the session successfully passed MFA challenge.
+    #[serde(rename = "mfaUpdatedAt")]
+    pub mfa_updated_at: String,
 }

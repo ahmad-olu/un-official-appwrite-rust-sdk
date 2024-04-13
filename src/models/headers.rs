@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Headers {
     /// Header name.
-    name: String,
+    pub name: String,
     /// Header value.
-    value: String,
+    pub value: String,
 }

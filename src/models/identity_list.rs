@@ -6,7 +6,7 @@ use super::identity::Identity;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct IdentityList {
     /// Total number of identities documents that matched your query.
-    total: u64,
+    pub total: u64,
     /// List of identities.
-    identities: Vec<Identity>,
+    pub identities: Vec<Identity>,
 }

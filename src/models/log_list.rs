@@ -6,7 +6,7 @@ use super::log::Log;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct LogList {
     /// Total number of logs documents that matched your query.
-    total: u64,
+    pub total: u64,
     /// List of logs.
-    sessions: Vec<Log>,
+    pub sessions: Vec<Log>,
 }

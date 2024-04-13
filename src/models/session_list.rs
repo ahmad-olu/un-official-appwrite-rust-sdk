@@ -6,7 +6,7 @@ use super::session::Session;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SessionList {
     /// Total number of sessions documents that matched your query.
-    total: u64,
+    pub total: u64,
     /// List of sessions.
-    sessions: Vec<Session>,
+    pub sessions: Vec<Session>,
 }

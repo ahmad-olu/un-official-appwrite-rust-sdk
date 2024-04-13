@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Continent {
     /// continent name.
-    name: String,
+    pub name: String,
     /// continent two letter code.
-    code: String,
+    pub code: String,
 }

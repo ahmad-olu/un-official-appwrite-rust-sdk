@@ -5,20 +5,20 @@ use serde::{Deserialize, Serialize};
 pub struct AlgoScrypt {
     /// algo type.
     #[serde(rename = "type")]
-    algo_type: String,
+    pub algo_type: String,
 
     /// CPU complexity of computed hash.
     #[serde(rename = "costCpu")]
-    cost_cpu: u64,
+    pub cost_cpu: u64,
 
     /// Memory complexity of computed hash.
     #[serde(rename = "costMemory")]
-    cost_memory: u64,
+    pub cost_memory: u64,
 
     /// Parallelization of computed hash.
     #[serde(rename = "costParallel")]
-    cost_parallel: u64,
+    pub cost_parallel: u64,
 
     /// Length used to compute hash.
-    length: u64,
+    pub length: u64,
 }

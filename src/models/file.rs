@@ -3,9 +3,10 @@ use serde::{Deserialize, Serialize};
 /// File
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct File {
-    // /// File ID.
-    // #[serde(rename = "$id")]
-    // pub id: String,
+    /// File ID.
+    #[serde(rename = "$id")]
+    pub id: String,
+
     /// Bucket ID.
     #[serde(rename = "bucketId")]
     pub bucket_id: String,
@@ -35,11 +36,11 @@ pub struct File {
     /// File original size in bytes.
     #[serde(rename = "sizeOriginal")]
     pub size_original: usize,
-    // /// Total number of chunks available
-    // #[serde(rename = "chunksTotal")]
-    // pub chunks_total: usize,
+    /// Total number of chunks available
+    #[serde(rename = "chunksTotal")]
+    pub chunks_total: usize,
 
-    // /// Total number of chunks uploaded
-    // #[serde(rename = "chunksUploaded")]
-    // pub chunks_uploaded: usize,
+    /// Total number of chunks uploaded
+    #[serde(rename = "chunksUploaded")]
+    pub chunks_uploaded: usize,
 }

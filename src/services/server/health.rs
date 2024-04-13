@@ -1,25 +1,29 @@
+//! # Health
+//!
+//! The Health service allows you to both validate and monitor your Appwrite
+//! server&#039;s health.
+
 use reqwest::header;
 use serde_json::json;
 
 use crate::{
     client::Client,
-    enums::HttpMethod,
+    enumm::HttpMethod,
+    enums::name::Name,
     error::Error,
     models::{
-        health_antivirus::HealthAntivirus, health_queue::HealthQueue, health_status::HealthStatus,
-        health_time::HealthTime,
+        health_antivirus::HealthAntivirus, health_certificate::HealthCertificate,
+        health_queue::HealthQueue, health_status::HealthStatus, health_time::HealthTime,
     },
 };
 
-/// The Health service allows you to both validate and monitor your Appwrite
-/// server&#039;s health.
 pub struct Health;
 
 impl Health {
     /// Get HTTP
     ///
     /// Check the Appwrite HTTP server is up and responsive.
-    async fn get(client: &Client) -> Result<HealthStatus, Error> {
+    pub async fn get(client: &Client) -> Result<HealthStatus, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/health";
 
@@ -38,7 +42,7 @@ impl Health {
     /// Get antivirus
     ///
     /// Check the Appwrite Antivirus server is up and connection is successful.
-    async fn get_antivirus(client: &Client) -> Result<HealthAntivirus, Error> {
+    pub async fn get_antivirus(client: &Client) -> Result<HealthAntivirus, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/anti-virus";
 
@@ -58,7 +62,7 @@ impl Health {
     ///
     /// Check the Appwrite in-memory cache servers are up and connection is
     /// successful.
-    async fn get_cache(client: &Client) -> Result<HealthStatus, Error> {
+    pub async fn get_cache(client: &Client) -> Result<HealthStatus, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/cache";
 
@@ -74,10 +78,36 @@ impl Health {
         Ok(res.json().await?)
     }
 
+    /// Get the SSL certificate for a domain
+    ///
+    /// Get the SSL certificate for a domain
+    pub async fn get_certificate(
+        client: &Client,
+        domain: Option<&str>,
+    ) -> Result<HealthCertificate, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = "/health/certificate";
+
+        let mut api_params = serde_json::Map::new();
+        if let Some(domain) = domain {
+            api_params.insert("domain".to_string(), json!(domain));
+        }
+        let api_params = serde_json::Value::Object(api_params);
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
     /// Get DB
     ///
     /// Check the Appwrite database servers are up and connection is successful.
-    async fn get_db(client: &Client) -> Result<HealthStatus, Error> {
+    pub async fn get_db(client: &Client) -> Result<HealthStatus, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/db";
 
@@ -96,7 +126,7 @@ impl Health {
     /// Get pubsub
     ///
     /// Check the Appwrite pub-sub servers are up and connection is successful.
-    async fn get_pub_sub(client: &Client) -> Result<HealthStatus, Error> {
+    pub async fn get_pub_sub(client: &Client) -> Result<HealthStatus, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/pubsub";
 
@@ -116,7 +146,7 @@ impl Health {
     ///
     /// Check the Appwrite queue messaging servers are up and connection is
     /// successful.
-    async fn get_queue(client: &Client) -> Result<HealthStatus, Error> {
+    pub async fn get_queue(client: &Client) -> Result<HealthStatus, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/queue";
 
@@ -136,7 +166,7 @@ impl Health {
     ///
     /// Get the number of builds that are waiting to be processed in the Appwrite
     /// internal queue server.
-    async fn get_queue_builds(
+    pub async fn get_queue_builds(
         client: &Client,
         threshold: Option<usize>,
     ) -> Result<HealthQueue, Error> {
@@ -165,7 +195,7 @@ impl Health {
     /// Get the number of certificates that are waiting to be issued against
     /// [Letsencrypt](https://letsencrypt.org/) in the Appwrite internal queue
     /// server.
-    async fn get_queue_certificate(
+    pub async fn get_queue_certificates(
         client: &Client,
         threshold: Option<usize>,
     ) -> Result<HealthQueue, Error> {
@@ -193,7 +223,7 @@ impl Health {
     ///
     /// Get the number of database changes that are waiting to be processed in the
     /// Appwrite internal queue server.
-    async fn get_queue_databases(
+    pub async fn get_queue_databases(
         client: &Client,
         name: Option<&str>,
         threshold: Option<usize>,
@@ -225,7 +255,7 @@ impl Health {
     ///
     /// Get the number of background destructive changes that are waiting to be
     /// processed in the Appwrite internal queue server.
-    async fn get_queue_deletes(
+    pub async fn get_queue_deletes(
         client: &Client,
         threshold: Option<usize>,
     ) -> Result<HealthQueue, Error> {
@@ -249,9 +279,46 @@ impl Health {
         Ok(res.json().await?)
     }
 
+    /// Get number of failed queue jobs
+    ///
+    /// Returns the amount of failed jobs in a given queue.
+    ///
+    pub async fn get_failed_jobs(
+        client: &Client,
+        name: Name,
+        threshold: Option<usize>,
+    ) -> Result<HealthQueue, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = format!("/health/queue/failed/{}", json!(name));
+
+        let mut api_params = serde_json::Map::new();
+        if let Some(threshold) = threshold {
+            api_params.insert("threshold".to_string(), json!(threshold));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::GET,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
     /// Get functions queue
     ///
-    async fn get_queue_functions(
+    /// Get the number of function executions that are waiting to be processed in
+    /// the Appwrite internal queue server.
+    pub async fn get_queue_functions(
         client: &Client,
         threshold: Option<usize>,
     ) -> Result<HealthQueue, Error> {
@@ -279,7 +346,7 @@ impl Health {
     ///
     /// Get the number of logs that are waiting to be processed in the Appwrite
     /// internal queue server.
-    async fn get_queue_logs(
+    pub async fn get_queue_logs(
         client: &Client,
         threshold: Option<usize>,
     ) -> Result<HealthQueue, Error> {
@@ -307,7 +374,7 @@ impl Health {
     ///
     /// Get the number of mails that are waiting to be processed in the Appwrite
     /// internal queue server.
-    async fn get_queue_mails(
+    pub async fn get_queue_mails(
         client: &Client,
         threshold: Option<usize>,
     ) -> Result<HealthQueue, Error> {
@@ -335,7 +402,7 @@ impl Health {
     ///
     /// Get the number of messages that are waiting to be processed in the Appwrite
     /// internal queue server.
-    async fn get_queue_messaging(
+    pub async fn get_queue_messaging(
         client: &Client,
         threshold: Option<usize>,
     ) -> Result<HealthQueue, Error> {
@@ -363,7 +430,7 @@ impl Health {
     ///
     /// Get the number of migrations that are waiting to be processed in the
     /// Appwrite internal queue server.
-    async fn get_queue_migrations(
+    pub async fn get_queue_migrations(
         client: &Client,
         threshold: Option<usize>,
     ) -> Result<HealthQueue, Error> {
@@ -387,11 +454,67 @@ impl Health {
         Ok(res.json().await?)
     }
 
+    /// Get usage queue
+    ///
+    /// Get the number of metrics that are waiting to be processed in the Appwrite
+    /// internal queue server.
+    pub async fn get_queue_usage(
+        client: &Client,
+        threshold: Option<usize>,
+    ) -> Result<HealthQueue, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = "/health/queue/usage";
+
+        let mut api_params = serde_json::Map::new();
+        if let Some(threshold) = threshold {
+            api_params.insert("threshold".to_string(), json!(threshold));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Get usage dump queue
+    ///
+    /// Get the number of projects containing metrics that are waiting to be
+    /// processed in the Appwrite internal queue server.
+    pub async fn get_queue_usage_dump(
+        client: &Client,
+        threshold: Option<usize>,
+    ) -> Result<HealthQueue, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = "/health/queue/usage-dump";
+
+        let mut api_params = serde_json::Map::new();
+        if let Some(threshold) = threshold {
+            api_params.insert("threshold".to_string(), json!(threshold));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
     /// Get webhooks queue
     ///
     /// Get the number of webhooks that are waiting to be processed in the Appwrite
     /// internal queue server.
-    async fn get_queue_webhooks(
+    pub async fn get_queue_webhooks(
         client: &Client,
         threshold: Option<usize>,
     ) -> Result<HealthQueue, Error> {
@@ -415,10 +538,29 @@ impl Health {
         Ok(res.json().await?)
     }
 
+    /// Get storage
+    ///
+    /// Check the Appwrite storage device is up and connection is successful.
+    pub async fn get_storage(client: &Client) -> Result<HealthStatus, Error> {
+        //const API_PATH: &str = "/functions";
+        let api_path = "/health/storage";
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
     /// Get local storage
     ///
     /// Check the Appwrite local storage device is up and connection is successful.
-    async fn get_storage_local(client: &Client) -> Result<HealthStatus, Error> {
+    pub async fn get_storage_local(client: &Client) -> Result<HealthStatus, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/storage/local";
 
@@ -443,7 +585,7 @@ impl Health {
     /// used by hundreds of millions of computers and devices to synchronize their
     /// clocks over the Internet. If your computer sets its own clock, it likely
     /// uses NTP.
-    async fn get_time(client: &Client) -> Result<HealthTime, Error> {
+    pub async fn get_time(client: &Client) -> Result<HealthTime, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/health/time";
 

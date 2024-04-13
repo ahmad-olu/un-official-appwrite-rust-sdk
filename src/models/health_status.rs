@@ -4,9 +4,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct HealthStatus {
     /// Name of the service.
-    name: String,
+    pub name: String,
     /// Duration in milliseconds how long the health check took.
-    ping: u64,
+    pub ping: u64,
     /// Service status. Possible values can are: `pass`, `fail`
-    status: String,
+    pub status: String,
 }

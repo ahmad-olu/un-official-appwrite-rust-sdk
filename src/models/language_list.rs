@@ -6,7 +6,7 @@ use super::language::Language;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct LanguageList {
     /// Total number of languages documents that matched your query.
-    total: u64,
+    pub total: u64,
     /// List of languages.
-    languages: Vec<Language>,
+    pub languages: Vec<Language>,
 }

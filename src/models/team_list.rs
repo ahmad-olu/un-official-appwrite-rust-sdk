@@ -6,7 +6,7 @@ use super::team::Team;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TeamList {
     /// Total number of teams documents that matched your query.
-    total: u64,
+   pub     total: u64,
     /// List of teams.
-    teams: Vec<Team>,
+   pub     teams: Vec<Team>,
 }

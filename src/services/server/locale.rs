@@ -1,8 +1,12 @@
+///!Locale
+///!
+///! The Locale service allows you to customize your app based on your users&#039;
+///! location.
 use reqwest::header;
 
 use crate::{
     client::Client,
-    enums::HttpMethod,
+    enumm::HttpMethod,
     error::Error,
     models::{
         continent_list::ContinentList, country_list::CountryList, currency_list::CurrencyList,
@@ -11,8 +15,6 @@ use crate::{
     },
 };
 
-/// The Locale service allows you to customize your app based on your users&#039;
-/// location.
 pub struct Locale;
 
 impl Locale {
@@ -24,7 +26,7 @@ impl Locale {
     /// supported language.
     ///
     /// ([IP Geolocation by DB-IP](https://db-ip.com))
-    async fn get(client: &Client) -> Result<MLocale, Error> {
+    pub async fn get(client: &Client) -> Result<MLocale, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale";
 
@@ -44,7 +46,7 @@ impl Locale {
     ///
     /// List of all locale codes in [ISO
     /// 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
-    async fn list_codes(client: &Client) -> Result<LocaleCode, Error> {
+    pub async fn list_codes(client: &Client) -> Result<LocaleCode, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale/codes";
 
@@ -64,7 +66,7 @@ impl Locale {
     ///
     /// List of all continents. You can use the locale header to get the data in a
     /// supported language.
-    async fn list_continents(client: &Client) -> Result<ContinentList, Error> {
+    pub async fn list_continents(client: &Client) -> Result<ContinentList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale/continents";
 
@@ -84,7 +86,7 @@ impl Locale {
     ///
     /// List of all countries. You can use the locale header to get the data in a
     /// supported language.
-    async fn list_countries(client: &Client) -> Result<CountryList, Error> {
+    pub async fn list_countries(client: &Client) -> Result<CountryList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale/countries";
 
@@ -104,7 +106,7 @@ impl Locale {
     ///
     /// List of all countries that are currently members of the EU. You can use the
     /// locale header to get the data in a supported language.
-    async fn list_countries_eu(client: &Client) -> Result<CountryList, Error> {
+    pub async fn list_countries_eu(client: &Client) -> Result<CountryList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale/countries/eu";
 
@@ -124,7 +126,7 @@ impl Locale {
     ///
     /// List of all countries phone codes. You can use the locale header to get the
     /// data in a supported language.
-    async fn list_countries_phones(client: &Client) -> Result<PhoneList, Error> {
+    pub async fn list_countries_phones(client: &Client) -> Result<PhoneList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale/countries/phones";
 
@@ -145,7 +147,7 @@ impl Locale {
     /// List of all currencies, including currency symbol, name, plural, and
     /// decimal digits for all major and minor currencies. You can use the locale
     /// header to get the data in a supported language.
-    async fn list_currencies(client: &Client) -> Result<CurrencyList, Error> {
+    pub async fn list_currencies(client: &Client) -> Result<CurrencyList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale/currencies";
 
@@ -165,7 +167,7 @@ impl Locale {
     ///
     /// List of all languages classified by ISO 639-1 including 2-letter code, name
     /// in English, and name in the respective language.
-    async fn list_languages(client: &Client) -> Result<LanguageList, Error> {
+    pub async fn list_languages(client: &Client) -> Result<LanguageList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale/languages";
 

@@ -6,7 +6,7 @@ use super::phone::Phone;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PhoneList {
     /// Total number of phones documents that matched your query.
-    total: u64,
+    pub total: u64,
     /// List of phones.
-    sessions: Vec<Phone>,
+    pub sessions: Vec<Phone>,
 }

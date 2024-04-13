@@ -5,6 +5,7 @@ pub mod functions;
 pub mod graphql;
 pub mod health;
 pub mod locale;
+pub mod messaging;
 pub mod storage;
 pub mod teams;
 pub mod users;

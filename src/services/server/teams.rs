@@ -1,9 +1,12 @@
+///! # Teams
+///! The Teams service allows you to group users of your project and to enable
+///! them to share read and write access to your project resources
 use reqwest::header;
 use serde_json::{json, Map, Value};
 
 use crate::{
     client::Client,
-    enums::HttpMethod,
+    enumm::HttpMethod,
     error::Error,
     models::{
         membership::Membership, membership_list::MembershipList, preferences::Preferences,
@@ -11,8 +14,6 @@ use crate::{
     },
 };
 
-/// The Teams service allows you to group users of your project and to enable
-/// them to share read and write access to your project resources
 pub struct Teams;
 
 impl Teams {
@@ -20,7 +21,7 @@ impl Teams {
     ///
     /// Get a list of all the teams in which the current user is a member. You can
     /// use the parameters to filter your results.
-    async fn list(
+    pub async fn list(
         client: &Client,
         queries: Option<Vec<&str>>,
         search: Option<&str>,
@@ -53,7 +54,7 @@ impl Teams {
     /// Create a new team. The user who creates the team will automatically be
     /// assigned as the owner of the team. Only the users with the owner role can
     /// invite new members, add new owners and delete or update the team.
-    async fn create(
+    pub async fn create(
         client: &Client,
         team_id: &str,
         name: &str,
@@ -84,7 +85,7 @@ impl Teams {
     /// Get team
     ///
     /// Get a team by its ID. All team members have read access for this resource.
-    async fn get(client: &Client, team_id: &str) -> Result<Team, Error> {
+    pub async fn get(client: &Client, team_id: &str) -> Result<Team, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/teams/{teamId}".replace("{teamId}", team_id);
 
@@ -109,7 +110,7 @@ impl Teams {
     /// Update name
     ///
     /// Update the team"s name by its unique ID.
-    async fn update_name(client: &Client, team_id: &str, name: &str) -> Result<Team, Error> {
+    pub async fn update_name(client: &Client, team_id: &str, name: &str) -> Result<Team, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/teams/{teamId}".replace("{teamId}", team_id);
 
@@ -137,7 +138,7 @@ impl Teams {
     ///
     /// Delete a team using its ID. Only team members with the owner role can
     /// delete the team.
-    async fn delete(client: &Client, team_id: &str) -> Result<(), Error> {
+    pub async fn delete(client: &Client, team_id: &str) -> Result<(), Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/teams/{teamId}".replace("{teamId}", team_id);
 
@@ -163,7 +164,7 @@ impl Teams {
     ///
     /// Use this endpoint to list a team"s members using the team"s ID. All team
     /// members have read access to this endpoint.
-    async fn list_memberships(
+    pub async fn list_memberships(
         client: &Client,
         team_id: &str,
         queries: Option<Vec<&str>>,
@@ -221,7 +222,7 @@ impl Teams {
     /// Appwrite will accept the only redirect URLs under the domains you have
     /// added as a platform on the Appwrite Console.
     ///
-    async fn create_memberships(
+    pub async fn create_memberships(
         client: &Client,
         team_id: &str,
         roles: Vec<&str>,
@@ -274,7 +275,7 @@ impl Teams {
     ///
     /// Get a team member by the membership unique id. All team members have read
     /// access for this resource.
-    async fn get_memberships(
+    pub async fn get_memberships(
         client: &Client,
         team_id: &str,
         membership_id: &str,
@@ -308,7 +309,7 @@ impl Teams {
     /// have access to this endpoint. Learn more about [roles and
     /// permissions](https://appwrite.io/docs/permissions).
     ///
-    async fn update_memberships(
+    pub async fn update_memberships(
         client: &Client,
         team_id: &str,
         membership_id: &str,
@@ -344,7 +345,7 @@ impl Teams {
     /// This endpoint allows a user to leave a team or for a team owner to delete
     /// the membership of any other team member. You can also use this endpoint to
     /// delete a user membership even if it is not accepted.
-    async fn delete_memberships(
+    pub async fn delete_memberships(
         client: &Client,
         team_id: &str,
         membership_id: &str,
@@ -381,7 +382,7 @@ impl Teams {
     /// If the request is successful, a session for the user is automatically
     /// created.
     ///
-    async fn update_membership_status(
+    pub async fn update_membership_status(
         client: &Client,
         team_id: &str,
         membership_id: &str,
@@ -419,7 +420,7 @@ impl Teams {
     /// Get the team's shared preferences by its unique ID. If a preference doesn't
     /// need to be shared by all team members, prefer storing them in [user
     /// preferences](https://appwrite.io/docs/references/cloud/client-web/account#getPrefs).
-    async fn get_prefs(client: &Client, team_id: &str) -> Result<Preferences, Error> {
+    pub async fn get_prefs(client: &Client, team_id: &str) -> Result<Preferences, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/teams/{teamId}/prefs".replace("{teamId}", team_id);
 
@@ -446,7 +447,7 @@ impl Teams {
     /// Update the team's preferences by its unique ID. The object you pass is
     /// stored as is and replaces any previous value. The maximum allowed prefs
     /// size is 64kB and throws an error if exceeded.
-    async fn update_prefs(
+    pub async fn update_prefs(
         client: &Client,
         team_id: &str,
         prefs: Map<String, Value>,

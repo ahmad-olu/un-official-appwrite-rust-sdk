@@ -1,16 +1,20 @@
+//! # Storage
+//!
+//! The Storage service allows you to manage your project files.
+
 use reqwest::header;
 use serde_json::{json, Value};
 
 use crate::{
-    client::{ChunksResponse, Client},
-    enums::HttpMethod,
+    client::Client,
+    enumm::HttpMethod,
+    enums::{compression::Compression, image_format::ImageFormat, image_gravity::ImageGravity},
     error::Error,
     models::{bucket::Bucket, bucket_list::BucketList, file::File, file_list::FileList},
     upload_progress::UploadProgress,
     utils::get_content_header_value,
 };
 
-/// The Storage service allows you to manage your project files.
 pub struct Storage;
 
 impl Storage {
@@ -18,7 +22,7 @@ impl Storage {
     ///
     /// Get a list of all the storage buckets. You can use the query params to
     /// filter your results.
-    async fn list_buckets(
+    pub async fn list_buckets(
         client: &Client,
         queries: Option<Vec<&str>>,
         search: Option<&str>,
@@ -49,7 +53,7 @@ impl Storage {
     /// Create bucket
     ///
     /// Create a new storage bucket.
-    async fn create_bucket(
+    pub async fn create_bucket(
         client: &Client,
         bucket_id: &str,
         name: &str,
@@ -58,7 +62,7 @@ impl Storage {
         enabled: Option<bool>,
         maximum_file_size: Option<usize>,
         allowed_file_extensions: Option<Vec<&str>>,
-        compression: Option<bool>,
+        compression: Option<Compression>,
         encryption: Option<bool>,
         antivirus: Option<bool>,
     ) -> Result<Bucket, Error> {
@@ -112,7 +116,7 @@ impl Storage {
     ///
     /// Get a storage bucket by its unique ID. This endpoint response returns a
     /// JSON object with the storage bucket metadata.
-    async fn get_bucket(client: &Client, bucket_id: &str) -> Result<Bucket, Error> {
+    pub async fn get_bucket(client: &Client, bucket_id: &str) -> Result<Bucket, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}".replace("{bucketId}", bucket_id);
 
@@ -137,7 +141,7 @@ impl Storage {
     /// Update bucket
     ///
     /// Update a storage bucket by its unique ID.
-    async fn update_bucket(
+    pub async fn update_bucket(
         client: &Client,
         bucket_id: &str,
         name: &str,
@@ -146,7 +150,7 @@ impl Storage {
         enabled: Option<bool>,
         maximum_file_size: Option<usize>,
         allowed_file_extensions: Option<Vec<&str>>,
-        compression: Option<bool>,
+        compression: Option<Compression>,
         encryption: Option<bool>,
         antivirus: Option<bool>,
     ) -> Result<Bucket, Error> {
@@ -204,7 +208,7 @@ impl Storage {
     /// Delete bucket
     ///
     /// Delete a storage bucket by its unique ID.
-    async fn delete_bucket(client: &Client, bucket_id: &str) -> Result<(), Error> {
+    pub async fn delete_bucket(client: &Client, bucket_id: &str) -> Result<(), Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}".replace("{bucketId}", bucket_id);
 
@@ -230,7 +234,7 @@ impl Storage {
     ///
     /// Get a list of all the user files. You can use the query params to filter
     /// your results.
-    async fn list_files(
+    pub async fn list_files(
         client: &Client,
         bucket_id: &str,
         queries: Option<Vec<&str>>,
@@ -285,14 +289,14 @@ impl Storage {
     /// If you"re creating a new file using one of the Appwrite SDKs, all the
     /// chunking logic will be managed by the SDK internally.
     ///
-    async fn create_files(
+    pub async fn create_files(
         client: &Client,
         bucket_id: &str,
         file_id: &str,
         file_path: &str,
         permissions: Option<Vec<&str>>,
         on_progress: Option<fn(UploadProgress)>,
-    ) -> Result<ChunksResponse<File>, Error> {
+    ) -> Result<File, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}/files".replace("{bucketId}", bucket_id);
 
@@ -303,8 +307,8 @@ impl Storage {
 
         let api_params = serde_json::Value::Object(api_params);
 
-        let res: ChunksResponse<File> = client
-            .chunk_upload(
+        let res: File = client
+            .chunk_upload_file(
                 file_path,
                 api_path.as_str(),
                 String::from(file_id),
@@ -320,11 +324,7 @@ impl Storage {
     ///
     /// Get a file by its unique ID. This endpoint response returns a JSON object
     /// with the file metadata.
-    async fn get_file(
-        client: &Client,
-        bucket_id: &str,
-        file_id: &str,
-    ) -> Result<ChunksResponse<File>, Error> {
+    pub async fn get_file(client: &Client, bucket_id: &str, file_id: &str) -> Result<File, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}/files/{fileId}"
             .replace("{bucketId}", bucket_id)
@@ -352,13 +352,13 @@ impl Storage {
     ///
     /// Update a file by its unique ID. Only users with write permissions have
     /// access to update this resource.
-    async fn update_file(
+    pub async fn update_file(
         client: &Client,
         bucket_id: &str,
         file_id: &str,
         name: Option<&str>,
         permissions: Option<Vec<&str>>,
-    ) -> Result<ChunksResponse<File>, Error> {
+    ) -> Result<File, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}/files/{fileId}"
             .replace("{bucketId}", bucket_id)
@@ -394,7 +394,7 @@ impl Storage {
     ///
     /// Delete a file by its unique ID. Only users with write permissions have
     /// access to delete this resource.
-    async fn delete_file(client: &Client, bucket_id: &str, file_id: &str) -> Result<(), Error> {
+    pub async fn delete_file(client: &Client, bucket_id: &str, file_id: &str) -> Result<(), Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}/files/{fileId}"
             .replace("{bucketId}", bucket_id)
@@ -423,7 +423,7 @@ impl Storage {
     /// Get a file content by its unique ID. The endpoint response return with a
     /// "Content-Disposition: attachment" header that tells the browser to start
     /// downloading the file to user downloads directory.
-    async fn get_file_download(
+    pub async fn get_file_download(
         client: &Client,
         bucket_id: &str,
         file_id: &str,
@@ -461,13 +461,13 @@ impl Storage {
     /// and spreadsheets, will return the file icon image. You can also pass query
     /// string arguments for cutting and resizing your preview image. Preview is
     /// supported only for image files smaller than 10MB.
-    async fn get_file_preview(
+    pub async fn get_file_preview(
         client: &Client,
         bucket_id: &str,
         file_id: &str,
         width: Option<usize>,
         height: Option<usize>,
-        gravity: Option<&str>,
+        gravity: Option<ImageGravity>,
         quality: Option<usize>,
         border_width: Option<usize>,
         border_color: Option<&str>,
@@ -475,7 +475,7 @@ impl Storage {
         opacity: Option<f32>,
         rotation: Option<usize>,
         background: Option<&str>,
-        output: Option<&str>,
+        output: Option<ImageFormat>,
     ) -> Result<Vec<u8>, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}/files/{fileId}/preview"
@@ -549,7 +549,7 @@ impl Storage {
     /// Get a file content by its unique ID. This endpoint is similar to the
     /// download method but returns with no  'Content-Disposition: attachment'
     /// header.
-    async fn get_file_view(
+    pub async fn get_file_view(
         client: &Client,
         bucket_id: &str,
         file_id: &str,

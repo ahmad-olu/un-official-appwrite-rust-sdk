@@ -5,16 +5,16 @@ use serde::{Deserialize, Serialize};
 pub struct AlgoScryptModified {
     /// algo type.
     #[serde(rename = "type")]
-    algo_type: String,
+    pub algo_type: String,
 
     /// Salt used to compute hash.
-    salt: String,
+    pub salt: String,
 
     /// Separator used to compute hash.
     #[serde(rename = "saltSeparator")]
-    salt_separator: String,
+    pub salt_separator: String,
 
     /// Key used to compute hash.
     #[serde(rename = "signerKey")]
-    signer_key: String,
+    pub signer_key: String,
 }

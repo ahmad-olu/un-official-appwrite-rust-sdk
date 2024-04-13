@@ -6,7 +6,7 @@ use super::membership::Membership;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MembershipList {
     /// Total number of memberships documents that matched your query.
-    total: u64,
+    pub total: u64,
     /// List of memberships.
-    sessions: Vec<Membership>,
+    pub sessions: Vec<Membership>,
 }

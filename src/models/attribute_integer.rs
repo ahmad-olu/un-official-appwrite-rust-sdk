@@ -4,30 +4,30 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AttributeInteger {
     /// Attribute Key.
-    key: String,
+    pub key: String,
 
     /// Attribute type.
     #[serde(rename = "type")]
-    attribute_type: String,
+    pub attribute_type: String,
 
     /// Attribute status. Possible values: `available`, `processing`, `deleting`, `stuck`, or `failed`
-    status: String,
+    pub status: String,
 
     /// Error message. Displays error generated on failure of creating or deleting an attribute.
-    error: String,
+    pub error: String,
 
     /// Is attribute required?
-    xrequired: bool,
+    pub xrequired: Option<bool>,
 
     /// Is attribute an array?
-    array: Option<bool>,
+    pub array: Option<bool>,
 
     /// Minimum value to enforce for new documents.
-    min: Option<u64>,
+    pub min: Option<u64>,
 
     /// Maximum value to enforce for new documents.
-    max: Option<u64>,
+    pub max: Option<u64>,
 
     /// Default value for attribute when not provided. Cannot be set when attribute is required.
-    xdefault: Option<u64>,
+    pub xdefault: Option<u64>,
 }

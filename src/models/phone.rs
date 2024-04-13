@@ -4,13 +4,13 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Phone {
     /// Phone code.
-    code: String,
+    pub code: String,
 
     /// Country two-character ISO 3166-1 alpha code.
     #[serde(rename = "countryCode")]
-    country_code: String,
+    pub country_code: String,
 
     /// Country name.
     #[serde(rename = "countryName")]
-    country_name: String,
+    pub country_name: String,
 }

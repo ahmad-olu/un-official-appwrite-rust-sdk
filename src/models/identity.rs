@@ -5,40 +5,40 @@ use serde::{Deserialize, Serialize};
 pub struct Identity {
     /// Identity ID.
     #[serde(rename = "$id")]
-    id: String,
+   pub     id: String,
 
     /// Identity creation date in ISO 8601 format.
     #[serde(rename = "$createdAt")]
-    created_at: String,
+   pub     created_at: String,
 
     /// Identity update date in ISO 8601 format.
     #[serde(rename = "$updatedAt")]
-    updated_at: String,
+   pub     updated_at: String,
 
     /// User ID.
     #[serde(rename = "userId")]
-    user_id: String,
+   pub     user_id: String,
 
     /// Identity Provider.
-    provider: String,
+   pub     provider: String,
 
     /// ID of the User in the Identity Provider.
     #[serde(rename = "providerUid")]
-    provider_uid: String,
+   pub     provider_uid: String,
 
     /// Email of the User in the Identity Provider.
     #[serde(rename = "providerEmail")]
-    provider_email: String,
+   pub     provider_email: String,
 
     /// Identity Provider Access Token.
     #[serde(rename = "providerAccessToken")]
-    provider_access_token: String,
+   pub     provider_access_token: String,
 
     /// The date of when the access token expires in ISO 8601 format.
     #[serde(rename = "providerAccessTokenExpiry")]
-    provider_access_token_expiry: String,
+   pub     provider_access_token_expiry: String,
 
     /// Identity Provider Refresh Token.
     #[serde(rename = "providerRefreshToken")]
-    provider_refresh_token: String,
+   pub     provider_refresh_token: String,
 }

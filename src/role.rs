@@ -1,11 +1,11 @@
 /// Helper struct to generate role strings for [Permission].
-struct Role;
+pub struct Role;
 
 impl Role {
     /// Grants access to anyone.
     ///
     /// This includes authenticated and unauthenticated users.
-    fn any() -> String {
+    pub fn any() -> String {
         "any".to_string()
     }
 
@@ -13,7 +13,7 @@ impl Role {
     ///
     /// You can optionally pass verified or unverified for
     /// [status] to target specific types of users.
-    fn user(id: &str, status: Option<String>) -> String {
+    pub fn user(id: &str, status: Option<String>) -> String {
         if status.is_none() {
             return format!("user:{}", id);
         }
@@ -24,7 +24,7 @@ impl Role {
     ///
     /// You can optionally pass verified or unverified for
     /// [status] to target specific types of users.
-    fn users(status: Option<String>) -> String {
+    pub fn users(status: Option<String>) -> String {
         if status.is_none() {
             return String::from("users");
         }
@@ -34,7 +34,7 @@ impl Role {
     /// Grants access to any guest user without a session.
     ///
     /// Authenticated users don't have access to this role.
-    fn guests() -> String {
+    pub fn guests() -> String {
         "guests".to_string()
     }
 
@@ -42,7 +42,7 @@ impl Role {
     ///
     /// You can optionally pass a role for [role] to target
     /// team members with the specified role.
-    fn team(id: &str, role: Option<String>) -> String {
+    pub fn team(id: &str, role: Option<String>) -> String {
         if role.is_none() {
             return format!("team:{}", id);
         }
@@ -53,12 +53,12 @@ impl Role {
     ///
     /// When the member is removed from the team, they will
     /// no longer have access.
-    fn member(id: &str) -> String {
+    pub fn member(id: &str) -> String {
         format!("member:{}", id)
     }
 
     /// Grants access to a user with the specified label.
-    fn label(name: &str) -> String {
+    pub fn label(name: &str) -> String {
         format!("label:{}", name)
     }
 }

@@ -5,5 +5,5 @@ use serde_json::{Map, Value};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Preferences {
     #[serde(flatten)]
-    data: Map<String, Value>,
+    pub data: Map<String, Value>,
 }

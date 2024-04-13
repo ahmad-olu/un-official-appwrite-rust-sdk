@@ -1,18 +1,15 @@
 use crate::client::Client;
-use futures_util::{future, pin_mut, StreamExt};
+use futures_util::StreamExt;
 use serde_json::Value;
 use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
 
 struct RealTime;
 
 impl RealTime {
-    async fn subscribe(client: &Client, channels: Vec<&str>, project_id: &str) {
+    pub async fn subscribe(client: &Client, channels: Vec<&str>, project_id: &str) {
         if channels.len() < 1 {
             return;
         }
-        // if client.end_point_realtime.is_none() {
-        //     return;
-        // }
         let mut url_search_params = String::new();
         url_search_params.push_str(format!("/realtime?project={}", project_id).as_str());
         channels.iter().for_each(|channel| {
@@ -28,16 +25,6 @@ impl RealTime {
         let (mut _write, mut read) = ws_stream.split();
 
         while let Some(message) = read.next().await {
-            // let msg = message.expect("Failed to read the message");
-            // let msg = match msg {
-            //     Message::Text(s) => s,
-            //     _ => {
-            //         panic!()
-            //     }
-            // };
-            // let parsed: Value = serde_json::from_str(&msg).expect("Unable to parse json");
-            // println!("{:#?}", parsed);
-
             let msg = match message {
                 Ok(Message::Text(s)) => s,
                 Ok(_) => continue, // Skip non-text messages

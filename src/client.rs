@@ -9,8 +9,9 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::{
-    enums::HttpMethod,
+    enumm::HttpMethod,
     error::{AppWriteError, Error},
+    models::{deployment::Deployment, file::File},
     upload_progress::UploadProgress,
 };
 
@@ -74,7 +75,7 @@ impl ClientBuilder {
 
     pub fn set_project(&mut self, value: &str) -> Result<&mut Self, Error> {
         self.header
-            .insert("X-Appwrite-Project", HeaderValue::from_str(value)?);
+            .insert("x-appwrite-Project", HeaderValue::from_str(value)?);
         Ok(self)
     }
 
@@ -129,7 +130,6 @@ impl Client {
         };
         let res = res
             .json(&params)
-            //  .query(params) //Todo:: add feature to add query
             .headers(headers)
             .headers(self.header.clone());
 
@@ -152,17 +152,19 @@ impl Client {
         }
     }
 
-    pub async fn chunk_upload<T: Serialize + ?Sized, G>(
+    // pub async fn web_auth(url: &str) {
+    //     let request = reqwest::Client::new().get(url);
+    //     request
+
+    // }
+    pub async fn chunk_upload_file<T: Serialize + ?Sized>(
         &self,
         file_path: &str,
         api_path: &str,
         file_id: String,
         params: &T,
         on_progress: Option<fn(UploadProgress)>,
-    ) -> Result<ChunksResponse<G>, Error>
-    where
-        G: DeserializeOwned + Clone,
-    {
+    ) -> Result<File, Error> {
         let boundary = Uuid::new_v4();
 
         let file_name = match Path::new(file_path).exists() {
@@ -179,7 +181,7 @@ impl Client {
         };
 
         let file_size = file.len();
-        let uri = format!("{}{}", self.end_point, api_path);
+        let uri = api_path;
 
         // File Size Check and Upload
         if file_size <= self.chunk_size {
@@ -199,9 +201,9 @@ impl Client {
             );
 
             let file = self
-                .call(HttpMethod::POST, uri.as_str(), headers, &params, Some(form))
+                .call(HttpMethod::POST, uri, headers, &params, Some(form))
                 .await?
-                .json::<ChunksResponse<G>>()
+                .json::<File>()
                 .await?;
 
             if let Some(ref on_progress) = on_progress {
@@ -222,7 +224,7 @@ impl Client {
         let mut first_upload = true; // Track if it's the first upload for x-appwrite-id
         let mut x_appwrite_id: Option<String> = None;
 
-        let mut res: Option<ChunksResponse<G>> = None;
+        let mut res: Option<File> = None;
 
         if file_id != "unique()" {
             let mut headers = HeaderMap::new();
@@ -242,7 +244,7 @@ impl Client {
                     None,
                 )
                 .await?
-                .json::<ChunksResponse<G>>()
+                .json::<File>()
                 .await?;
             offset = res.chunks_uploaded * self.chunk_size
         }
@@ -279,20 +281,14 @@ impl Client {
             //     "permissions": &[] as &[String]
             // });
             let response = self
-                .call(
-                    HttpMethod::POST,
-                    uri.as_str(),
-                    headers,
-                    &params,
-                    Some(chunk_form),
-                )
+                .call(HttpMethod::POST, uri, headers, &params, Some(chunk_form))
                 .await?;
             if response.status() != StatusCode::CREATED {
                 return Err(Error::AppWriteError(
                     response.json::<AppWriteError>().await?,
                 ));
             }
-            let file = response.json::<ChunksResponse<G>>().await?;
+            let file = response.json::<File>().await?;
             if first_upload {
                 x_appwrite_id = Some(file.clone().id);
                 first_upload = false;
@@ -314,22 +310,158 @@ impl Client {
         }
         Ok(res.unwrap())
     }
-}
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct ChunksResponse<G> {
-    /// File ID.
-    #[serde(rename = "$id")]
-    pub id: String,
+    pub async fn chunk_upload_deployment<T: Serialize + ?Sized>(
+        &self,
+        file_path: &str,
+        api_path: &str,
+        file_id: String,
+        params: &T,
+        on_progress: Option<fn(UploadProgress)>,
+    ) -> Result<Deployment, Error> {
+        let boundary = Uuid::new_v4();
 
-    /// Total number of chunks available
-    #[serde(rename = "chunksTotal")]
-    pub chunks_total: usize,
+        let file_name = match Path::new(file_path).exists() {
+            true => match Path::new(file_path).file_name() {
+                Some(val) => format!("{:?}", val),
+                None => Err(Error::Unknown)?,
+            },
+            false => Err(Error::FilePathNotExist(String::from(file_path)))?,
+        };
 
-    /// Total number of chunks uploaded
-    #[serde(rename = "chunksUploaded")]
-    pub chunks_uploaded: usize,
+        let file = match fs::read(file_path) {
+            Ok(size) => size,
+            Err(err) => return Err(Error::Io(err)),
+        };
 
-    #[serde(flatten)]
-    pub extras: Option<G>,
+        let file_size = file.len();
+        let uri = api_path;
+
+        // Deployment Size Check and Upload
+        if file_size <= self.chunk_size {
+            // Single-request upload
+            let part = Part::bytes(file).file_name(file_name.clone());
+
+            let form = multipart::Form::new()
+                .text("fileId", file_id.clone())
+                .part("file", part);
+
+            let mut headers = HeaderMap::new();
+            headers.insert(
+                CONTENT_TYPE,
+                HeaderValue::from_str(
+                    format!("multipart/form-data; boundary={}", boundary).as_str(),
+                )?,
+            );
+
+            let file = self
+                .call(HttpMethod::POST, uri, headers, &params, Some(form))
+                .await?
+                .json::<Deployment>()
+                .await?;
+
+            if let Some(ref on_progress) = on_progress {
+                on_progress(UploadProgress {
+                    id: file.clone().id,
+                    progress: 100,
+                    size_uploaded: 100,
+                    chunks_total: file.chunks_total,
+                    chunks_uploaded: file.chunks_uploaded,
+                });
+            }
+
+            return Ok(file);
+        }
+
+        let mut offset: usize = 0;
+
+        let mut first_upload = true; // Track if it's the first upload for x-appwrite-id
+        let mut x_appwrite_id: Option<String> = None;
+
+        let mut res: Option<Deployment> = None;
+
+        if file_id != "unique()" {
+            let mut headers = HeaderMap::new();
+            headers.insert(
+                CONTENT_TYPE,
+                HeaderValue::from_str(
+                    format!("multipart/form-data; boundary={}", boundary).as_str(),
+                )?,
+            );
+            let params = serde_json::json!({});
+            let res = self
+                .call(
+                    HttpMethod::GET,
+                    format!("{}{}/{}", self.end_point, api_path, file_id).as_str(),
+                    headers,
+                    &params,
+                    None,
+                )
+                .await?
+                .json::<File>()
+                .await?;
+            offset = res.chunks_uploaded * self.chunk_size
+        }
+
+        while offset < file_size {
+            let end = std::cmp::min(offset + self.chunk_size, file_size);
+            let chunk = &file[offset..end];
+            let content_range = format!("bytes {}-{}/{}", offset, end - 1, file_size);
+
+            let mut headers = HeaderMap::new();
+            headers.insert(
+                CONTENT_TYPE,
+                HeaderValue::from_str(
+                    format!("multipart/form-data; boundary={}", boundary).as_str(),
+                )?,
+            );
+            headers.insert(
+                "Content-Range",
+                HeaderValue::from_str(content_range.as_str())?,
+            );
+            let mut chunk_form = multipart::Form::new();
+            chunk_form = chunk_form.text("fileId", file_id.clone()).part(
+                "file",
+                Part::bytes(chunk.to_vec()).file_name(file_name.clone()),
+            );
+            if !first_upload {
+                headers.insert(
+                    "x-appwrite-id",
+                    x_appwrite_id.clone().unwrap().as_str().parse().unwrap(),
+                );
+            }
+
+            // let params = serde_json::json!({
+            //     "permissions": &[] as &[String]
+            // });
+            let response = self
+                .call(HttpMethod::POST, uri, headers, &params, Some(chunk_form))
+                .await?;
+            if response.status() != StatusCode::CREATED {
+                return Err(Error::AppWriteError(
+                    response.json::<AppWriteError>().await?,
+                ));
+            }
+            let file = response.json::<Deployment>().await?;
+            if first_upload {
+                x_appwrite_id = Some(file.clone().id);
+                first_upload = false;
+            }
+
+            if let Some(ref on_progress) = on_progress {
+                on_progress(UploadProgress {
+                    id: file.clone().id,
+                    progress: std::cmp::min(offset, self.chunk_size) / self.chunk_size * 100,
+                    size_uploaded: std::cmp::min(offset, self.chunk_size),
+                    chunks_total: file.chunks_total,
+                    chunks_uploaded: file.chunks_uploaded,
+                });
+            }
+
+            res = Some(file.clone());
+
+            offset += self.chunk_size;
+        }
+        Ok(res.unwrap())
+    }
 }

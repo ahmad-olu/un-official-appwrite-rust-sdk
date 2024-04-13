@@ -1,18 +1,27 @@
+//!  # ACCOUNT
+//!
+//! The Account service allows you to authenticate and manage a user account.
+
 use reqwest::header;
-use serde_json::Value;
+use serde_json::{json, Map, Value};
 
 use crate::{
     client::Client,
-    enums::HttpMethod,
+    enumm::HttpMethod,
+    enums::{
+        authentication_factor::AuthenticationFactor, authentication_type::AuthenticationType,
+        o_auth_provider::OAuthProvider,
+    },
     error::Error,
     models::{
-        identity_list::IdentityList, log_list::LogList, preferences::Preferences, session::Session,
-        session_list::SessionList, token::Token, user::User,
+        identity_list::IdentityList, jwt::JWT, log_list::LogList, mfa_challenge::MfaChallenge,
+        mfa_factors::MfaFactors, mfa_recovery_codes::MfaRecoveryCodes, mfa_type::MfaType,
+        preferences::Preferences, session::Session, session_list::SessionList, token::Token,
+        user::User,
     },
+    utils::get_content_header_value,
 };
 
-/// ACCOUNT
-/// The Account service allows you to authenticate and manage a user account.
 pub struct Account;
 
 impl Account {
@@ -39,7 +48,7 @@ impl Account {
     // Use this endpoint to allow a new user to register a new account in your
     // project. After the user registration completes successfully, you can use
     // the
-    // [/account/verfication](https://appwrite.io/docs/references/cloud/client-web/account#createVerification)
+    // [/account/verification](https://appwrite.io/docs/references/cloud/client-web/account#createVerification)
     // route to start verifying the user email address. To allow the new user to
     // login to their new account, you need to create a new [account
     // session](https://appwrite.io/docs/references/cloud/client-web/account#createEmailSession).
@@ -105,7 +114,7 @@ impl Account {
     /// Get the list of identities for the currently logged in user.
     pub async fn list_identities(
         client: &Client,
-        queries: Option<&str>,
+        queries: Option<String>,
     ) -> Result<IdentityList, Error> {
         const API_PATH: &str = "/account/identities";
 
@@ -152,11 +161,36 @@ impl Account {
         Ok(())
     }
 
+    /// Create JWT
+    ///
+    /// Use this endpoint to create a JSON Web Token. You can use the resulting JWT
+    /// to authenticate on behalf of the current user when working with the
+    /// Appwrite server-side API and SDKs. The JWT secret is valid for 15 minutes
+    /// from its creation and will be invalid if the user will logout in that time
+    /// frame.
+    pub async fn create_jwt(client: &Client) -> Result<JWT, Error> {
+        let api_path = "/account/jwt";
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
     /// List logs
     ///
     /// Get the list of latest security activity logs for the currently logged in
     /// user. Each log returns user IP address, location and date and time of log.
-    pub async fn list_logs(client: &Client, queries: Option<Vec<&str>>) -> Result<LogList, Error> {
+    pub async fn list_logs(
+        client: &Client,
+        queries: Option<Vec<String>>,
+    ) -> Result<LogList, Error> {
         const API_PATH: &str = "/account/logs";
 
         let mut api_params = serde_json::Map::new();
@@ -172,6 +206,254 @@ impl Account {
 
         let res = client
             .call(HttpMethod::GET, API_PATH, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Update MFA
+    ///
+    /// Enable or disable MFA on an account.
+    pub async fn update_mfa(client: &Client, mfa: bool) -> Result<User, Error> {
+        let api_path = "/account/mfa";
+
+        let api_params = serde_json::json!({
+            "mfa":mfa
+        });
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::PATCH, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Add Authenticator
+    ///
+    /// Add an authenticator app to be used as an MFA factor. Verify the
+    /// authenticator using the [verify
+    /// authenticator](/docs/references/cloud/client-web/account#verifyAuthenticator)
+    /// method.
+    pub async fn create_mfa_authenticator(
+        client: &Client,
+        x_type: AuthenticationType,
+    ) -> Result<MfaType, Error> {
+        let api_path = format!("/account/mfa/authenticators/{}", json!(x_type));
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::POST,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Verify Authenticator
+    ///
+    /// Verify an authenticator app after adding it using the [add
+    /// authenticator](/docs/references/cloud/client-web/account#addAuthenticator)
+    /// method.
+    pub async fn update_mfa_authenticator(
+        client: &Client,
+        x_type: AuthenticationType,
+        otp: &str,
+    ) -> Result<User, Error> {
+        let api_path = format!("/account/mfa/authenticators/{}", json!(x_type));
+
+        let api_params = serde_json::json!({
+            "otp":otp,
+        });
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::PUT,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Delete Authenticator
+    ///
+    /// Delete an authenticator for a user by ID.
+    pub async fn delete_mfa_authenticator(
+        client: &Client,
+        x_type: AuthenticationType,
+        otp: &str,
+    ) -> Result<User, Error> {
+        let api_path = format!("/account/mfa/authenticators/{}", json!(x_type));
+
+        let api_params = serde_json::json!({
+            "otp":otp,
+        });
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(
+                HttpMethod::DELETE,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Create 2FA Challenge
+    ///
+    /// Begin the process of MFA verification after sign-in. Finish the flow with
+    /// [updateMfaChallenge](/docs/references/cloud/client-web/account#updateMfaChallenge)
+    /// method.
+    pub async fn create_mfa_challenge(
+        client: &Client,
+        factor: AuthenticationFactor,
+    ) -> Result<MfaChallenge, Error> {
+        let api_path = "/account/mfa/challenge";
+
+        let api_params = serde_json::json!({
+            "factor":factor,
+        });
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Create MFA Challenge (confirmation)
+    ///
+    /// Complete the MFA challenge by providing the one-time password. Finish the
+    /// process of MFA verification by providing the one-time password. To begin
+    /// the flow, use
+    /// [createMfaChallenge](/docs/references/cloud/client-web/account#createMfaChallenge)
+    /// method.
+    pub async fn update_mfa_challenge(
+        client: &Client,
+        challenge_id: &str,
+        otp: &str,
+    ) -> Result<(), Error> {
+        let api_path = "/account/mfa/challenge";
+
+        let api_params = serde_json::json!({
+            "challengeId":challenge_id,
+            "otp":otp,
+        });
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let _res = client
+            .call(HttpMethod::PUT, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(())
+    }
+
+    /// List Factors
+    ///
+    /// List the factors available on the account to be used as a MFA challenge.
+    pub async fn list_mfa_factors(client: &Client) -> Result<MfaFactors, Error> {
+        let api_path = "/account/mfa/factors";
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Get MFA Recovery Codes
+    ///
+    /// Get recovery codes that can be used as backup for MFA flow. Before getting
+    /// codes, they must be generated using
+    /// [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes)
+    /// method. An OTP challenge is required to read recovery codes.
+    pub async fn get_mfa_recovery_codes(client: &Client) -> Result<MfaRecoveryCodes, Error> {
+        let api_path = "/account/mfa/recovery-codes";
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Create MFA Recovery Codes
+    ///
+    /// Generate recovery codes as backup for MFA flow. It's recommended to
+    /// generate and show then immediately after user successfully adds their
+    /// authenticator. Recovery codes can be used as a MFA verification type in
+    /// [createMfaChallenge](/docs/references/cloud/client-web/account#createMfaChallenge)
+    /// method.
+    pub async fn create_mfa_recovery_codes(client: &Client) -> Result<MfaRecoveryCodes, Error> {
+        let api_path = "/account/mfa/recovery-codes";
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Regenerate MFA Recovery Codes
+    ///
+    /// Regenerate recovery codes that can be used as backup for MFA flow. Before
+    /// regenerating codes, they must be first generated using
+    /// [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes)
+    /// method. An OTP challenge is required to regenerate recovery codes.
+    pub async fn update_mfa_recovery_codes(client: &Client) -> Result<MfaRecoveryCodes, Error> {
+        let api_path = "/account/mfa/recovery-codes";
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::PATCH, api_path, api_headers, &api_params, None)
             .await?;
 
         Ok(res.json().await?)
@@ -393,6 +675,141 @@ impl Account {
         Ok(())
     }
 
+    /// Create anonymous session
+    ///
+    /// Use this endpoint to allow a new user to register an anonymous account in
+    /// your project. This route will also create a new session for the user. To
+    /// allow the new user to convert an anonymous account to a normal account, you
+    /// need to update its [email and
+    /// password](https://appwrite.io/docs/references/cloud/client-web/account#updateEmail)
+    /// or create an [OAuth2
+    /// session](https://appwrite.io/docs/references/cloud/client-web/account#CreateOAuth2Session).
+    pub async fn create_anonymous_session(client: &Client) -> Result<Session, Error> {
+        let api_path = "/account/sessions/anonymous";
+
+        let api_params = serde_json::json!({});
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Create email password session
+    ///
+    /// Allow the user to login into their account by providing a valid email and
+    /// password combination. This route will create a new session for the user.
+    ///
+    /// A user is limited to 10 active sessions at a time by default. [Learn more
+    /// about session
+    /// limits](https://appwrite.io/docs/authentication-security#limits).
+    pub async fn create_email_password_session(
+        client: &Client,
+        email: &str,
+        password: &str,
+    ) -> Result<Session, Error> {
+        let api_path = "/account/sessions/email";
+
+        let api_params = serde_json::json!({
+            "email":email,
+            "password":password,
+        });
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Update magic URL session
+    ///
+    /// Use this endpoint to create a session from token. Provide the **userId**
+    /// and **secret** parameters from the successful response of authentication
+    /// flows initiated by token creation. For example, magic URL and phone login.
+    pub async fn create_magic_url_session(
+        client: &Client,
+        user_id: &str,
+        secret: &str,
+    ) -> Result<Session, Error> {
+        let api_path = "/account/sessions/magic-url";
+
+        let api_params = serde_json::json!({
+            "userId":user_id,
+            "secret":secret,
+        });
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::PUT, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Update phone session
+    ///
+    /// Use this endpoint to create a session from token. Provide the **userId**
+    /// and **secret** parameters from the successful response of authentication
+    /// flows initiated by token creation. For example, magic URL and phone login.
+    pub async fn update_phone_session(
+        client: &Client,
+        user_id: &str,
+        secret: &str,
+    ) -> Result<Session, Error> {
+        let api_path = "/account/sessions/phone";
+
+        let api_params = serde_json::json!({
+            "userId":user_id,
+            "secret":secret,
+        });
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::PUT, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Create session
+    ///
+    /// Use this endpoint to create a session from token. Provide the **userId**
+    /// and **secret** parameters from the successful response of authentication
+    /// flows initiated by token creation. For example, magic URL and phone login.
+    pub async fn create_session(
+        client: &Client,
+        user_id: &str,
+        secret: &str,
+    ) -> Result<Session, Error> {
+        let api_path = "/account/sessions/token";
+
+        let api_params = serde_json::json!({
+            "userId":user_id,
+            "secret":secret,
+        });
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::PUT, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
     /// Get session
     ///
     /// Use this endpoint to get a logged in user's session using a Session ID.
@@ -420,11 +837,11 @@ impl Account {
         Ok(res.json().await?)
     }
 
-    /// Update OAuth session (refresh tokens)
+    /// Update session
     ///
-    /// Access tokens have limited lifespan and expire to mitigate security risks.
-    /// If session was created using an OAuth provider, this route can be used to
-    /// "refresh" the access token.
+    /// Use this endpoint to extend a session's length. Extending a session is
+    /// useful when session expiry is short. If the session was created using an
+    /// OAuth provider, this endpoint refreshes the access token from the provider.
     pub async fn update_session(client: &Client, session_id: &str) -> Result<Session, Error> {
         let api_path: String = r"/account/sessions/{sessionId}"
             .to_owned()
@@ -493,6 +910,189 @@ impl Account {
 
         let res = client
             .call(HttpMethod::DELETE, API_PATH, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Create email token (OTP)
+    ///
+    /// Sends the user an email with a secret key for creating a session. If the
+    /// provided user ID has not be registered, a new user will be created. Use the
+    /// returned user ID and secret and submit a request to the [POST
+    /// /v1/account/sessions/token](https://appwrite.io/docs/references/cloud/client-web/account#createSession)
+    /// endpoint to complete the login process. The secret sent to the user's email
+    /// is valid for 15 minutes.
+    ///
+    /// A user is limited to 10 active sessions at a time by default. [Learn more
+    /// about session
+    /// limits](https://appwrite.io/docs/authentication-security#limits).
+    pub async fn create_email_token(
+        client: &Client,
+        user_id: &str,
+        email: &str,
+        phrase: Option<bool>,
+    ) -> Result<Token, Error> {
+        let api_path = "/account/token/email";
+
+        let mut api_params = Map::new();
+        api_params.insert("userId".to_string(), json!(user_id));
+        api_params.insert("email".to_string(), json!(email));
+        if let Some(phrase) = phrase {
+            api_params.insert("phrase".to_string(), json!(phrase));
+        }
+        let api_params = serde_json::Value::Object(api_params);
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Create magic URL token
+    ///
+    /// Sends the user an email with a secret key for creating a session. If the
+    /// provided user ID has not been registered, a new user will be created. When
+    /// the user clicks the link in the email, the user is redirected back to the
+    /// URL you provided with the secret key and userId values attached to the URL
+    /// query string. Use the query string parameters to submit a request to the
+    /// [POST
+    /// /v1/account/sessions/token](https://appwrite.io/docs/references/cloud/client-web/account#createSession)
+    /// endpoint to complete the login process. The link sent to the user's email
+    /// address is valid for 1 hour. If you are on a mobile device you can leave
+    /// the URL parameter empty, so that the login completion will be handled by
+    /// your Appwrite instance by default.
+    ///
+    /// A user is limited to 10 active sessions at a time by default. [Learn more
+    /// about session
+    /// limits](https://appwrite.io/docs/authentication-security#limits).
+    ///
+    pub async fn create_magic_url_token(
+        client: &Client,
+        user_id: &str,
+        email: &str,
+        url: Option<&str>,
+        phrase: Option<bool>,
+    ) -> Result<Token, Error> {
+        let api_path = "/account/token/magic-url";
+
+        let mut api_params = Map::new();
+        api_params.insert("userId".to_string(), json!(user_id));
+        api_params.insert("email".to_string(), json!(email));
+        if let Some(url) = url {
+            api_params.insert("url".to_string(), json!(url));
+        }
+        if let Some(phrase) = phrase {
+            api_params.insert("phrase".to_string(), json!(phrase));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .await?;
+
+        Ok(res.json().await?)
+    }
+
+    /// Create OAuth2 token
+    ///
+    /// Allow the user to login to their account using the OAuth2 provider of their
+    /// choice. Each OAuth2 provider should be enabled from the Appwrite console
+    /// first. Use the success and failure arguments to provide a redirect URL's
+    /// back to your app when login is completed.
+    ///
+    /// If authentication succeeds, `userId` and `secret` of a token will be
+    /// appended to the success URL as query parameters. These can be used to
+    /// create a new session using the [Create
+    /// session](https://appwrite.io/docs/references/cloud/client-web/account#createSession)
+    /// endpoint.
+    ///
+    /// A user is limited to 10 active sessions at a time by default. [Learn more
+    /// about session
+    /// limits](https://appwrite.io/docs/authentication-security#limits).
+    pub async fn create_oauth2_token(
+        client: &Client,
+        provider: OAuthProvider,
+        success: Option<&str>,
+        failure: Option<&str>,
+        scopes: Option<Vec<&str>>,
+    ) -> Result<(), Error> {
+        let api_path = format!("/account/token/oauth2/{}", json!(provider));
+
+        let mut api_params = Map::new();
+        if let Some(success) = success {
+            api_params.insert("success".to_string(), json!(success));
+        }
+        if let Some(failure) = failure {
+            api_params.insert("failure".to_string(), json!(failure));
+        }
+        if let Some(scopes) = scopes {
+            api_params.insert("scopes".to_string(), json!(scopes));
+        }
+        api_params.insert(
+            "project".to_string(),
+            json!(get_content_header_value(&client, "project")),
+        );
+
+        // let query = vec![];
+        // for (key, value) in api_params.iter() {}
+
+        let api_params = serde_json::Value::Object(api_params);
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let _res = client
+            .call(
+                HttpMethod::POST,
+                api_path.as_str(),
+                api_headers,
+                &api_params,
+                None,
+            )
+            .await?;
+        //todo ! return client.webauth(url);
+        Ok(())
+    }
+
+    // Create phone token
+    ///
+    /// Sends the user an SMS with a secret key for creating a session. If the
+    /// provided user ID has not be registered, a new user will be created. Use the
+    /// returned user ID and secret and submit a request to the [POST
+    /// /v1/account/sessions/token](https://appwrite.io/docs/references/cloud/client-web/account#createSession)
+    /// endpoint to complete the login process. The secret sent to the user's phone
+    /// is valid for 15 minutes.
+    ///
+    /// A user is limited to 10 active sessions at a time by default. [Learn more
+    /// about session
+    /// limits](https://appwrite.io/docs/authentication-security#limits).
+    pub async fn create_phone_token(
+        client: &Client,
+        user_id: &str,
+        phone: &str,
+    ) -> Result<Token, Error> {
+        let api_path = "/account/token/phone";
+
+        let api_params = json!({
+                "userId":user_id,
+                "phone":phone,
+            }
+        );
+
+        let mut api_headers = header::HeaderMap::new();
+        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+
+        let res = client
+            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
             .await?;
 
         Ok(res.json().await?)

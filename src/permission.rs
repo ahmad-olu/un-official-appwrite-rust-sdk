@@ -1,8 +1,9 @@
-struct Permission;
+pub struct Permission;
 
+///Must be one of: any, guests, users, user, team, member, label.
 impl Permission {
     /// Read permission for provided [role]
-    fn read(role: &str) -> String {
+    pub fn read(role: &str) -> String {
         format!("read(\"{}\")", role)
     }
 
@@ -10,22 +11,22 @@ impl Permission {
     ///
     /// This is an alias of update, delete, and possibly create.
     /// Don't use write in combination with update, delete, or create.
-    fn write(role: &str) -> String {
+    pub fn write(role: &str) -> String {
         format!("write(\"{}\")", role)
     }
 
     /// Create permission for provided [role]
-    fn create(role: &str) -> String {
+    pub fn create(role: &str) -> String {
         format!("create(\"{}\")", role)
     }
 
     /// Update permission for provided [role]
-    fn update(role: &str) -> String {
+    pub fn update(role: &str) -> String {
         format!("update(\"{}\")", role)
     }
 
     /// Delete permission for provided [role]
-    fn delete(role: &str) -> String {
+    pub fn delete(role: &str) -> String {
         format!("delete(\"{}\")", role)
     }
 }

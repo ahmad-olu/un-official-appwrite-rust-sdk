@@ -5,16 +5,16 @@ use serde_json::Value;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Index {
     /// Index Key.
-    key: String,
+    pub key: String,
     /// Index type.
     #[serde(rename = "type")]
-    index_type: String,
+    pub index_type: String,
     /// Index status. Possible values: `available`, `processing`, `deleting`, `stuck`, or `failed`
-    status: String,
+    pub status: String,
     /// Error message. Displays error generated on failure of creating or deleting an index.
-    error: String,
+    pub error: String,
     /// Index attributes.
-    attributes: Value,
+    pub attributes: Vec<Value>,
     /// Index orders.
-    orders: Option<Value>,
+    pub orders: Option<Value>,
 }

@@ -7,23 +7,23 @@ use super::preferences::Preferences;
 pub struct Team {
     /// Team ID.
     #[serde(rename = "$id")]
-    id: String,
+    pub id: String,
 
     /// Team creation date in ISO 8601 format.
     #[serde(rename = "$createdAt")]
-    created_at: String,
+    pub created_at: String,
 
     /// Team update date in ISO 8601 format.
     #[serde(rename = "$updatedAt")]
-    updated_at: String,
+    pub updated_at: String,
 
     /// Team name.
-    name: String,
+    pub name: String,
 
     /// Total number of team members.
-    total: u64,
+    pub total: u64,
 
     /// Team preferences as a key-value object
     #[serde(rename = "prefs")]
-    preferences: Preferences,
+    pub preferences: Preferences,
 }

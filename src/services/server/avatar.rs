@@ -1,15 +1,16 @@
+//! # Avatars
+//!
+//! The Avatars service aims to help you complete everyday tasks related to
+//! your app image, icons, and avatars.
+
 use crate::{
-    client::Client,
-    enums::{HttpMethod, ResponseType},
-    error::Error,
+    client::Client, enumm::HttpMethod, enums::flag::Flag, error::Error,
     utils::get_content_header_value,
 };
 use reqwest::header;
 use serde_json::json;
 
-/// The Avatars service aims to help you complete everyday tasks related to
-/// your app image, icons, and avatars.
-struct Avatars;
+pub struct Avatars;
 
 impl Avatars {
     /// Get browser icon
@@ -24,7 +25,7 @@ impl Avatars {
     /// with preserved aspect ratio. If both dimensions are 0, the API provides an
     /// image at source quality. If dimensions are not specified, the default size
     /// of image returned is 100x100px.
-    async fn get_browser(
+    pub async fn get_browser(
         client: &Client,
         code: &str,
         width: Option<u64>,
@@ -81,14 +82,14 @@ impl Avatars {
     /// image at source quality. If dimensions are not specified, the default size
     /// of image returned is 100x100px.
     ///
-    async fn get_credit_card(
+    pub async fn get_credit_card(
         client: &Client,
         code: &str,
         width: Option<u64>,
         height: Option<u64>,
         quality: Option<u64>,
     ) -> Result<Vec<u8>, Error> {
-        let api_path = "/avatars/credit-card/{code}".replace("{code}", code);
+        let api_path = "/avatars/credit-cards/{code}".replace("{code}", code);
 
         let mut api_params = serde_json::Map::new();
         if let Some(width_val) = width {
@@ -132,7 +133,7 @@ impl Avatars {
     /// Use this endpoint to fetch the favorite icon (AKA favicon) of any remote
     /// website URL.
     ///
-    async fn get_fav_icon(client: &Client, url: &str) -> Result<Vec<u8>, Error> {
+    pub async fn get_fav_icon(client: &Client, url: &str) -> Result<Vec<u8>, Error> {
         const API_PATH: &str = "/avatars/favicon";
 
         let api_params = serde_json::json!({
@@ -163,14 +164,14 @@ impl Avatars {
     /// image at source quality. If dimensions are not specified, the default size
     /// of image returned is 100x100px.
     ///
-    async fn get_flag(
+    pub async fn get_flag(
         client: &Client,
-        code: &str,
+        code: Flag,
         width: Option<u64>,
         height: Option<u64>,
         quality: Option<u64>,
     ) -> Result<Vec<u8>, Error> {
-        let api_path = "/avatars/flags/{code}".replace("{code}", code);
+        let api_path = format!("/avatars/flags/{}", json!(code));
 
         let mut api_params = serde_json::Map::new();
         if let Some(width_val) = width {
@@ -221,7 +222,7 @@ impl Avatars {
     /// image at source quality. If dimensions are not specified, the default size
     /// of image returned is 400x400px.
     ///
-    async fn get_image(
+    pub async fn get_image(
         client: &Client,
         url: &str,
         width: Option<u64>,
@@ -276,12 +277,12 @@ impl Avatars {
     /// image at source quality. If dimensions are not specified, the default size
     /// of image returned is 100x100px.
     ///
-    async fn get_initials(
+    pub async fn get_initials(
         client: &Client,
         name: Option<&str>,
-        background: Option<&str>,
         width: Option<u64>,
         height: Option<u64>,
+        background: Option<&str>,
     ) -> Result<Vec<u8>, Error> {
         const API_PATH: &str = "/avatars/initials";
 
@@ -324,12 +325,12 @@ impl Avatars {
     /// Converts a given plain text to a QR code image. You can use the query
     /// parameters to change the size and style of the resulting image.
     ///
-    async fn get_qr(
+    pub async fn get_qr(
         client: &Client,
         text: &str,
-        download: Option<bool>,
         size: Option<u64>,
         margin: Option<u64>,
+        download: Option<bool>,
     ) -> Result<Vec<u8>, Error> {
         const API_PATH: &str = "/avatars/qr";
 

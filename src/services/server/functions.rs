@@ -1,9 +1,15 @@
+//! # Functions
+//!
+//! The Functions Service allows you view, create and manage your Cloud
+//! Functions.
+
 use reqwest::header;
 use serde_json::{json, Map, Value};
 
 use crate::{
-    client::{ChunksResponse, Client},
-    enums::HttpMethod,
+    client::Client,
+    enumm::HttpMethod,
+    enums::{execution_method::ExecutionMethod, runtime::Runtime},
     error::Error,
     models::{
         deployment::Deployment, deployment_list::DeploymentList, execution::Execution,
@@ -14,16 +20,14 @@ use crate::{
     utils::get_content_header_value,
 };
 
-/// The Functions Service allows you view, create and manage your Cloud
-/// Functions.
-struct Functions;
+pub struct Functions;
 
 impl Functions {
     /// List functions
     ///
     /// Get a list of all the project"s functions. You can use the query params to
     /// filter your results.
-    async fn list(
+    pub async fn list(
         client: &Client,
         queries: Option<Vec<&str>>,
         search: Option<&str>,
@@ -57,11 +61,11 @@ impl Functions {
     /// [permissions](https://appwrite.io/docs/permissions) to allow different
     /// project users or team with access to execute the function using the client
     /// API.
-    async fn create(
+    pub async fn create(
         client: &Client,
         function_id: &str,
         name: &str,
-        runtime: &str,
+        runtime: Runtime,
         execute: Option<Vec<&str>>,
         events: Option<Vec<&str>>,
         schedule: Option<&str>,
@@ -166,7 +170,7 @@ impl Functions {
     /// List runtimes
     ///
     /// Get a list of all runtimes that are currently active on your instance.
-    async fn list_run_times(client: &Client) -> Result<RuntimeList, Error> {
+    pub async fn list_run_times(client: &Client) -> Result<RuntimeList, Error> {
         const API_PATH: &str = "/functions/runtimes";
         // let api_path = "/avatars/browsers/{code}".replace("{code}", code);
 
@@ -185,7 +189,7 @@ impl Functions {
     /// Get function
     ///
     /// Get a function by its unique ID.
-    async fn get(client: &Client, function_id: &str) -> Result<Func, Error> {
+    pub async fn get(client: &Client, function_id: &str) -> Result<Func, Error> {
         // const API_PATH: &str = "/functions/runtimes";
         let api_path = "/functions/{functionId}".replace("{functionId}", function_id);
 
@@ -210,11 +214,11 @@ impl Functions {
     /// Update function
     ///
     /// Update function by its unique ID.
-    async fn update(
+    pub async fn update(
         client: &Client,
         function_id: &str,
         name: &str,
-        runtime: Option<&str>,
+        runtime: Option<Runtime>,
         execute: Option<Vec<&str>>,
         events: Option<Vec<&str>>,
         schedule: Option<&str>,
@@ -306,7 +310,7 @@ impl Functions {
     /// Delete function
     ///
     /// Delete a function by its unique ID.
-    async fn delete(client: &Client, function_id: &str) -> Result<(), Error> {
+    pub async fn delete(client: &Client, function_id: &str) -> Result<(), Error> {
         // const API_PATH: &str = "/functions/runtimes";
         let api_path = "/functions/{functionId}".replace("{functionId}", function_id);
 
@@ -332,7 +336,7 @@ impl Functions {
     ///
     /// Get a list of all the project"s code deployments. You can use the query
     /// params to filter your results.
-    async fn list_deployments(
+    pub async fn list_deployments(
         client: &Client,
         function_id: &str,
         queries: Option<Vec<&str>>,
@@ -380,15 +384,16 @@ impl Functions {
     ///
     /// Use the "command" param to set the entrypoint used to execute your code.
     ///
-    async fn create_deployments(
+    pub async fn create_deployments(
         client: &Client,
         function_id: &str,
         // code: InputFile,
+        file_path: &str,
         activate: bool,
         entry_point: Option<&str>,
         commands: Option<&str>,
         on_progress: Option<fn(UploadProgress)>,
-    ) -> Result<ChunksResponse<Deployment>, Error> {
+    ) -> Result<Deployment, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/functions/{functionId}/deployments".replace("{functionId}", function_id);
 
@@ -403,9 +408,9 @@ impl Functions {
 
         let api_params = serde_json::Value::Object(api_params);
 
-        let res: ChunksResponse<Deployment> = client
-            .chunk_upload(
-                "file_path",
+        let res: Deployment = client
+            .chunk_upload_deployment(
+                file_path,
                 api_path.as_str(),
                 function_id.to_string(),
                 &api_params,
@@ -419,7 +424,7 @@ impl Functions {
     /// Get deployment
     ///
     /// Get a code deployment by its unique ID.
-    async fn get_deployments(
+    pub async fn get_deployments(
         client: &Client,
         function_id: &str,
         deployment_id: &str,
@@ -452,7 +457,7 @@ impl Functions {
     /// Update the function code deployment ID using the unique function ID. Use
     /// this endpoint to switch the code deployment that should be executed by the
     /// execution endpoint.
-    async fn update_deployments(
+    pub async fn update_deployments(
         client: &Client,
         function_id: &str,
         deployment_id: &str,
@@ -483,7 +488,7 @@ impl Functions {
     /// Delete deployment
     ///
     /// Delete a code deployment by its unique ID.
-    async fn delete_deployments(
+    pub async fn delete_deployments(
         client: &Client,
         function_id: &str,
         deployment_id: &str,
@@ -515,7 +520,7 @@ impl Functions {
     ///
     /// Create a new build for an Appwrite Function deployment. This endpoint can
     /// be used to retry a failed build.
-    async fn create_build(
+    pub async fn create_build(
         client: &Client,
         function_id: &str,
         deployment_id: &str,
@@ -549,7 +554,7 @@ impl Functions {
     ///
     /// Get a Deployment's contents by its unique ID. This endpoint supports range
     /// requests for partial or streaming file download.
-    async fn download_deployment(
+    pub async fn download_deployment(
         client: &Client,
         function_id: &str,
         deployment_id: &str,
@@ -584,7 +589,7 @@ impl Functions {
     ///
     /// Get a list of all the current user function execution logs. You can use the
     /// query params to filter your results.
-    async fn list_executions(
+    pub async fn list_executions(
         client: &Client,
         function_id: &str,
         queries: Option<Vec<&str>>,
@@ -625,13 +630,13 @@ impl Functions {
     /// current execution status. You can ping the `Get Execution` endpoint to get
     /// updates on the current execution status. Once this endpoint is called, your
     /// function execution process will start asynchronously.
-    async fn create_executions(
+    pub async fn create_executions(
         client: &Client,
         function_id: &str,
         body: Option<&str>,
         x_async: Option<bool>,
         path: Option<&str>,
-        method: Option<&str>,
+        method: Option<ExecutionMethod>,
         headers: Option<Map<String, Value>>, //should be Map
     ) -> Result<Execution, Error> {
         //const API_PATH: &str = "/functions";
@@ -642,7 +647,7 @@ impl Functions {
             api_params.insert("body".to_string(), json!(body));
         }
         if let Some(x_async) = x_async {
-            api_params.insert("async".to_string(), json!(x_async));
+            api_params.insert("pub async".to_string(), json!(x_async));
         }
         if let Some(path) = path {
             api_params.insert("path".to_string(), json!(path));
@@ -675,7 +680,7 @@ impl Functions {
     /// Get execution
     ///
     /// Get a function execution log by its unique ID.
-    async fn get_executions(
+    pub async fn get_executions(
         client: &Client,
         function_id: &str,
         execution_id: &str,
@@ -706,7 +711,7 @@ impl Functions {
     /// List variables
     ///
     /// Get a list of all variables of a specific function.
-    async fn list_variables(client: &Client, function_id: &str) -> Result<VariableList, Error> {
+    pub async fn list_variables(client: &Client, function_id: &str) -> Result<VariableList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/functions/{functionId}/variables".replace("{functionId}", function_id);
 
@@ -732,7 +737,7 @@ impl Functions {
     ///
     /// Create a new function environment variable. These variables can be accessed
     /// in the function at runtime as environment variables.
-    async fn create_variables(
+    pub async fn create_variables(
         client: &Client,
         function_id: &str,
         key: &str,
@@ -765,7 +770,7 @@ impl Functions {
     /// Get variable
     ///
     /// Get a variable by its unique ID.
-    async fn get_variables(
+    pub async fn get_variables(
         client: &Client,
         function_id: &str,
         variable_id: &str,
@@ -796,7 +801,7 @@ impl Functions {
     /// Update variable
     ///
     /// Update variable by its unique ID.
-    async fn update_variables(
+    pub async fn update_variables(
         client: &Client,
         function_id: &str,
         variable_id: &str,
@@ -835,7 +840,7 @@ impl Functions {
     /// Delete variable
     ///
     /// Delete a variable by its unique ID.
-    async fn delete_variables(
+    pub async fn delete_variables(
         client: &Client,
         function_id: &str,
         variable_id: &str,

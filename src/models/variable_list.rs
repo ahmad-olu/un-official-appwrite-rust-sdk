@@ -6,7 +6,7 @@ use super::variable::Variable;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct VariableList {
     /// Total number of variables documents that matched your query.
-    total: u64,
+    pub total: u64,
     /// List of variables.
-    variables: Vec<Variable>,
+    pub variables: Vec<Variable>,
 }

@@ -6,7 +6,7 @@ use super::user::User;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UserList {
     /// Total number of users documents that matched your query.
-    total: u64,
+    pub total: u64,
     /// List of users.
-    users: Vec<User>,
+    pub users: Vec<User>,
 }

@@ -5,5 +5,5 @@ use serde::{Deserialize, Serialize};
 pub struct AlgoPhpass {
     /// algo type.
     #[serde(rename = "type")]
-    algo_type: String,
+    pub algo_type: String,
 }

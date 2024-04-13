@@ -6,23 +6,23 @@ use serde_json::Value;
 pub struct Runtime {
     /// Runtime ID.
     #[serde(rename = "$id")]
-    id: String,
+    pub id: String,
 
     /// Runtime Name.
-    name: String,
+    pub name: String,
 
     /// Runtime version.
-    version: String,
+    pub version: String,
 
     /// Base Docker image used to build the runtime.
-    base: String,
+    pub base: String,
 
     /// Image name of Docker Hub.
-    image: String,
+    pub image: String,
 
     /// Name of the logo image.
-    logo: String,
+    pub logo: String,
 
     /// List of supported architectures.
-    supports: Value,
+    pub supports: Vec<Value>,
 }

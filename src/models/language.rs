@@ -4,10 +4,10 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Language {
     /// Language name.
-    name: String,
+    pub name: String,
     /// Language two-character ISO 639-1 codes.
-    code: String,
+    pub code: String,
     /// Language native name.
     #[serde(rename = "nativeName")]
-    native_name: String,
+    pub native_name: String,
 }

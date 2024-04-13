@@ -6,7 +6,7 @@ use super::index::Index;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct IndexList {
     /// Total number of indexes documents that matched your query.
-    total: u64,
+   pub     total: u64,
     /// List of indexes.
-    indexes: Vec<Index>,
+   pub     indexes: Vec<Index>,
 }

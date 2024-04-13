@@ -4,45 +4,45 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AttributeRelationship {
     /// Attribute Key.
-    key: String,
+    pub key: String,
 
     /// Attribute type.
     #[serde(rename = "type")]
-    attribute_type: String,
+    pub attribute_type: String,
 
     /// Attribute status. Possible values: `available`, `processing`, `deleting`, `stuck`, or `failed`
-    status: String,
+    pub status: String,
 
     /// Error message. Displays error generated on failure of creating or deleting an attribute.
-    error: String,
+    pub error: String,
 
     /// Is attribute required?
-    xrequired: bool,
+    pub xrequired: Option<bool>,
 
     /// Is attribute an array?
-    array: Option<bool>,
+    pub array: Option<bool>,
 
     /// The ID of the related collection.
     #[serde(rename = "relatedCollection")]
-    related_collection: String,
+    pub related_collection: String,
 
     /// The type of the relationship.
     #[serde(rename = "relationType")]
-    relation_type: String,
+    pub relation_type: String,
 
     /// Is the relationship two-way?
     #[serde(rename = "twoWay")]
-    two_way: bool,
+    pub two_way: bool,
 
     /// The key of the two-way relationship.
     #[serde(rename = "twoWayKey")]
-    two_way_key: String,
+    pub two_way_key: String,
 
     /// How deleting the parent document will propagate to child documents.
     #[serde(rename = "onDelete")]
-    on_delete: String,
+    pub on_delete: String,
 
     /// Whether this is the parent or child side of the relationship
     #[serde(rename = "type")]
-    side: String,
+    pub att_type: Option<String>,
 }

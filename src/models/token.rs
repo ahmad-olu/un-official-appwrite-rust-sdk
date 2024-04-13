@@ -5,19 +5,22 @@ use serde::{Deserialize, Serialize};
 pub struct Token {
     /// Token ID.
     #[serde(rename = "$id")]
-    id: String,
+    pub id: String,
 
     /// Token creation date in ISO 8601 format.
     #[serde(rename = "$createdAt")]
-    created_at: String,
+    pub created_at: String,
 
     /// User ID.
     #[serde(rename = "userId")]
-    user_id: String,
+    pub user_id: String,
 
     /// Token secret key. This will return an empty string unless the response is returned using an API key or as part of a webhook payload.
-    secret: String,
+    pub secret: String,
 
     /// Token expiration date in ISO 8601 format.
-    expire: String,
+    pub expire: String,
+
+    /// Security phrase of a token. Empty if security phrase was not requested when creating a token. It includes randomly generated phrase which is also sent in the external resource such as email.
+    pub phrase: String,
 }

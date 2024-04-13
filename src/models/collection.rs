@@ -8,37 +8,37 @@ use super::index::Index;
 pub struct Collection {
     /// Collection ID.
     #[serde(rename = "$id")]
-    id: String,
+    pub id: String,
 
     /// Collection creation date in ISO 8601 format.
     #[serde(rename = "$createdAt")]
-    created_at: String,
+    pub created_at: String,
 
     /// Collection update date in ISO 8601 format.
     #[serde(rename = "$updatedAt")]
-    updated_at: String,
+    pub updated_at: String,
 
     /// Collection permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
     #[serde(rename = "$permissions")]
-    permissions: Value,
+    pub permissions: Vec<Value>,
 
     /// Database ID.
     #[serde(rename = "databaseId")]
-    database_id: String,
+    pub database_id: String,
 
     /// Collection name.
-    name: String,
+    pub name: String,
 
     /// Collection enabled. Can be &#039;enabled&#039; or &#039;disabled&#039;. When disabled, the collection is inaccessible to users, but remains accessible to Server SDKs using API keys.
-    enabled: bool,
+    pub enabled: bool,
 
     /// Whether document-level permissions are enabled. [Learn more about permissions](https://appwrite.io/docs/permissions).
     #[serde(rename = "documentSecurity")]
-    document_security: bool,
+    pub document_security: bool,
 
     /// Collection attributes.
-    attributes: Value,
+    pub attributes: Vec<Value>,
 
     /// Collection indexes.
-    indexes: Vec<Index>,
+    pub indexes: Vec<Index>,
 }

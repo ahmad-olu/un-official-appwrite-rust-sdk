@@ -6,7 +6,7 @@ use super::document::Document;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DocumentList {
     /// Total number of document documents that matched your query.
-    total: u64,
+    pub total: u64,
     /// List of document.
-    documents: Vec<Document>,
+    pub documents: Vec<Document>,
 }

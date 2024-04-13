@@ -1,69 +1,211 @@
-use std::{fs, path::Path};
-
-use client::{Client, ClientBuilder};
-use error::Error;
-use reqwest::{
-    header::{self, CONTENT_TYPE},
-    multipart::{self, Part},
-    StatusCode,
-};
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
-
-use futures_util::{future, pin_mut, StreamExt};
-use services::server::users::Users;
-use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
-use url::Url;
-
-pub mod client;
-pub mod enums;
-pub mod error;
-pub mod id;
-pub mod models;
-pub mod permission;
-pub mod query;
-pub mod realtime;
-pub mod role;
-pub mod services;
-pub mod upload_progress;
-pub mod utils;
-
-const BASE_URL: &str = "https://cloud.appwrite.io";
+use unofficial_appwrite::{client::ClientBuilder, error::Error};
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    let  client = ClientBuilder::default()
-    .set_project("65d20d389f2b36778b8b")?
-    .set_key("ae07b88634eacfb42a2fc4c4a7f278d967d863385d677c054d5b8edddfdd6c98f0669fa0f03d2e8fa9b029024c7b2a7b69726fa1e32a68b6d11df3933a467a9b7160f5c149775e94814ea8f6ff3225ba1854fa069c6f0e130921e3e4f33d2839a54a5f618dfe7f85442458425f6fcbd090d48dd5b830f8881176caec65d0bb20")?
-    .build()?;
+    let client = ClientBuilder::default()
+        .set_project("...")?
+        .set_key("...")?
+        //.set_self_signed(false)?
+        .build()?;
 
-    let create_user = Users::create(
-        &client,
-        "22222346",
-        Some("bhd35@gmail.com"),
-        None,
-        Some("password"),
-        None,
-    )
-    .await?;
-    println!("{:?}", create_user);
+    //============= Storage =============>
 
-    // let data = serde_json::json!({
-    //     "userId":"unique()",
-    //     "email":"ace2@gmail.com",
-    //     "password":"password",
-    // });
+    // let create_buk = Storage::create_bucket(
+    //     &client,
+    //     ID::unique(),
+    //     "My Bucket",
+    //     None,
+    //     None,
+    //     None,
+    //     None,
+    //     None,
+    //     None,
+    //     None,
+    //     None,
+    // )
+    // .await?;
+    // dbg!(create_buk);
 
-    // let res = run_account_client(AccountUrl::Create, BASE_URL, Some(&data)).await?;
-    // println!("{:#?}", res);
+    // let create_file_less_than_5_mb = Storage::create_files(
+    //     &client,
+    //     "...",
+    //     ID::unique(),
+    //    r"C:\Users\pc\Downloads\Documents\test\WEB700 Assignment 5.pdf",
+    //     None,
+    //     None,
+    // )
+    // .await?;
+    // dbg!(create_file_less_than_5_mb);
 
-    // let res = run_account_client(AccountUrl::CreateAnonymousSession, BASE_URL, None::<&Value>)
-    //     .await
-    //     .expect("msg");
-    // println!("{:#?}", res);
+    // let create_file_greater_than_5_mb = Storage::create_files(
+    //     &client,
+    //     "...",
+    //     ID::unique(),
+    //     r"C:\Users\pc\Downloads\Documents\test\y2mate.com - Lovefool  Vintage Jazz Cardigans Cover ft Haley Reinhart_v720P.mp4",
+    //     None,
+    //     Some(|prog| {
+    //         println!("{}:{}:{}", prog.id, prog.progress, prog.size_uploaded);
+    //     }),
+    // )
+    // .await?;
+    // dbg!(create_file_greater_than_5_mb);
 
-    //
+    // let get_file =
+    //     Storage::get_file(&client, "...", "...").await?;
+    // dbg!(get_file);
 
+    // let get_file_download =
+    //     Storage::get_file_download(&client, "...", "...").await?;
+    // fs::write(
+    //     r"C:\Users\pc\Downloads\Documents\test\second\new.mp4",
+    //     get_file_download,
+    // )
+    // .expect("didn't work");
+    //============= Database ============>
+
+    // let list_db = Databases::list(&client, None, None).await?;
+    // dbg!(list_db);
+
+    // let create_db = Databases::create(&client, ID::unique(), "test_db", None).await?;
+    // dbg!(create_db);
+
+    // let create_collection = Databases::create_collection(
+    //     &client,
+    //     "...",
+    //     ID::unique(),
+    //     "test_collection_1",
+    //     Some(vec![
+    //         Permission::read("any").as_str(),
+    //         Permission::create("user:22222346").as_str(),
+    //     ]),
+    //     None,
+    //     None,
+    // )
+    // .await?;
+    // dbg!(create_collection);
+
+    // let queries: Query = Query;
+    // let queries = vec![queries.equal("name", vec![json!("test_collection_3")])];
+    // let list_collections =
+    //     Databases::list_collections(&client, "...", None, Some(queries)).await?;
+    // dbg!(list_collections);
+
+    // let att = Databases::create_boolean_attribute(
+    //     &client,
+    //     "...",
+    //     "...",
+    //     "isAdmin",
+    //     true,
+    //     None,
+    //     None,
+    // )
+    // .await?;
+    // dbg!(att);
+    // let name = Databases::create_string_attribute(
+    //     &client,
+    //     "...",
+    //     "...",
+    //     "title",
+    //     255,
+    //     true,
+    //     None,
+    //     None,
+    //     None,
+    // )
+    // .await?;
+    // dbg!(name);
+
+    // let _del_att = Databases::delete_attribute(
+    //     &client,
+    //     "...",
+    //     "...",
+    //     "isAdmin",
+    // )
+    // .await?;
+
+    // let list_doc = Databases::list_documents(
+    //     &client,
+    //     "...",
+    //     "...",
+    //     None,
+    // )
+    // .await?;
+    // dbg!(list_doc);
+
+    // let a = vec![Query::equal("title", json!("next1"))];
+
+    // let mut data = Map::new();
+    // data.insert(String::from("isAdmin"), json!(false));
+    // data.insert(String::from("title"), json!("next1"));
+    // let create_doc = Databases::create_documents(
+    //     &client,
+    //     "...",
+    //     "...",
+    //     ID::unique(),
+    //     data,
+    //     None,
+    // )
+    // .await?;
+    // dbg!(create_doc);
+
+    // let queries = vec![Query::search("name", "a")];
+    // println!("{queries:?}");
+    // let get_doc = Databases::list_documents(
+    //     &client,
+    //     "...",
+    //     "...",
+    //     Some(queries),
+    // )
+    // .await?;
+    // dbg!(get_doc);
+
+    // let relationship = Databases::create_relationship_attribute(
+    //     &client,
+    //     "...",
+    //     "...",
+    //     "...",
+    //     RelationshipType::OneToOne,
+    //     None,
+    //     Some("test_col_2"),
+    //     None,
+    //     None,
+    // )
+    // .await?;
+    // dbg!(relationship);
+
+    //============= User ================>
+
+    // let create_user = Users::create(
+    //     &client,
+    //     ID::unique(),
+    //     Some("olu3@gmail.com"),
+    //     None,
+    //     Some("password"),
+    //     Some("olu3"),
+    // )
+    // .await?;
+    // println!("{:?}", create_user);
+
+    // let user_list = Users::list(&client, None, None).await?;
+    // println!("{:#?}", user_list.users);
+
+    // let user_changed_password =
+    //     Users::update_password(&client, "...", "newPassword").await?;
+    // println!("{:#?}", user_changed_password);
+
+    // let user_changed_email =
+    //     Users::update_email(&client, "...", "new_olu@gmail.com").await?;
+    // println!("{:#?}", user_changed_email);
+
+    // let user_prefs = Users::get_prefs(&client, "...").await?;
+    // println!("{:#?}", user_prefs);
+
+    // let mut prefs = Map::new();
+    // prefs.insert("isAdmin".to_string(), json!(true));
+    // let user_update_prefs = Users::update_prefs(&client, "...", prefs).await?;
+    // println!("{:#?}", user_update_prefs);
+
+    //-------------------------------------------
     // fn prog(p: OnProgress) {
     //     println!("{:?}", p)
     // }
@@ -96,258 +238,4 @@ async fn main() -> Result<(), Error> {
     // println!("{}", format!("{:?}", a));
 
     Ok(())
-}
-
-enum AccountUrl {
-    Create,
-    CreateEmailSession,
-    CreateAnonymousSession,
-}
-
-/// HTTP methods.
-pub enum HttpMethod {
-    GET,
-    POST,
-    PUT,
-    DELETE,
-    PATCH,
-}
-
-impl AccountUrl {
-    fn url(&self) -> (&str, HttpMethod) {
-        match self {
-            AccountUrl::Create => ("/v1/account", HttpMethod::POST),
-            AccountUrl::CreateEmailSession => ("/v1/account/sessions/email", HttpMethod::POST),
-            AccountUrl::CreateAnonymousSession => {
-                ("/v1/account/sessions/anonymous", HttpMethod::POST)
-            }
-        }
-    }
-}
-
-async fn run_account_client<T: Serialize + ?Sized>(
-    url: AccountUrl,
-    base_url: &str,
-    json: Option<&T>,
-) -> Result<String, reqwest::Error> {
-    let acc = url.url();
-    let res = reqwest::Client::new();
-
-    let res = match acc.1 {
-        HttpMethod::GET => res.get(format!("{}{}", base_url, acc.0)),
-        HttpMethod::POST => res.post(format!("{}{}", base_url, acc.0)),
-        HttpMethod::PUT => res.put(format!("{}{}", base_url, acc.0)),
-        HttpMethod::DELETE => res.delete(format!("{}{}", base_url, acc.0)),
-        HttpMethod::PATCH => res.patch(format!("{}{}", base_url, acc.0)),
-    };
-
-    let res = match json {
-        Some(data) => res.json(data),
-        None => res.json(&serde_json::json!({})),
-    };
-
-    let res = res
-        .header(CONTENT_TYPE, "application/json")
-        .header("X-Appwrite-Project", "65d20d389f2b36778b8b")
-        .send()
-        .await?
-        .text()
-        .await?;
-    Ok(res)
-}
-
-#[derive(Debug)]
-struct OnProgress {
-    id: String,
-    progress: usize,
-    size_uploaded: usize,
-    chunks_total: usize,
-    chunks_uploaded: usize,
-}
-
-async fn create_file(on_progress: Option<fn(OnProgress)>) -> Result<File, AppWriteError> {
-    const CHUNK_SIZE: usize = 5 * 1024 * 1024; // 5 MB
-    const FILE_PART: &str =
-        r"C:\Users\pc\Documents\books\soft books\cheatsheet\AI-Neural-Networks.pdf";
-    const FILE_NAME: &str = "AI-Neural-Networks.pdf";
-
-    // const FILE_PART: &str = r"C:\Users\pc\Pictures\Imagine\6676892.jpg";
-    // const FILE_NAME: &str = "6676892.jpg";
-
-    let file = match fs::read(FILE_PART) {
-        Ok(size) => size,
-        Err(err) => return Err(AppWriteError::FileSizeError(err)),
-    };
-
-    let file_size = file.len();
-
-    // API Path Formation
-    let api_path = format!("/storage/buckets/{}/files", "65d20d5c8096032a03cd");
-    let base_url = "https://cloud.appwrite.io/v1";
-    let uri = format!("{}{}", base_url, api_path);
-
-    // File Size Check and Upload
-    if file_size <= CHUNK_SIZE {
-        // Single-request upload
-        let part = Part::bytes(file).file_name(FILE_NAME);
-        let form = multipart::Form::new()
-            .text("fileId", "unique()")
-            .part("file", part);
-
-        let file = reqwest::Client::new()
-            .post(uri)
-            .header(CONTENT_TYPE, "multipart/form-data; boundary=111122223333")
-            .header("X-Appwrite-Project", "65d20d389f2b36778b8b")
-            .multipart(form)
-            .send()
-            .await
-            .map_err(|e| AppWriteError::NetworkError(e))?
-            .json::<File>()
-            .await
-            .map_err(|e| AppWriteError::InvalidResponse(e))?;
-        return Ok(file);
-    }
-
-    // Large File Chunking
-    let mut offset: usize = 0;
-    let boundary = "111122223333";
-    let mut first_upload = true; // Track if it's the first upload for x-appwrite-id
-    let mut x_appwrite_id: Option<String> = None;
-
-    let mut res: Option<File> = None;
-
-    while offset < file_size {
-        let end = std::cmp::min(offset + CHUNK_SIZE, file_size);
-        let chunk = &file[offset..end];
-        let content_range = format!("bytes {}-{}/{}", offset, end - 1, file_size);
-        println!("{}", content_range);
-        // Build the multipart form request
-        let mut headers = header::HeaderMap::new();
-
-        let mut chunk_form = multipart::Form::new();
-
-        chunk_form = chunk_form
-            .text("fileId", "unique()")
-            .part("file", Part::bytes(chunk.to_vec()).file_name(FILE_NAME));
-
-        if !first_upload {
-            headers.insert(
-                "x-appwrite-id",
-                x_appwrite_id.clone().unwrap().as_str().parse().unwrap(),
-            );
-        }
-
-        let response = reqwest::Client::new()
-            .post(uri.clone())
-            .json(&serde_json::json!({
-                "permissions": &[] as &[String]
-            }))
-            .header(
-                reqwest::header::CONTENT_TYPE,
-                format!("multipart/form-data; boundary={}", boundary),
-            )
-            .header("X-Appwrite-Project", "65d20d389f2b36778b8b")
-            .header("Content-Range", content_range)
-            .headers(headers)
-            .multipart(chunk_form)
-            .send()
-            .await
-            .map_err(AppWriteError::NetworkError)?;
-
-        if response.status() != StatusCode::CREATED {
-            println!("{:#?}", response.text().await);
-            return Err(AppWriteError::AppwriteError(
-                "Invalid response from server".to_string(),
-            ));
-        }
-        let response = response
-            .json::<File>()
-            .await
-            .map_err(|_| AppWriteError::AppwriteError("Conversion to file error".to_string()))?;
-
-        if first_upload {
-            if let Some(id) = response.clone().id {
-                println!("id-----{}", id);
-                x_appwrite_id = Some(id);
-            }
-            first_upload = false;
-        }
-
-        if let Some(ref on_progress) = on_progress {
-            on_progress(OnProgress {
-                id: response.clone().id.unwrap(),
-                progress: std::cmp::min(offset, CHUNK_SIZE) / CHUNK_SIZE * 100,
-                size_uploaded: std::cmp::min(offset, CHUNK_SIZE),
-                chunks_total: response.chunks_total,
-                chunks_uploaded: response.chunks_uploaded,
-            });
-        }
-
-        res = Some(response.clone());
-
-        offset += CHUNK_SIZE;
-    }
-
-    Ok(res.unwrap())
-}
-
-/// File
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct File {
-    /// File ID.
-    #[serde(rename = "$id")]
-    id: Option<String>,
-    /// Bucket ID.
-    #[serde(rename = "bucketId")]
-    bucket_id: String,
-
-    /// File creation date in ISO 8601 format.
-    #[serde(rename = "$createdAt")]
-    created_at: String,
-
-    /// File update date in ISO 8601 format.
-    #[serde(rename = "$updatedAt")]
-    updated_at: String,
-
-    /// File permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
-    #[serde(rename = "$permissions")]
-    permissions: Vec<String>,
-
-    /// File name.
-    name: String,
-
-    /// File MD5 signature.
-    signature: String,
-
-    /// File mime type.
-    #[serde(rename = "mimeType")]
-    mime_type: String,
-
-    /// File original size in bytes.
-    #[serde(rename = "sizeOriginal")]
-    size_original: usize,
-
-    /// Total number of chunks available
-    #[serde(rename = "chunksTotal")]
-    chunks_total: usize,
-
-    /// Total number of chunks uploaded
-    #[serde(rename = "chunksUploaded")]
-    chunks_uploaded: usize,
-}
-
-#[derive(Debug)]
-enum AppWriteError {
-    //MissingParameter(String),
-    //InvalidParameter(String),
-    FileSizeError(std::io::Error),
-    NetworkError(reqwest::Error),
-    InvalidResponse(reqwest::Error),
-    AppwriteError(String),
-}
-
-impl std::fmt::Display for AppWriteError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
-    }
 }
