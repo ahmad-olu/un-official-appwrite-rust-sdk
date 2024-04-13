@@ -200,9 +200,9 @@ NOTE: for other examples. check out the official docs or sdk of official sdk as 
 -------
 You can use the following resources to learn more and get help
 
-🚀 Getting Started Tutorial - https://appwrite.io/docs/getting-started-for-server
-📜 Appwrite Docs - https://appwrite.io/docs
-💬 Discord Community - https://appwrite.io/discord
+- 🚀 Getting Started Tutorial - https://appwrite.io/docs/getting-started-for-server
+- 📜 Appwrite Docs - https://appwrite.io/docs
+- 💬 Discord Community - https://appwrite.io/discord
 
 ### What next
 ------
