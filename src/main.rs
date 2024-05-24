@@ -12,22 +12,22 @@ use unofficial_appwrite::{
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    let client = ClientBuilder::default()
-        .set_project("65d20d389f2b36778b8b")?
-        .set_key("ae07b88634eacfb42a2fc4c4a7f278d967d863385d677c054d5b8edddfdd6c98f0669fa0f03d2e8fa9b029024c7b2a7b69726fa1e32a68b6d11df3933a467a9b7160f5c149775e94814ea8f6ff3225ba1854fa069c6f0e130921e3e4f33d2839a54a5f618dfe7f85442458425f6fcbd090d48dd5b830f8881176caec65d0bb20")?
-        //.set_self_signed(false)?
-        .build()?;
+    // let client = ClientBuilder::default()
+    //     .set_project("65d20d389f2b36778b8b")?
+    //     .set_key("ae07b88634eacfb42a2fc4c4a7f278d967d863385d677c054d5b8edddfdd6c98f0669fa0f03d2e8fa9b029024c7b2a7b69726fa1e32a68b6d11df3933a467a9b7160f5c149775e94814ea8f6ff3225ba1854fa069c6f0e130921e3e4f33d2839a54a5f618dfe7f85442458425f6fcbd090d48dd5b830f8881176caec65d0bb20")?
+    //     //.set_self_signed(false)?
+    //     .build()?;
 
     //-----------------websocket
-    let stream = RealTime::subscribe(
-        &client,
-        vec!["databases.6618eec286a4ef198076.collections.6618ef06d269bf4110d4.documents"],
-    )
-    .await;
-    pin_mut!(stream);
-    while let Some(data) = stream.next().await {
-        println!("=====>{:?}<=====", data);
-    }
+    // let stream = RealTime::subscribe(
+    //     &client,
+    //     vec!["databases.6618eec286a4ef198076.collections.6618ef06d269bf4110d4.documents"],
+    // )
+    // .await;
+    // pin_mut!(stream);
+    // while let Some(data) = stream.next().await {
+    //     println!("=====>{:?}<=====", data);
+    // }
 
     // let queries = vec![Query::equal(r"$id", json!(vec!["6618ef06d269bf4110d4"]))];
 
