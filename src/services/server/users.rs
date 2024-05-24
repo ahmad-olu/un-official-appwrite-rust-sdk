@@ -31,7 +31,7 @@ impl Users {
     pub async fn list(
         client: &Client,
         queries: Option<Vec<String>>,
-        search: Option<&str>,
+        search: Option<String>,
     ) -> Result<UserList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users";
@@ -175,7 +175,7 @@ impl Users {
     pub async fn list_identities(
         client: &Client,
         queries: Option<Vec<String>>,
-        search: Option<&str>,
+        search: Option<String>,
     ) -> Result<IdentityList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/users/identities";

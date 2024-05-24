@@ -8,8 +8,13 @@ pub enum Error {
     Io(#[from] std::io::Error),
     #[error("network error: {0:?}")]
     Network(#[from] reqwest::Error),
-    #[error("AppWrite error: {0:?}")]
-    AppWriteError(AppWriteError),
+    #[error("AppWrite error:-> code:{code:?} -> message:{message:?} -> response:{response:?} -> type:{error_type:?}")]
+    AppWriteError {
+        message: String,
+        code: Option<u64>,
+        response: Option<String>,
+        error_type: Option<String>,
+    },
 
     #[error("invalid header name: {0:#?}")]
     HeaderName(#[from] InvalidHeaderName),
@@ -21,6 +26,12 @@ pub enum Error {
 
     #[error("Unknown error: probably a None Type")]
     Unknown,
+
+    #[error("wrong upload type")]
+    WrongUploadType,
+
+    #[error("Custom error: {0}")]
+    Custom(String),
 }
 
 #[derive(Debug, Deserialize)]
@@ -28,7 +39,7 @@ pub struct AppWriteError {
     /// Error message.
     pub message: String,
 
-    code: Option<u64>,
+    pub code: Option<u64>,
     pub response: Option<String>,
     /// Error type.
     ///

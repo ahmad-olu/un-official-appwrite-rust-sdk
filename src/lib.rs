@@ -135,7 +135,7 @@
 //!use unofficial_appwrite::client::ClientBuilder;
 //!use unofficial_appwrite::error::Error;
 //!use unofficial_appwrite::id::ID;
-//!use unofficial_appwrite::services::server::storage::Storage,;
+//!use unofficial_appwrite::services::server::storage::Storage;
 //!use std::fs;
 //!
 //!#[tokio::main]
@@ -195,7 +195,7 @@ pub mod id;
 pub mod models;
 pub mod permission;
 pub mod query;
-mod realtime;
+pub mod realtime;
 pub mod role;
 pub mod services;
 pub mod upload_progress;

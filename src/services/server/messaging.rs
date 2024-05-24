@@ -26,8 +26,8 @@ impl Messaging {
     /// Get a list of all messages from the current Appwrite project.
     pub async fn list_messages(
         client: &Client,
-        queries: Option<Vec<&str>>,
-        search: Option<&str>,
+        queries: Option<Vec<String>>,
+        search: Option<String>,
     ) -> Result<MessageList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/messaging/messages";
@@ -521,7 +521,7 @@ impl Messaging {
     pub async fn list_message_logs(
         client: &Client,
         message_id: &str,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
     ) -> Result<LogList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = format!("/messaging/messages/{}/logs", message_id);
@@ -554,7 +554,7 @@ impl Messaging {
     pub async fn list_targets(
         client: &Client,
         message_id: &str,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
     ) -> Result<TargetList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = format!("/messaging/messages/{}/targets", message_id);
@@ -586,7 +586,7 @@ impl Messaging {
     /// Get a list of all providers from the current Appwrite project.
     pub async fn list_providers(
         client: &Client,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
         search: Option<Vec<&str>>,
     ) -> Result<ProviderList, Error> {
         //const API_PATH: &str = "/functions";
@@ -1697,7 +1697,7 @@ impl Messaging {
     pub async fn list_provider_logs(
         client: &Client,
         provider_id: &str,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
     ) -> Result<LogList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = format!("/messaging/providers/{}/logs", provider_id);
@@ -1730,7 +1730,7 @@ impl Messaging {
     pub async fn list_subscriber_logs(
         client: &Client,
         subscriber_id: &str,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
     ) -> Result<LogList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = format!("/messaging/subscribers/{}/logs", subscriber_id);
@@ -1762,8 +1762,8 @@ impl Messaging {
     /// Get a list of all topics from the current Appwrite project.
     pub async fn list_topics(
         client: &Client,
-        queries: Option<Vec<&str>>,
-        search: Option<&str>,
+        queries: Option<Vec<String>>,
+        search: Option<String>,
     ) -> Result<TopicList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/messaging/topics";
@@ -1912,7 +1912,7 @@ impl Messaging {
     pub async fn list_topic_logs(
         client: &Client,
         topic_id: &str,
-        queries: Option<Vec<&str>>,
+        queries: Option<Vec<String>>,
     ) -> Result<LogList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = format!("/messaging/topics/{}/logs", topic_id);
@@ -1945,8 +1945,8 @@ impl Messaging {
     pub async fn list_subscribers(
         client: &Client,
         topic_id: &str,
-        queries: Option<Vec<&str>>,
-        search: Option<&str>,
+        queries: Option<Vec<String>>,
+        search: Option<String>,
     ) -> Result<SubscriberList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = format!("/messaging/topics/{}/subscribers", topic_id);

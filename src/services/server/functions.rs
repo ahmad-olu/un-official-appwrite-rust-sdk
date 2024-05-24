@@ -3,6 +3,7 @@
 //! The Functions Service allows you view, create and manage your Cloud
 //! Functions.
 
+use futures_util::Stream;
 use reqwest::header;
 use serde_json::{json, Map, Value};
 
@@ -14,7 +15,7 @@ use crate::{
     models::{
         deployment::Deployment, deployment_list::DeploymentList, execution::Execution,
         execution_list::ExecutionList, function::Func, function_list::FunctionList,
-        runtime_list::RuntimeList, variable::Variable, variable_list::VariableList,
+        runtime_list::RuntimeList, variable::Variable, variable_list::VariableList, UploadType,
     },
     upload_progress::UploadProgress,
     utils::get_content_header_value,
@@ -29,8 +30,8 @@ impl Functions {
     /// filter your results.
     pub async fn list(
         client: &Client,
-        queries: Option<Vec<&str>>,
-        search: Option<&str>,
+        queries: Option<Vec<String>>,
+        search: Option<String>,
     ) -> Result<FunctionList, Error> {
         const API_PATH: &str = "/functions";
         // let api_path = "/avatars/browsers/{code}".replace("{code}", code);
@@ -339,8 +340,8 @@ impl Functions {
     pub async fn list_deployments(
         client: &Client,
         function_id: &str,
-        queries: Option<Vec<&str>>,
-        search: Option<&str>,
+        queries: Option<Vec<String>>,
+        search: Option<String>,
     ) -> Result<DeploymentList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/functions/{functionId}/deployments".replace("{functionId}", function_id);
@@ -389,10 +390,10 @@ impl Functions {
         function_id: &str,
         // code: InputFile,
         file_path: &str,
+        file_name: String,
         activate: bool,
         entry_point: Option<&str>,
         commands: Option<&str>,
-        on_progress: Option<fn(UploadProgress)>,
     ) -> Result<Deployment, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/functions/{functionId}/deployments".replace("{functionId}", function_id);
@@ -408,17 +409,70 @@ impl Functions {
 
         let api_params = serde_json::Value::Object(api_params);
 
-        let res: Deployment = client
-            .chunk_upload_deployment(
+        let res: UploadType = client
+            .chunk_upload_file(
                 file_path,
                 api_path.as_str(),
                 function_id.to_string(),
                 &api_params,
-                on_progress,
+                file_name,
+                false,
             )
             .await?;
 
-        Ok(res)
+        match res {
+            UploadType::File(_) => Err(Error::WrongUploadType),
+            UploadType::Deployment(res) => Ok(res),
+        }
+    }
+
+    /// Create deployment
+    ///
+    /// Create a new function code deployment. Use this endpoint to upload a new
+    /// version of your code function. To execute your newly uploaded code, you"ll
+    /// need to update the function"s deployment to use your new deployment UID.
+    ///
+    /// This endpoint accepts a tar.gz file compressed with your code. Make sure to
+    /// include any dependencies your code has within the compressed file. You can
+    /// learn more about code packaging in the [Appwrite Cloud Functions
+    /// tutorial](https://appwrite.io/docs/functions).
+    ///
+    /// Use the "command" param to set the entrypoint used to execute your code.
+    ///
+    pub async fn create_deployments_streamed<'a>(
+        client: &'a Client,
+        function_id: &'a str,
+        // code: InputFile,
+        file_path: &'a str,
+        file_name: String,
+        activate: bool,
+        entry_point: Option<&'a str>,
+        commands: Option<&'a str>,
+    ) -> impl Stream<Item = Result<(UploadType, UploadProgress), Error>> + 'a {
+        //const API_PATH: &str = "/functions";
+        let api_path = "/functions/{functionId}/deployments".replace("{functionId}", function_id);
+
+        let mut api_params = Map::new();
+        api_params.insert("activate".to_string(), json!(activate));
+        if let Some(entry_point) = entry_point {
+            api_params.insert("entrypoint".to_string(), json!(entry_point));
+        }
+        if let Some(commands) = commands {
+            api_params.insert("commands".to_string(), json!(commands));
+        }
+
+        let api_params = serde_json::Value::Object(api_params);
+
+        client
+            .chunk_upload_file_streamed(
+                file_path,
+                api_path,
+                String::from(function_id),
+                api_params,
+                file_name,
+                true,
+            )
+            .await
     }
 
     /// Get deployment
@@ -592,8 +646,8 @@ impl Functions {
     pub async fn list_executions(
         client: &Client,
         function_id: &str,
-        queries: Option<Vec<&str>>,
-        search: Option<&str>,
+        queries: Option<Vec<String>>,
+        search: Option<String>,
     ) -> Result<ExecutionList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/functions/{functionId}/executions".replace("{functionId}", function_id);

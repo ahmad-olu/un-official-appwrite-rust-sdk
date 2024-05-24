@@ -1,13 +1,18 @@
 [package]
 name = "unofficial_appwrite"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
-description = "wrapper on appwrite api"
+description = "wrapper on appwrite api -> https://appwrite.io/docs"
 license = "MIT"
+homepage = "https://github.com/ahmad-olu/un-official-appwrite-rust-sdk"
+repository = "https://github.com/ahmad-olu/un-official-appwrite-rust-sdk"
+keywords = ["appwrite", "baas", "unofficial", "server"]
+category = ["Api binding", "Web programing"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+async-fn-stream = "0.2.2"
 futures-util = "0.3.30"
 reqwest = { version = "0.11.23", features = ["json", "multipart", "blocking"] }
 serde = { version = "1.0.195", features = ["derive"] }

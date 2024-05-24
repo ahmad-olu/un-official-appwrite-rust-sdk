@@ -32,7 +32,7 @@ impl Databases {
     /// the search parameter to filter your results.
     pub async fn list(
         client: &Client,
-        search: Option<&str>,
+        search: Option<String>,
         queries: Option<Vec<String>>,
     ) -> Result<DatabaseList, Error> {
         const API_PATH: &str = "/databases";
@@ -181,7 +181,7 @@ impl Databases {
     pub async fn list_collections(
         client: &Client,
         database_id: &str,
-        search: Option<&str>,
+        search: Option<String>,
         queries: Option<Vec<String>>,
     ) -> Result<CollectionList, Error> {
         //const API_PATH: &str = "/databases";

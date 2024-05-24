@@ -23,8 +23,8 @@ impl Teams {
     /// use the parameters to filter your results.
     pub async fn list(
         client: &Client,
-        queries: Option<Vec<&str>>,
-        search: Option<&str>,
+        queries: Option<Vec<String>>,
+        search: Option<String>,
     ) -> Result<TeamList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/teams";
@@ -167,8 +167,8 @@ impl Teams {
     pub async fn list_memberships(
         client: &Client,
         team_id: &str,
-        queries: Option<Vec<&str>>,
-        search: Option<&str>,
+        queries: Option<Vec<String>>,
+        search: Option<String>,
     ) -> Result<MembershipList, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/teams/{teamId}/memberships".replace("{teamId}", team_id);

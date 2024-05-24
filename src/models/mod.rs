@@ -86,3 +86,9 @@ pub mod user;
 pub mod user_list;
 pub mod variable;
 pub mod variable_list;
+
+#[derive(Debug)]
+pub enum UploadType {
+    File(self::file::File),
+    Deployment(self::deployment::Deployment),
+}
