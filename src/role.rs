@@ -17,7 +17,7 @@ impl Role {
         if status.is_none() {
             return format!("user:{}", id);
         }
-        format!("user:{}/{}", id, status.unwrap())
+        format!("user:{}/{}", id, status.unwrap_or("".to_string()))
     }
 
     /// Grants access to any authenticated or anonymous user.
@@ -28,7 +28,7 @@ impl Role {
         if status.is_none() {
             return String::from("users");
         }
-        format!("users/{}", status.unwrap())
+        format!("users/{}", status.unwrap_or("".to_string()))
     }
 
     /// Grants access to any guest user without a session.
@@ -46,7 +46,7 @@ impl Role {
         if role.is_none() {
             return format!("team:{}", id);
         }
-        format!("team:{}/{}", id, role.unwrap())
+        format!("team:{}/{}", id, role.unwrap_or("".to_string()))
     }
 
     /// Grants access to a specific member of a team.

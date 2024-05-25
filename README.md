@@ -39,7 +39,7 @@ use unofficial_appwrite::id::ID;
 async fn main() -> Result<(), Error> {
     let  client = ClientBuilder::default()
     .set_endpoint("http://[HOSTNAME_OR_IP]/v1") // Make sure your endpoint is accessible
-    .set_project("5ff3379a01d25")? // Your project ID
+    .set_project("5ff...")? // Your project ID
     .set_key("cd868c7af8bdc893b4...93b7535db89")?
     //.set_self_signed(false)? // Use only on dev mode with a self-signed SSL cert
     .build()?;
@@ -71,7 +71,7 @@ use serde_json::{json, Map};
 async fn main() -> Result<(), Error> {
     let  client = ClientBuilder::default()
     .set_endpoint("http://[HOSTNAME_OR_IP]/v1") // Make sure your endpoint is accessible
-    .set_project("5ff3379a01d25")? // Your project ID
+    .set_project("5ff33...")? // Your project ID
     .set_key("cd868c7af8bdc893b4...93b7535db89")?
     //.set_self_signed(false)? // Use only on dev mode with a self-signed SSL cert
     .build()?;
@@ -94,8 +94,9 @@ use unofficial_appwrite::error::Error;
 use serde_json::{json, Map};
 use unofficial_appwrite::id::ID;
 use unofficial_appwrite::services::server::databases::Databases;
-use permission::Permission;
+use unofficial_appwrite::permission::Permission;
 use unofficial_appwrite::enums::relationship_type::RelationshipType;
+use unofficial_appwrite::query::Query;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -113,8 +114,8 @@ async fn main() -> Result<(), Error> {
     let create_collection = Databases::create_collection(
         &client,"6618...76",ID::unique(),"test_collection_1",
         Some(vec![
-            Permission::read("any").as_str(),
-            Permission::create("user:22222346").as_str(),
+            Permission::read("any"),
+            Permission::create("user:22222346"),
         ]),
         None,None,).await?;
     dbg!(create_collection);
@@ -138,6 +139,17 @@ async fn main() -> Result<(), Error> {
         RelationshipType::OneToOne,
         None,Some("test_col_2"),None,None,).await?;
     dbg!(relationship);
+
+    let queries = vec![Query::equal(r"$id", json!(vec!["6618ef06d269bf4110d4"]))];
+
+    let col_list = Databases::list_collections(
+        &client,
+        "6618eec286a4ef198076",
+        Some(Query::equal(r"$id", json!(vec!["6619010ddab914e6b01e"]))),
+        Some(queries),
+    )
+    .await?;
+    dbg!(col_list);
 }
 
 ```
@@ -147,7 +159,8 @@ async fn main() -> Result<(), Error> {
 use unofficial_appwrite::client::ClientBuilder;
 use unofficial_appwrite::error::Error;
 use unofficial_appwrite::id::ID;
-use unofficial_appwrite::services::server::storage::Storage,;
+use unofficial_appwrite::services::server::storage::Storage;
+use futures_util::{pin_mut, StreamExt};
 use std::fs;
 
 #[tokio::main]
@@ -164,21 +177,34 @@ let create_buk = Storage::create_bucket(
         &client,ID::unique(),"My Bucket",None,None,None,None,None,None,None,None,).await?;
     dbg!(create_buk);
 
-    let create_file_less_than_5_mb = Storage::create_files(
-        &client,"661...e9",ID::unique(),
-       r"C:\Users\pc\Downloads\Documents\test\WEB700 Assignment 5.pdf",None, None,
-    ).await?;
-    dbg!(create_file_less_than_5_mb);
 
-    let create_file_greater_than_5_mb = Storage::create_files(
-        &client,"661...e9",ID::unique(),
-        r"C:\Users\pc\Downloads\Documents\test\Lovefool Vintage Jazz Cardigans Cover ft Haley Reinhart.mp4",None,
-        Some(|prog| {
-            println!("{}:{}:{}", prog.id, prog.progress, prog.size_uploaded);
-        }),
+    let create_file_with_no_progress = Storage::create_files(
+        &client,
+        "65d20d5c8096032a03cd",
+        ID::unique(),
+        r"c:\Users\pc\Downloads\Video\New folder (2)\Folder 1\Ultimate Flutter for Cross-Platform App Development (Temidayo Adefioye) (Z-Library).pdf",
+        String::from("sgs_deadlines_next.pdf"),
+        None,
     )
     .await?;
-    dbg!(create_file_greater_than_5_mb);
+    dbg!(create_file_with_no_progress);
+
+    //or
+    let create_file_and_stream_upload_progress = Storage::create_files_streamed(
+        &client,
+        "65d20d5c8096032a03cd",
+        ID::unique(),
+        r"c:\Users\pc\Downloads\Video\New folder (2)\Folder 1\Ultimate Flutter for Cross-Platform App Development (Temidayo Adefioye) (Z-Library).pdf",
+        String::from("sgs_deadlines_next_3.pdf"),
+        None,
+    )
+    .await;
+    pin_mut!(create_file_and_stream_upload_progress);
+    while let Some(data) = create_file_and_stream_upload_progress.next().await {
+        let res = data.unwrap();
+        let file = res.0;
+        println!("==>{:?}===>{:?}", file, res.1);
+    }
 
     let get_file =
         Storage::get_file(&client, "661...e9", "661...71e").await?;
@@ -194,6 +220,56 @@ let create_buk = Storage::create_bucket(
 }
 
 ```
+#### Realtime
+```rust
+use futures_util::{pin_mut, StreamExt};
+use unofficial_appwrite::{client::ClientBuilder, error::Error, realtime::RealTime};
+
+#[tokio::main]
+async fn main() -> Result<(), Error> {
+
+     let  client = ClientBuilder::default()
+    .set_endpoint("http://[HOSTNAME_OR_IP]/v1") // Make sure your endpoint is accessible
+    .set_project("5ff3...")? // Your project ID
+    .set_key("cd868c7af8bdc893b4...93b7535db89")?
+    //.set_self_signed(false)? // Use only on dev mode with a self-signed SSL cert
+    .build()?;
+
+ let stream = RealTime::subscribe(
+        &client,
+        vec!["databases.6618eec286a4ef198076.collections.6618ef06d269bf4110d4.documents"],
+    )
+    .await;
+    pin_mut!(stream);
+    while let Some(data) = stream.next().await {
+        println!("=====>{:?}<=====", data);
+    }
+}
+```
+
+#### Utilities
+##### Queries
+```rust
+    use unofficial_appwrite::query::Query;
+    Query::equal(r"$id", json!(vec!["6618ef06d269bf4110d4"]))
+```
+##### Id
+```rust
+    use unofficial_appwrite::id::ID;
+    ID::unique();
+```
+##### Permission
+```rust
+    use unofficial_appwrite::permission::Permission;
+    Permission::read("any"),
+    Permission::create("user:22222346"),
+```
+##### Role
+```rust
+    use unofficial_appwrite::role::Role;
+    Role::any()
+```
+
 NOTE: for other examples. check out the official docs or sdk of official sdk as a guide to using this sdk. 
 
 ### Learn more
@@ -207,9 +283,6 @@ You can use the following resources to learn more and get help
 ### What next
 ------
 - Clean up some of the excess code
-- Make the query parameters work
-- Work on the Realtime feature
-- work on making the upload progress better while uploading file `Storage::create_files(...)`
 
 ### contributing
 ------

@@ -224,7 +224,7 @@ impl Databases {
         database_id: &str,
         collection_id: &str,
         name: &str,
-        permissions: Option<Vec<&str>>,
+        permissions: Option<Vec<String>>,
         document_security: Option<bool>,
         enabled: Option<bool>,
     ) -> Result<Collection, Error> {
@@ -302,7 +302,7 @@ impl Databases {
         database_id: &str,
         collection_id: &str,
         name: &str,
-        permissions: Option<Vec<&str>>,
+        permissions: Option<Vec<String>>,
         document_security: Option<bool>,
         enabled: Option<bool>,
     ) -> Result<Collection, Error> {
@@ -1469,7 +1469,7 @@ impl Databases {
         collection_id: &str,
         document_id: &str,
         data: Map<String, Value>,
-        permissions: Option<Vec<&str>>,
+        permissions: Option<Vec<String>>,
     ) -> Result<Document, Error> {
         //const API_PATH: &str = "/databases";
         let api_path = "/databases/{databaseId}/collections/{collectionId}/documents"
@@ -1551,7 +1551,7 @@ impl Databases {
         collection_id: &str,
         document_id: &str,
         data: Option<Map<String, Value>>,
-        permissions: Option<Vec<&str>>,
+        permissions: Option<Vec<String>>,
     ) -> Result<Document, Error> {
         //const API_PATH: &str = "/databases";
         let api_path = "/databases/{databaseId}/collections/{collectionId}/documents/{documentId}"

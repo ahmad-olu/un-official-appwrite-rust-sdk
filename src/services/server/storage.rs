@@ -60,7 +60,7 @@ impl Storage {
         client: &Client,
         bucket_id: &str,
         name: &str,
-        permissions: Option<Vec<&str>>,
+        permissions: Option<Vec<String>>,
         file_security: Option<bool>,
         enabled: Option<bool>,
         maximum_file_size: Option<usize>,
@@ -148,7 +148,7 @@ impl Storage {
         client: &Client,
         bucket_id: &str,
         name: &str,
-        permissions: Option<Vec<&str>>,
+        permissions: Option<Vec<String>>,
         file_security: Option<bool>,
         enabled: Option<bool>,
         maximum_file_size: Option<usize>,
@@ -298,7 +298,7 @@ impl Storage {
         file_id: &str,
         file_path: &str,
         file_name: String,
-        permissions: Option<Vec<&str>>,
+        permissions: Option<Vec<String>>,
     ) -> Result<File, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}/files".replace("{bucketId}", bucket_id);
@@ -353,7 +353,7 @@ impl Storage {
         file_id: &'a str,
         file_path: &'a str,
         file_name: String,
-        permissions: Option<Vec<&str>>,
+        permissions: Option<Vec<String>>,
     ) -> impl Stream<Item = Result<(UploadType, UploadProgress), Error>> + 'a {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}/files".replace("{bucketId}", bucket_id);
@@ -414,7 +414,7 @@ impl Storage {
         bucket_id: &str,
         file_id: &str,
         name: Option<&str>,
-        permissions: Option<Vec<&str>>,
+        permissions: Option<Vec<String>>,
     ) -> Result<File, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}/files/{fileId}"
