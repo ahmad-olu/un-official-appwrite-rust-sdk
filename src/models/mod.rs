@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 pub mod algo_argon2;
 pub mod algo_bcrypt;
 pub mod algo_md5;
@@ -87,7 +89,7 @@ pub mod user_list;
 pub mod variable;
 pub mod variable_list;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum UploadType {
     File(self::file::File),
     Deployment(self::deployment::Deployment),
