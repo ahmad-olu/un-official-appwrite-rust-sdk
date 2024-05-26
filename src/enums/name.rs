@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub enum Name {
+    #[default]
     #[serde(rename = "v1-database")]
     V1Database,
     #[serde(rename = "v1-deletes")]

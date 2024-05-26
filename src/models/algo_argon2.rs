@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// AlgoArgon2
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct AlgoArgon2 {
     /// algo type.
     #[serde(rename = "type")]

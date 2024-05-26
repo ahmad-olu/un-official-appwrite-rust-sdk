@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::user::User;
 
 /// User List
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct UserList {
     /// Total number of users documents that matched your query.
     pub total: u64,

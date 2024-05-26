@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// AttributeEmail
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct AttributeEmail {
     /// Attribute Key.
     pub key: String,

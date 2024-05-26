@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// AttributeIP
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct AttributeIp {
     /// Attribute Key.
     pub key: String,

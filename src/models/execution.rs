@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::headers::Headers;
 
 /// Execution
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Execution {
     /// Execution ID.
     #[serde(rename = "$id")]

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Deployment
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Deployment {
     /// Deployment ID.
     #[serde(rename = "$id")]

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Token
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Token {
     /// Token ID.
     #[serde(rename = "$id")]

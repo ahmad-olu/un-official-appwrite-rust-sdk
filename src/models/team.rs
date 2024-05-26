@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::preferences::Preferences;
 
 /// Team
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Team {
     /// Team ID.
     #[serde(rename = "$id")]

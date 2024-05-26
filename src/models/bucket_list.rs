@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::bucket::Bucket;
 
 /// Buckets List
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct BucketList {
     /// Total number of buckets documents that matched your query.
     pub total: u64,

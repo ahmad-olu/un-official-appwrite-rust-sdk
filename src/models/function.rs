@@ -4,7 +4,7 @@ use serde_json::Value;
 use super::variable::Variable;
 
 /// Func
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Func {
     /// Function ID.
     #[serde(rename = "$id")]

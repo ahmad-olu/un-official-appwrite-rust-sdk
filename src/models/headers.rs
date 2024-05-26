@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Headers
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Headers {
     /// Header name.
     pub name: String,

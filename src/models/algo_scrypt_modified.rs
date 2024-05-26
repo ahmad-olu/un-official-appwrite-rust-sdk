@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// AlgoScryptModified
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct AlgoScryptModified {
     /// algo type.
     #[serde(rename = "type")]

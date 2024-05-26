@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::target::Target;
 
 /// Target List
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct TargetList {
     /// Total number of targets documents that matched your query.
     total: usize,

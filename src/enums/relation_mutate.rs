@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub enum RelationMutate {
+    #[default]
     #[serde(rename = "cascade")]
     Cascade,
     #[serde(rename = "restrict")]

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// AttributeString
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct AttributeRelationship {
     /// Attribute Key.
     pub key: String,

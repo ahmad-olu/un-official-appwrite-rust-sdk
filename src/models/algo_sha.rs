@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// AlgoSHA
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct AlgoSha {
     /// algo type.
     #[serde(rename = "type")]

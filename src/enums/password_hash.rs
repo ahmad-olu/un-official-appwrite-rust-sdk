@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub enum PasswordHash {
+    #[default]
     #[serde(rename = "sha1")]
     Sha1,
     #[serde(rename = "sha224")]

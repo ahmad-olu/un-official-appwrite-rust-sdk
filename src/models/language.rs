@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Language
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Language {
     /// Language name.
     pub name: String,

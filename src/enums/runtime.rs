@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub enum Runtime {
+    #[default]
     #[serde(rename = "node-14.5")]
     Node145,
     #[serde(rename = "node-16.0")]

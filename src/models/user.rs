@@ -4,7 +4,7 @@ use serde_json::Value;
 use super::{preferences::Preferences, target::Target};
 
 /// User
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct User {
     /// User ID.
     #[serde(rename = "$id")]

@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::language::Language;
 
 /// Languages List
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct LanguageList {
     /// Total number of languages documents that matched your query.
     pub total: u64,

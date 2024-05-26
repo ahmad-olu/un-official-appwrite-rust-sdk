@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Country
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Country {
     /// Country name.
     pub name: String,

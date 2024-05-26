@@ -4,7 +4,7 @@ use serde_json::Value;
 use super::index::Index;
 
 /// Collection
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Collection {
     /// Collection ID.
     #[serde(rename = "$id")]

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// File
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct File {
     /// File ID.
     #[serde(rename = "$id")]

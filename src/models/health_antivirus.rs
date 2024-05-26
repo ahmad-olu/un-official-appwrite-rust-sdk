@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Health Antivirus
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct HealthAntivirus {
     /// Antivirus version.
     pub version: String,

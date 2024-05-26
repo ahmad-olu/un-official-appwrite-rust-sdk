@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub enum IndexType {
+    #[default]
     #[serde(rename = "key")]
     Key,
     #[serde(rename = "fulltext")]

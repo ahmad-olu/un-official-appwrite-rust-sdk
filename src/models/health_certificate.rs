@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Health Certificate
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct HealthCertificate {
     /// Certificate name
     pub name: String,

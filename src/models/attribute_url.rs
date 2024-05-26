@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// AttributeURL
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct AttributeUrl {
     /// Attribute Key.
     pub key: String,

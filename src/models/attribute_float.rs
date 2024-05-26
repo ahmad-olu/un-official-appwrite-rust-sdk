@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// AttributeFloat
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct AttributeFloat {
     /// Attribute Key.
     pub key: String,

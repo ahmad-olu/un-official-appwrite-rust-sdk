@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// MFA Challenge
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct MfaChallenge {
     /// Token ID.
     #[serde(rename = "$id")]

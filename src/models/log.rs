@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Log
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Log {
     /// Event name.
     pub event: String,

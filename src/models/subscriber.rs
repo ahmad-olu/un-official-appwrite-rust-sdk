@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::target::Target;
 
 /// Subscriber
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Subscriber {
     /// Subscriber ID.
     #[serde(rename = "$id")]

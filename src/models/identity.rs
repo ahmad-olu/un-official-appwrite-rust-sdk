@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Identity
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Identity {
     /// Identity ID.
     #[serde(rename = "$id")]

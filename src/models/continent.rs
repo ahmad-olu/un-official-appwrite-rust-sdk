@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Continent
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Continent {
     /// continent name.
     pub name: String,

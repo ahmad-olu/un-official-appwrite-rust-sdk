@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// AttributeBoolean
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct AttributeBoolean {
     /// Attribute Key.
     pub key: String,

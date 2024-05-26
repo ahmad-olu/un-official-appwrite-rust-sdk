@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Health Status
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct HealthStatus {
     /// Name of the service.
     pub name: String,

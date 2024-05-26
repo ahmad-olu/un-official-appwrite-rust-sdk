@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Currency
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Currency {
     /// Currency symbol.
     pub symbol: String,

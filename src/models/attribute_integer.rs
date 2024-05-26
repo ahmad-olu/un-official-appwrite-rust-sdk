@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// AttributeInteger
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct AttributeInteger {
     /// Attribute Key.
     pub key: String,

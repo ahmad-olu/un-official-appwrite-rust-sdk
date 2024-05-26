@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Progress of a File Upload
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct UploadProgress {
     /// ID of the file.
     #[serde(rename = "$id")]

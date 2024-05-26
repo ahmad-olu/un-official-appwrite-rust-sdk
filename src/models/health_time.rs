@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Health Time
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct HealthTime {
     /// Current unix timestamp on trustful remote server.
     #[serde(rename = "remoteTime")]

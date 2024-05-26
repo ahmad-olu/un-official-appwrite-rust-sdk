@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Phone
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Phone {
     /// Phone code.
     pub code: String,

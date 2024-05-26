@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::continent::Continent;
 
 /// Continent List
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct ContinentList {
     /// Total number of continents documents that matched your query.
     pub total: u64,

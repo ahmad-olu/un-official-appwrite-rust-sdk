@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::index::Index;
 
 /// Indexes List
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct IndexList {
     /// Total number of indexes documents that matched your query.
    pub     total: u64,

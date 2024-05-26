@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::topic::Topic;
 
 /// Topic List
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct TopicList {
     /// Total number of topics documents that matched your query.
     pub total: usize,

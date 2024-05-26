@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Locale
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct Locale {
     /// User IP address.
     pub ip: String,

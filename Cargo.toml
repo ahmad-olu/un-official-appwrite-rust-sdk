@@ -1,6 +1,6 @@
 [package]
 name = "unofficial_appwrite"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 description = "wrapper on appwrite api -> https://appwrite.io/docs"
 license = "MIT"
@@ -8,6 +8,8 @@ homepage = "https://github.com/ahmad-olu/un-official-appwrite-rust-sdk"
 repository = "https://github.com/ahmad-olu/un-official-appwrite-rust-sdk"
 keywords = ["appwrite", "baas", "unofficial", "server"]
 category = ["Api binding", "Web programing"]
+exclude = ["/src/main.rs"]
+authors = ["Ahmad <ahmadolu001@gmail.com>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

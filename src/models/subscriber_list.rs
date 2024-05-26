@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::subscriber::Subscriber;
 
 /// Subscriber List
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct SubscriberList {
     /// Total number of subscribers documents that matched your query.
     pub total: usize,
