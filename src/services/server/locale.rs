@@ -2,9 +2,8 @@
 ///!
 ///! The Locale service allows you to customize your app based on your users&#039;
 ///! location.
-use reqwest::header;
-
 use crate::{
+    api_params, app_json_header,
     client::Client,
     enumm::HttpMethod,
     error::Error,
@@ -30,10 +29,9 @@ impl Locale {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale";
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
@@ -50,10 +48,9 @@ impl Locale {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale/codes";
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
@@ -70,10 +67,9 @@ impl Locale {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale/continents";
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
@@ -90,10 +86,9 @@ impl Locale {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale/countries";
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
@@ -110,10 +105,9 @@ impl Locale {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale/countries/eu";
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
@@ -130,10 +124,9 @@ impl Locale {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale/countries/phones";
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
@@ -151,10 +144,9 @@ impl Locale {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale/currencies";
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
@@ -171,10 +163,9 @@ impl Locale {
         //const API_PATH: &str = "/functions";
         let api_path = "/locale/languages";
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(HttpMethod::GET, api_path, api_headers, &api_params, None)

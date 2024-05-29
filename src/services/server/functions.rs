@@ -4,10 +4,10 @@
 //! Functions.
 
 use futures_util::Stream;
-use reqwest::header;
-use serde_json::{json, Map, Value};
+use serde_json::{Map, Value};
 
 use crate::{
+    api_params, app_json_header,
     client::Client,
     enumm::HttpMethod,
     enums::{execution_method::ExecutionMethod, runtime::Runtime},
@@ -34,20 +34,13 @@ impl Functions {
         search: Option<String>,
     ) -> Result<FunctionList, Error> {
         const API_PATH: &str = "/functions";
-        // let api_path = "/avatars/browsers/{code}".replace("{code}", code);
 
-        let mut api_params = serde_json::Map::new();
-        if let Some(queries) = queries {
-            api_params.insert("queries".to_string(), json!(queries));
-        }
-        if let Some(search) = search {
-            api_params.insert("search".to_string(), json!(search));
-        }
+        let api_params = api_params!(
+            "queries"=> queries,
+            "search"=>search,
+        );
 
-        let api_params = serde_json::Value::Object(api_params);
-
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(HttpMethod::GET, API_PATH, api_headers, &api_params, None)
@@ -86,80 +79,31 @@ impl Functions {
         template_branch: Option<&str>,
     ) -> Result<Func, Error> {
         const API_PATH: &str = "/functions";
-        // let api_path = "/avatars/browsers/{code}".replace("{code}", code);
 
-        let mut api_params = Map::new();
-        api_params.insert("functionId".to_string(), json!(function_id));
-        api_params.insert("name".to_string(), json!(name));
-        api_params.insert("runtime".to_string(), json!(runtime));
-        if let Some(execute) = execute {
-            api_params.insert("execute".to_string(), json!(execute));
-        }
-        if let Some(events) = events {
-            api_params.insert("events".to_string(), json!(events));
-        }
-        if let Some(schedule) = schedule {
-            api_params.insert("schedule".to_string(), json!(schedule));
-        }
-        if let Some(timeout) = timeout {
-            api_params.insert("timeout".to_string(), json!(timeout));
-        }
-        if let Some(enabled) = enabled {
-            api_params.insert("enabled".to_string(), json!(enabled));
-        }
-        if let Some(logging) = logging {
-            api_params.insert("logging".to_string(), json!(logging));
-        }
-        if let Some(entry_point) = entry_point {
-            api_params.insert("entryPoint".to_string(), json!(entry_point));
-        }
-        if let Some(commands) = commands {
-            api_params.insert("commands".to_string(), json!(commands));
-        }
-        if let Some(installation_id) = installation_id {
-            api_params.insert("installationId".to_string(), json!(installation_id));
-        }
-        if let Some(provider_repository_id) = provider_repository_id {
-            api_params.insert(
-                "providerRepositoryId".to_string(),
-                json!(provider_repository_id),
-            );
-        }
-        if let Some(provider_branch) = provider_branch {
-            api_params.insert("providerBranch".to_string(), json!(provider_branch));
-        }
-        if let Some(provider_silent_mode) = provider_silent_mode {
-            api_params.insert(
-                "providerSilentMode".to_string(),
-                json!(provider_silent_mode),
-            );
-        }
-        if let Some(provider_root_directory) = provider_root_directory {
-            api_params.insert(
-                "providerRootDirectory".to_string(),
-                json!(provider_root_directory),
-            );
-        }
-        if let Some(template_repository) = template_repository {
-            api_params.insert("templateRepository".to_string(), json!(template_repository));
-        }
-        if let Some(template_owner) = template_owner {
-            api_params.insert("templateOwner".to_string(), json!(template_owner));
-        }
-        if let Some(template_root_directory) = template_root_directory {
-            api_params.insert(
-                "templateRootDirectory".to_string(),
-                json!(template_root_directory),
-            );
-        }
-        if let Some(template_branch) = template_branch {
-            api_params.insert("templateBranch".to_string(), json!(template_branch));
-        }
+        let api_params = api_params!(
+            "functionId"=> Some(function_id),
+            "name"=>Some(name),
+            "runtime"=>Some(runtime),
+            "execute"=>execute,
+            "events"=> events,
+            "schedule"=> schedule,
+            "timeout"=> timeout,
+            "enabled"=> enabled,
+            "logging"=> logging,
+            "entryPoint"=> entry_point,
+            "commands"=> commands,
+            "installationId"=> installation_id,
+            "providerRepositoryId"=> provider_repository_id,
+            "providerBranch"=> provider_branch,
+            "providerSilentMode"=> provider_silent_mode,
+            "providerRootDirectory"=> provider_root_directory,
+            "templateRepository"=> template_repository,
+            "templateOwner"=> template_owner,
+            "templateRootDirectory"=> template_root_directory,
+            "templateBranch"=> template_branch,
+        );
 
-        let api_params = Value::Object(api_params);
-
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(HttpMethod::POST, API_PATH, api_headers, &api_params, None)
@@ -175,10 +119,9 @@ impl Functions {
         const API_PATH: &str = "/functions/runtimes";
         // let api_path = "/avatars/browsers/{code}".replace("{code}", code);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(HttpMethod::GET, API_PATH, api_headers, &api_params, None)
@@ -194,10 +137,9 @@ impl Functions {
         // const API_PATH: &str = "/functions/runtimes";
         let api_path = "/functions/{functionId}".replace("{functionId}", function_id);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -237,63 +179,25 @@ impl Functions {
         // const API_PATH: &str = "/functions/runtimes";
         let api_path = "/functions/{functionId}".replace("{functionId}", function_id);
 
-        let mut api_params = serde_json::Map::new();
-        api_params.insert("name".to_string(), json!(name));
-        if let Some(runtime) = runtime {
-            api_params.insert("runtime".to_string(), json!(runtime));
-        }
-        if let Some(execute) = execute {
-            api_params.insert("execute".to_string(), json!(execute));
-        }
-        if let Some(events) = events {
-            api_params.insert("events".to_string(), json!(events));
-        }
-        if let Some(schedule) = schedule {
-            api_params.insert("schedule".to_string(), json!(schedule));
-        }
-        if let Some(timeout) = timeout {
-            api_params.insert("timeout".to_string(), json!(timeout));
-        }
-        if let Some(enabled) = enabled {
-            api_params.insert("enabled".to_string(), json!(enabled));
-        }
-        if let Some(logging) = logging {
-            api_params.insert("logging".to_string(), json!(logging));
-        }
-        if let Some(entry_point) = entry_point {
-            api_params.insert("entrypoint".to_string(), json!(entry_point));
-        }
-        if let Some(commands) = commands {
-            api_params.insert("commands".to_string(), json!(commands));
-        }
-        if let Some(installation_id) = installation_id {
-            api_params.insert("installationId".to_string(), json!(installation_id));
-        }
-        if let Some(provider_repository_id) = provider_repository_id {
-            api_params.insert(
-                "providerRepositoryId".to_string(),
-                json!(provider_repository_id),
-            );
-        }
-        if let Some(provider_branch) = provider_branch {
-            api_params.insert("providerBranch".to_string(), json!(provider_branch));
-        }
-        if let Some(provider_silent_mode) = provider_silent_mode {
-            api_params.insert(
-                "providerSilentMode".to_string(),
-                json!(provider_silent_mode),
-            );
-        }
-        if let Some(provider_root_directory) = provider_root_directory {
-            api_params.insert(
-                "providerRootDirectory".to_string(),
-                json!(provider_root_directory),
-            );
-        }
-        let api_params = serde_json::Value::Object(api_params);
+        let api_params = api_params!(
+            "name"=>Some(name),
+            "runtime"=>runtime,
+            "execute"=>execute,
+            "events"=> events,
+            "schedule"=> schedule,
+            "timeout"=> timeout,
+            "enabled"=> enabled,
+            "logging"=> logging,
+            "entryPoint"=> entry_point,
+            "commands"=> commands,
+            "installationId"=> installation_id,
+            "providerRepositoryId"=> provider_repository_id,
+            "providerBranch"=> provider_branch,
+            "providerSilentMode"=> provider_silent_mode,
+            "providerRootDirectory"=> provider_root_directory,
+        );
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -315,10 +219,9 @@ impl Functions {
         // const API_PATH: &str = "/functions/runtimes";
         let api_path = "/functions/{functionId}".replace("{functionId}", function_id);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let __res = client
             .call(
@@ -346,18 +249,12 @@ impl Functions {
         //const API_PATH: &str = "/functions";
         let api_path = "/functions/{functionId}/deployments".replace("{functionId}", function_id);
 
-        let mut api_params = serde_json::Map::new();
-        if let Some(queries) = queries {
-            api_params.insert("queries".to_string(), json!(queries));
-        }
-        if let Some(search) = search {
-            api_params.insert("search".to_string(), json!(search));
-        }
+        let api_params = api_params!(
+            "queries"=> queries,
+            "search"=>search,
+        );
 
-        let api_params = serde_json::Value::Object(api_params);
-
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -392,22 +289,17 @@ impl Functions {
         file_path: &str,
         file_name: String,
         activate: bool,
-        entry_point: Option<&str>,
+        entrypoint: Option<&str>,
         commands: Option<&str>,
     ) -> Result<Deployment, Error> {
         //const API_PATH: &str = "/functions";
         let api_path = "/functions/{functionId}/deployments".replace("{functionId}", function_id);
 
-        let mut api_params = Map::new();
-        api_params.insert("activate".to_string(), json!(activate));
-        if let Some(entry_point) = entry_point {
-            api_params.insert("entrypoint".to_string(), json!(entry_point));
-        }
-        if let Some(commands) = commands {
-            api_params.insert("commands".to_string(), json!(commands));
-        }
-
-        let api_params = serde_json::Value::Object(api_params);
+        let api_params = api_params!(
+            "activate"=> Some(activate),
+            "entrypoint"=>entrypoint,
+            "commands"=> commands,
+        );
 
         let res: UploadType = client
             .chunk_upload_file(
@@ -446,22 +338,17 @@ impl Functions {
         file_path: &'a str,
         file_name: String,
         activate: bool,
-        entry_point: Option<&'a str>,
+        entrypoint: Option<&'a str>,
         commands: Option<&'a str>,
     ) -> impl Stream<Item = Result<(UploadType, UploadProgress), Error>> + 'a {
         //const API_PATH: &str = "/functions";
         let api_path = "/functions/{functionId}/deployments".replace("{functionId}", function_id);
 
-        let mut api_params = Map::new();
-        api_params.insert("activate".to_string(), json!(activate));
-        if let Some(entry_point) = entry_point {
-            api_params.insert("entrypoint".to_string(), json!(entry_point));
-        }
-        if let Some(commands) = commands {
-            api_params.insert("commands".to_string(), json!(commands));
-        }
-
-        let api_params = serde_json::Value::Object(api_params);
+        let api_params = api_params!(
+            "activate"=> Some(activate),
+            "entrypoint"=>entrypoint,
+            "commands"=> commands,
+        );
 
         client
             .chunk_upload_file_streamed(
@@ -488,10 +375,9 @@ impl Functions {
             .replace("{functionId}", function_id)
             .replace("deploymentId", deployment_id);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -521,10 +407,9 @@ impl Functions {
             .replace("{functionId}", function_id)
             .replace("deploymentId", deployment_id);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -552,10 +437,9 @@ impl Functions {
             .replace("{functionId}", function_id)
             .replace("deploymentId", deployment_id);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let _res = client
             .call(
@@ -586,10 +470,9 @@ impl Functions {
             .replace("deploymentId", deployment_id)
             .replace("buildId", build_id);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -618,13 +501,12 @@ impl Functions {
             .replace("{functionId}", function_id)
             .replace("deploymentId", deployment_id);
 
-        let api_params = serde_json::json!({
-            "project": get_content_header_value(&client, "project"),
-            "key": get_content_header_value(&client, "key"),
-        });
+        let api_params = api_params!(
+            "project"=> get_content_header_value(&client, "project"),
+            "key"=> get_content_header_value(&client, "key"),
+        );
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -652,18 +534,12 @@ impl Functions {
         //const API_PATH: &str = "/functions";
         let api_path = "/functions/{functionId}/executions".replace("{functionId}", function_id);
 
-        let mut api_params = serde_json::Map::new();
-        if let Some(queries) = queries {
-            api_params.insert("queries".to_string(), json!(queries));
-        }
-        if let Some(search) = search {
-            api_params.insert("search".to_string(), json!(search));
-        }
+        let api_params = api_params!(
+            "queries"=>queries,
+            "search"=> search,
+        );
 
-        let api_params = serde_json::Value::Object(api_params);
-
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -696,27 +572,15 @@ impl Functions {
         //const API_PATH: &str = "/functions";
         let api_path = "/functions/{functionId}/executions".replace("{functionId}", function_id);
 
-        let mut api_params = Map::new();
-        if let Some(body) = body {
-            api_params.insert("body".to_string(), json!(body));
-        }
-        if let Some(x_async) = x_async {
-            api_params.insert("pub async".to_string(), json!(x_async));
-        }
-        if let Some(path) = path {
-            api_params.insert("path".to_string(), json!(path));
-        }
-        if let Some(method) = method {
-            api_params.insert("method".to_string(), json!(method));
-        }
-        if let Some(headers) = headers {
-            api_params.insert("headers".to_string(), json!(headers));
-        }
+        let api_params = api_params!(
+            "body"=> body,
+            "async"=>x_async,
+            "path"=> path,
+            "method"=> method,
+            "headers"=> headers,
+        );
 
-        let api_params = serde_json::Value::Object(api_params);
-
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -744,10 +608,9 @@ impl Functions {
             .replace("{functionId}", function_id)
             .replace("{executionId}", execution_id);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -769,10 +632,9 @@ impl Functions {
         //const API_PATH: &str = "/functions";
         let api_path = "/functions/{functionId}/variables".replace("{functionId}", function_id);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -800,13 +662,12 @@ impl Functions {
         //const API_PATH: &str = "/functions";
         let api_path = "/functions/{functionId}/variables".replace("{functionId}", function_id);
 
-        let api_params = serde_json::json!({
-            "key":key,
-            "value":value,
-        });
+        let api_params = api_params!(
+            "key"=> Some(key),
+            "value"=>Some(value),
+        );
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -834,10 +695,9 @@ impl Functions {
             .replace("{functionId}", function_id)
             .replace("{variableId}", variable_id);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -867,16 +727,12 @@ impl Functions {
             .replace("{functionId}", function_id)
             .replace("{variableId}", variable_id);
 
-        let mut api_params = Map::new();
-        api_params.insert("key".to_string(), json!(key));
-        if let Some(value) = value {
-            api_params.insert("value".to_string(), json!(value));
-        }
+        let api_params = api_params!(
+            "key"=> Some(key),
+            "value"=>value,
+        );
 
-        let api_params = serde_json::Value::Object(api_params);
-
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -904,10 +760,9 @@ impl Functions {
             .replace("{functionId}", function_id)
             .replace("{variableId}", variable_id);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let _res = client
             .call(

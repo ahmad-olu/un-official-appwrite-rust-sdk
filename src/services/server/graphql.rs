@@ -3,10 +3,9 @@
 //! The GraphQL API allows you to query and mutate your Appwrite server using
 //! GraphQL.
 
-use reqwest::header;
 use serde_json::{Map, Value};
 
-use crate::{client::Client, enumm::HttpMethod, error::Error};
+use crate::{api_params, client::Client, enumm::HttpMethod, error::Error};
 
 pub struct Graphql;
 
@@ -18,12 +17,12 @@ impl Graphql {
         //const API_PATH: &str = "/functions";
         let api_path = "/graphql";
 
-        let api_params = serde_json::json!({
-           "query":query
-        });
+        let api_params = api_params!(
+            "query"=> Some(query),
+        );
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let mut api_headers = reqwest::header::HeaderMap::new();
+        api_headers.insert(reqwest::header::CONTENT_TYPE, "application/json".parse()?);
         api_headers.insert("x-sdk-graphql", "true".parse()?);
 
         let res = client
@@ -40,12 +39,12 @@ impl Graphql {
         //const API_PATH: &str = "/functions";
         let api_path = "/graphql/mutation";
 
-        let api_params = serde_json::json!({
-           "query":query
-        });
+        let api_params = api_params!(
+            "query"=> Some(query),
+        );
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let mut api_headers = reqwest::header::HeaderMap::new();
+        api_headers.insert(reqwest::header::CONTENT_TYPE, "application/json".parse()?);
         api_headers.insert("x-sdk-graphql", "true".parse()?);
 
         let res = client

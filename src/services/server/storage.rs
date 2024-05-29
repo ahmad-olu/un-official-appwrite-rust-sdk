@@ -3,10 +3,9 @@
 //! The Storage service allows you to manage your project files.
 
 use futures_util::Stream;
-use reqwest::header;
-use serde_json::{json, Value};
 
 use crate::{
+    api_params, app_json_header,
     client::Client,
     enumm::HttpMethod,
     enums::{compression::Compression, image_format::ImageFormat, image_gravity::ImageGravity},
@@ -33,18 +32,12 @@ impl Storage {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets";
 
-        let mut api_params = serde_json::Map::new();
-        if let Some(queries) = queries {
-            api_params.insert("queries".to_string(), json!(queries));
-        }
-        if let Some(search) = search {
-            api_params.insert("search".to_string(), json!(search));
-        }
+        let api_params = api_params!(
+            "queries"=> queries,
+            "search"=> search,
+        );
 
-        let api_params = serde_json::Value::Object(api_params);
-
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
@@ -72,41 +65,20 @@ impl Storage {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets";
 
-        let mut api_params = serde_json::Map::new();
-        api_params.insert("bucketId".to_string(), json!(bucket_id));
-        api_params.insert("name".to_string(), json!(name));
-        if let Some(permissions) = permissions {
-            api_params.insert("permissions".to_string(), json!(permissions));
-        }
-        if let Some(file_security) = file_security {
-            api_params.insert("fileSecurity".to_string(), json!(file_security));
-        }
-        if let Some(enabled) = enabled {
-            api_params.insert("enabled".to_string(), json!(enabled));
-        }
-        if let Some(maximum_file_size) = maximum_file_size {
-            api_params.insert("maximumFileSize".to_string(), json!(maximum_file_size));
-        }
-        if let Some(allowed_file_extensions) = allowed_file_extensions {
-            api_params.insert(
-                "allowedFileExtensions".to_string(),
-                json!(allowed_file_extensions),
-            );
-        }
-        if let Some(compression) = compression {
-            api_params.insert("compression".to_string(), json!(compression));
-        }
-        if let Some(encryption) = encryption {
-            api_params.insert("encryption".to_string(), json!(encryption));
-        }
-        if let Some(antivirus) = antivirus {
-            api_params.insert("antivirus".to_string(), json!(antivirus));
-        }
+        let api_params = api_params!(
+            "bucketId"=> Some(bucket_id),
+            "name"=> Some(name),
+            "permissions"=> permissions,
+            "fileSecurity"=> file_security,
+            "enabled"=> enabled,
+            "maximumFileSize"=> maximum_file_size,
+            "allowedFileExtensions"=> allowed_file_extensions,
+            "compression"=> compression,
+            "encryption"=> encryption,
+            "antivirus"=> antivirus,
+        );
 
-        let api_params = Value::Object(api_params);
-
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
@@ -123,10 +95,9 @@ impl Storage {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}".replace("{bucketId}", bucket_id);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -160,40 +131,19 @@ impl Storage {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}".replace("{bucketId}", bucket_id);
 
-        let mut api_params = serde_json::Map::new();
-        api_params.insert("name".to_string(), json!(name));
-        if let Some(permissions) = permissions {
-            api_params.insert("permissions".to_string(), json!(permissions));
-        }
-        if let Some(file_security) = file_security {
-            api_params.insert("fileSecurity".to_string(), json!(file_security));
-        }
-        if let Some(enabled) = enabled {
-            api_params.insert("enabled".to_string(), json!(enabled));
-        }
-        if let Some(maximum_file_size) = maximum_file_size {
-            api_params.insert("maximumFileSize".to_string(), json!(maximum_file_size));
-        }
-        if let Some(allowed_file_extensions) = allowed_file_extensions {
-            api_params.insert(
-                "allowedFileExtensions".to_string(),
-                json!(allowed_file_extensions),
-            );
-        }
-        if let Some(compression) = compression {
-            api_params.insert("compression".to_string(), json!(compression));
-        }
-        if let Some(encryption) = encryption {
-            api_params.insert("encryption".to_string(), json!(encryption));
-        }
-        if let Some(antivirus) = antivirus {
-            api_params.insert("antivirus".to_string(), json!(antivirus));
-        }
+        let api_params = api_params!(
+            "name"=> Some(name),
+            "permissions"=> permissions,
+            "fileSecurity"=> file_security,
+            "enabled"=> enabled,
+            "maximumFileSize"=> maximum_file_size,
+            "allowedFileExtensions"=> allowed_file_extensions,
+            "compression"=> compression,
+            "encryption"=> encryption,
+            "antivirus"=> antivirus,
+        );
 
-        let api_params = Value::Object(api_params);
-
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -215,10 +165,9 @@ impl Storage {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}".replace("{bucketId}", bucket_id);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let _res = client
             .call(
@@ -246,18 +195,12 @@ impl Storage {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}/files".replace("{bucketId}", bucket_id);
 
-        let mut api_params = serde_json::Map::new();
-        if let Some(queries) = queries {
-            api_params.insert("queries".to_string(), json!(queries));
-        }
-        if let Some(search) = search {
-            api_params.insert("search".to_string(), json!(search));
-        }
+        let api_params = api_params!(
+            "queries"=> queries,
+            "search"=> search,
+        );
 
-        let api_params = serde_json::Value::Object(api_params);
-
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -303,12 +246,9 @@ impl Storage {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}/files".replace("{bucketId}", bucket_id);
 
-        let mut api_params = serde_json::Map::new();
-        if let Some(permissions) = permissions {
-            api_params.insert("permissions".to_string(), json!(permissions));
-        }
-
-        let api_params = serde_json::Value::Object(api_params);
+        let api_params = api_params!(
+            "permissions"=> permissions,
+        );
 
         let res: UploadType = client
             .chunk_upload_file(
@@ -358,12 +298,9 @@ impl Storage {
         //const API_PATH: &str = "/functions";
         let api_path = "/storage/buckets/{bucketId}/files".replace("{bucketId}", bucket_id);
 
-        let mut api_params = serde_json::Map::new();
-        if let Some(permissions) = permissions {
-            api_params.insert("permissions".to_string(), json!(permissions));
-        }
-
-        let api_params = serde_json::Value::Object(api_params);
+        let api_params = api_params!(
+            "permissions"=> permissions,
+        );
 
         client
             .chunk_upload_file_streamed(
@@ -387,10 +324,9 @@ impl Storage {
             .replace("{bucketId}", bucket_id)
             .replace("{fileId}", file_id);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -421,18 +357,12 @@ impl Storage {
             .replace("{bucketId}", bucket_id)
             .replace("{fileId}", file_id);
 
-        let mut api_params = serde_json::Map::new();
-        if let Some(name) = name {
-            api_params.insert("name".to_string(), json!(name));
-        }
-        if let Some(permissions) = permissions {
-            api_params.insert("permissions".to_string(), json!(permissions));
-        }
+        let api_params = api_params!(
+            "name"=> name,
+            "permissions"=> permissions,
+        );
 
-        let api_params = serde_json::Value::Object(api_params);
-
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -457,10 +387,9 @@ impl Storage {
             .replace("{bucketId}", bucket_id)
             .replace("{fileId}", file_id);
 
-        let api_params = serde_json::json!({});
+        let api_params = api_params!();
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let _res = client
             .call(
@@ -490,13 +419,12 @@ impl Storage {
             .replace("{bucketId}", bucket_id)
             .replace("{fileId}", file_id);
 
-        let api_params = serde_json::json!({
-            "project":get_content_header_value(&client, "project"),
-            "key":get_content_header_value(&client, "key"),
-        });
+        let api_params = api_params!(
+            "project"=>get_content_header_value(&client, "project"),
+            "key"=>get_content_header_value(&client, "key"),
+        );
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -539,54 +467,23 @@ impl Storage {
             .replace("{bucketId}", bucket_id)
             .replace("{fileId}", file_id);
 
-        let mut api_params = serde_json::Map::new();
-
-        if let Some(width) = width {
-            api_params.insert("width".to_string(), json!(width));
-        }
-        if let Some(height) = height {
-            api_params.insert("height".to_string(), json!(height));
-        }
-        if let Some(gravity) = gravity {
-            api_params.insert("gravity".to_string(), json!(gravity));
-        }
-        if let Some(quality) = quality {
-            api_params.insert("quality".to_string(), json!(quality));
-        }
-        if let Some(border_width) = border_width {
-            api_params.insert("borderWidth".to_string(), json!(border_width));
-        }
-        if let Some(border_color) = border_color {
-            api_params.insert("borderColor".to_string(), json!(border_color));
-        }
-        if let Some(border_radius) = border_radius {
-            api_params.insert("borderRadius".to_string(), json!(border_radius));
-        }
-        if let Some(opacity) = opacity {
-            api_params.insert("opacity".to_string(), json!(opacity));
-        }
-        if let Some(rotation) = rotation {
-            api_params.insert("rotation".to_string(), json!(rotation));
-        }
-        if let Some(background) = background {
-            api_params.insert("background".to_string(), json!(background));
-        }
-        if let Some(output) = output {
-            api_params.insert("output".to_string(), json!(output));
-        }
-
-        api_params.insert(
-            "project".to_string(),
-            json!(get_content_header_value(&client, "project")),
+        let api_params = api_params!(
+            "width"=>width,
+            "height"=> height,
+            "gravity"=> gravity,
+            "quality"=> quality,
+            "borderWidth"=> border_width,
+            "borderColor"=> border_color,
+            "borderRadius"=> border_radius,
+            "opacity"=> opacity,
+            "rotation"=> rotation,
+            "background"=> background,
+            "output"=> output,
+            "project"=>get_content_header_value(&client, "project"),
+            "key"=>get_content_header_value(&client, "key"),
         );
-        api_params.insert(
-            "key".to_string(),
-            json!(get_content_header_value(&client, "key")),
-        );
-        let api_params = serde_json::Value::Object(api_params);
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(
@@ -616,13 +513,12 @@ impl Storage {
             .replace("{bucketId}", bucket_id)
             .replace("{fileId}", file_id);
 
-        let api_params = serde_json::json!({
-            "project":get_content_header_value(&client, "project"),
-            "key":get_content_header_value(&client, "key"),
-        });
+        let api_params = api_params!(
+            "project"=>get_content_header_value(&client, "project"),
+            "key"=>get_content_header_value(&client, "key"),
+        );
 
-        let mut api_headers = header::HeaderMap::new();
-        api_headers.insert(header::CONTENT_TYPE, "application/json".parse()?);
+        let api_headers = app_json_header!();
 
         let res = client
             .call(

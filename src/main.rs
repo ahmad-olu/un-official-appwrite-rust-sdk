@@ -49,5 +49,8 @@ async fn main() -> Result<(), Error> {
     // let prog = prog.lock().unwrap();
     // println!("Progress: {}", *prog);
 
+    // let a = app_json_header!();
+    // println!("{:?}", a);
+
     Ok(())
 }

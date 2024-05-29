@@ -27,7 +27,7 @@
 //!    .set_key("cd868c7af8bdc893b4...93b7535db89")?
 //!    //.set_self_signed(false)? // Use only on dev mode with a self-signed SSL cert
 //!    .build()?;
-//!
+//! // create new user
 //! let create_user = Users::create(
 //!        &client,
 //!        ID::unique(),
@@ -59,6 +59,7 @@
 //!    //.set_self_signed(false)? // Use only on dev mode with a self-signed SSL cert
 //!    .build()?;
 //!
+//!     // get user preference
 //!let user_prefs = Users::get_prefs(&client, "6...64").await?;
 //!    dbg!("{:#?}", user_prefs);
 //!
@@ -93,9 +94,11 @@
 //!    //.set_self_signed(false)? // Use only on dev mode with a self-signed SSL cert
 //!    .build()?;
 //!
+//!     // create a database
 //!     let create_db = Databases::create(&client, ID::unique(), "test_db", None).await?;
 //!    dbg!(create_db);
 //!
+//!     // create a collection
 //!    let create_collection = Databases::create_collection(
 //!        &client,"6618...76",ID::unique(),"test_collection_1",
 //!        Some(vec![
@@ -105,13 +108,17 @@
 //!        None,None,).await?;
 //!    dbg!(create_collection);
 //!
+//!     // create boolean attribute
 //!    let att = Databases::create_boolean_attribute(
 //!        &client,"6618...76","6618...d4","isAdmin",true,None,None,).await?;
 //!    dbg!(att);
+//! 
+//!     // create string attribute
 //!    let name = Databases::create_string_attribute(
 //!        &client,"6618...76","6618...d4","title",255,true,None,None,None,).await?;
 //!    dbg!(name);
 //!
+//!     // create a document
 //!    let mut data = Map::new();
 //!    data.insert(String::from("isAdmin"), json!(false));
 //!    data.insert(String::from("title"), json!("next1"));
@@ -119,12 +126,14 @@
 //!        &client,"6618...76","6618...d4",ID::unique(),data,None,).await?;
 //!    dbg!(create_doc);
 //!
+//!     // create relationship attribute
 //!    let relationship = Databases::create_relationship_attribute(
 //!        &client,"6618...76","6618...d4","6619...1e",
 //!        RelationshipType::OneToOne,
 //!        None,Some("test_col_2"),None,None,).await?;
 //!    dbg!(relationship);
 //!
+//!     // get a list of collection
 //!     let queries = vec![Query::equal(r"$id", json!(vec!["6618ef06d269bf4110d4"]))];
 //!
 //!     let col_list = Databases::list_collections(
@@ -161,10 +170,12 @@
 //!    //.set_self_signed(false)? // Use only on dev mode with a self-signed SSL cert
 //!    .build()?;
 //!
+//! // create a bucket
 //!let create_buk = Storage::create_bucket(
 //!        &client,ID::unique(),"My Bucket",None,None,None,None,None,None,None,None,).await?;
 //!    dbg!(create_buk);
 //!
+//!     // create file
 //!   let create_file_with_no_progress = Storage::create_files(
 //!   &client,
 //!   "65d20d5c8096032a03cd",
@@ -176,7 +187,7 @@
 //!   .await?;
 //!   dbg!(create_file_with_no_progress);
 //!   
-//!   //or
+//!   //or create file with upload progress [stream]
 //!   let create_file_and_stream_upload_progress = Storage::create_files_streamed(
 //!   &client,
 //!   "65d20d5c8096032a03cd",
@@ -193,10 +204,12 @@
 //!   println!("==>{:?}===>{:?}", file, res.1);
 //!   }
 //!
+//!     // get a file
 //!    let get_file =
 //!        Storage::get_file(&client, "661...e9", "661...71e").await?;
 //!    dbg!(get_file);
 //!
+//!     // download a file
 //!    let get_file_download =
 //!        Storage::get_file_download(&client, "661...e9", "661...71e").await?;
 //!    fs::write(
@@ -225,6 +238,7 @@
 //!     //.set_self_signed(false)? // Use only on dev mode with a self-signed SSL cert
 //!     .build()?;
 //!
+//!     // stream realtime
 //!  let stream = RealTime::subscribe(
 //!         &client,
 //!         vec!["databases.6618eec286a4ef198076.collections.6618ef06d269bf4110d4.documents"],
