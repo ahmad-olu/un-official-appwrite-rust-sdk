@@ -8,7 +8,7 @@ use reqwest::{
     Response, StatusCode,
 };
 use serde::Serialize;
-use serde_json::json;
+use serde_json::{json, Value};
 use uuid::Uuid;
 
 use crate::{
@@ -16,7 +16,6 @@ use crate::{
     error::{AppWriteError, Error},
     models::{deployment::Deployment, file::File, UploadType},
     upload_progress::UploadProgress,
-    value::Value as val,
 };
 
 #[derive(Debug, Clone)]
@@ -62,9 +61,10 @@ impl ClientBuilder {
     pub fn set_endpoint(&mut self, endpoint: &str) -> Result<&mut Self, Error> {
         self.end_point = Some(String::from(endpoint));
         if self.end_point_realtime.as_ref().is_none() {
-            self.end_point_realtime = self.end_point.clone().and_then(|val| {
+            self.end_point_realtime = self.end_point.clone().and_then(|Value| {
                 Some(
-                    val.replace("https://", "wss://")
+                    Value
+                        .replace("https://", "wss://")
                         .replace("http://", "ws://"),
                 )
             });
@@ -121,7 +121,7 @@ impl Client {
         method: HttpMethod,
         path: &str,
         headers: HeaderMap,
-        params: BTreeMap<String, val>,
+        params: BTreeMap<String, Value>,
         form: Option<Form>,
     ) -> Result<Response, Error> {
         let res = reqwest::Client::new();
@@ -180,9 +180,9 @@ impl Client {
                 "Unable to convert value because it's not an object".to_string(),
             ))?
             .iter()
-            .for_each(|val| match val.0.contains("queries") {
+            .for_each(|Value| match Value.0.contains("queries") {
                 true => {
-                    let v = val.1.as_array().unwrap();
+                    let v = Value.1.as_array().unwrap();
                     v.iter().for_each(|query| {
                         let start_string = match i == 0 {
                             true => "?",
@@ -201,8 +201,13 @@ impl Client {
                         false => "?",
                     };
                     params_chain.push_str(
-                        format!("{}{}={}", start_character, val.0, val.1.as_str().unwrap())
-                            .as_str(),
+                        format!(
+                            "{}{}={}",
+                            start_character,
+                            Value.0,
+                            Value.1.as_str().unwrap()
+                        )
+                        .as_str(),
                     )
                 }
             });
@@ -214,7 +219,7 @@ impl Client {
         file_path: &str,
         api_path: &str,
         file_id: String,
-        params: BTreeMap<String, val>,
+        params: BTreeMap<String, Value>,
         file_name: String,
         //on_progress: Option<fn(UploadProgress)>,
         is_file: bool,
@@ -301,7 +306,7 @@ impl Client {
                     format!("multipart/form-data; boundary={}", boundary).as_str(),
                 )?,
             );
-            let params: BTreeMap<String, val> = BTreeMap::new();
+            let params: BTreeMap<String, Value> = BTreeMap::new();
             match is_file {
                 true => {
                     let res = self
@@ -445,7 +450,7 @@ impl Client {
         file_path: &'a str,
         api_path: String,
         file_id: String,
-        params: BTreeMap<String, val>,
+        params: BTreeMap<String, Value>,
         file_name: String,
         is_file: bool,
     ) -> impl Stream<Item = Result<(UploadType, UploadProgress), Error>> + 'a {
@@ -550,7 +555,7 @@ impl Client {
                         format!("multipart/form-data; boundary={}", boundary).as_str(),
                     )?,
                 );
-                let params: BTreeMap<String, val> = BTreeMap::new();
+                let params: BTreeMap<String, Value> = BTreeMap::new();
                 match is_file {
                     true => {
                         let res = self

@@ -1,18 +1,50 @@
 use std::collections::BTreeMap;
 
+use reqwest::header::{HeaderMap, HeaderValue};
+use serde_json::{json, Value};
 // use futures_util::{pin_mut, StreamExt};
 // use std::sync::{Arc, Mutex};
 // use tokio::task;
-use unofficial_appwrite::{error::Error, id::ID, value::Value};
+use unofficial_appwrite::{error::Error, id::ID};
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
+    let params = json!({
+        "userId":ID::unique(7),
+        "email": "fakeEmail@Email.com",
+        "password": "VeryVerySecurePassword@123456789",
+        "name":"ola",
+    });
+
     let mut a: BTreeMap<String, Value> = BTreeMap::new();
 
     a.insert("email".into(), "fakeEmail@Email.com".into());
     a.insert("password".into(), "VeryVerySecurePassword@123456789".into());
-    a.insert("userId".into(), "unique()".into());
-    dbg!(a);
+    a.insert("userId".into(), ID::unique(7).into());
+
+    let mut headers = HeaderMap::new();
+    headers.insert(
+        "x-appwrite-Project",
+        HeaderValue::from_str("676c2b7b000c834e1fce")?,
+    );
+
+    headers.insert("x-appwrite-key", HeaderValue::from_str("standard_5d84014ebaf0de52308eff28946a43062921240c10b81c2fd037ab60b02f0257b7f0a53fe94065170fe7c7d0af2d4136d4cbf32a4055baeada3d27f2e323b70aeda87e97f676207cf10cbb18b7a80f8d1103803617454c89138f217dad701bbe9dc6950bc58853fdb2a0b4b67d2a8b8b6b7b9b2e6d9b94e0a2fcfee794688e2e")?);
+    let res = reqwest::Client::new()
+        .post(format!("{}{}", "http://127.0.0.1/v1", "/users"))
+        .json(&a)
+        .headers(headers)
+        .send()
+        .await?;
+
+    dbg!(res);
+
+    // let mut a: BTreeMap<String, Value> = BTreeMap::new();
+
+    // a.insert("email".into(), "fakeEmail@Email.com".into());
+    // a.insert("password".into(), "VeryVerySecurePassword@123456789".into());
+    // a.insert("userId".into(), "unique()".into());
+    // dbg!(a);
+
     // let client = ClientBuilder::default()
     //     .set_project("65d20d....")?
     //     .set_key("ae07b88634eacfb42a2fc4c4a7f278d96....")?

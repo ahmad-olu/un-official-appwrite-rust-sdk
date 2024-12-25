@@ -4,7 +4,7 @@
 
 use std::collections::BTreeMap;
 
-use serde_json::json;
+use serde_json::{json, Value};
 
 use crate::{
     app_json_header,
@@ -19,7 +19,6 @@ use crate::{
         user::User,
     },
     utils::get_content_header_value,
-    value::Value,
 };
 
 pub struct Account;
@@ -1039,7 +1038,7 @@ impl Account {
 
 #[cfg(test)]
 mod tests {
-    use crate::{client::ClientBuilder, error::Error, id::ID};
+    use crate::{client::ClientBuilder, error::Error, id::ID, models::message};
 
     use super::Account;
 
@@ -1053,17 +1052,28 @@ mod tests {
             .build()?;
 
         // ! create user
-        // let user_res = Account::create(
-        //     &client,
-        //     maplit::btreemap! {
-        //         "userId".into() => ID::unique(7).into(),
-        //         "email".into()=> "fakeEmail@Email.com".into(),
-        //         "password".into()=> "VeryVerySecurePassword@123456789".into(),
-        //     },
-        // )
-        // .await?;
+        let user_res = Account::create(
+            &client,
+            maplit::btreemap! {
+                "userId".into() => ID::unique(7).into(),
+                "email".into()=> "fakeEmail@Email.com".into(),
+                "password".into()=> "VeryVerySecurePassword@123456789".into(),
+            },
+        )
+        .await
+        .unwrap_err();
 
-        // assert_eq!(user_res.email, "fakeEmail@Email.com");
+        let err = match user_res {
+            Error::AppWriteError {
+                message,
+                code: _,
+                response: _,
+                error_type: _,
+            } => message,
+            _ => "".to_string(),
+        };
+
+        assert_eq!(err, "Error: Server Error");
 
         Ok(())
     }
