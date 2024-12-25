@@ -16,5 +16,5 @@ pub struct Index {
     /// Index attributes.
     pub attributes: Vec<Value>,
     /// Index orders.
-    pub orders: Option<Value>,
+    pub orders: Option<Vec<Value>>,
 }

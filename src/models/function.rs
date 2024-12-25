@@ -19,7 +19,7 @@ pub struct Func {
     pub updated_at: String,
 
     /// Execution permissions.
-    pub execute: Value,
+    pub execute: Vec<Value>,
 
     /// Function name.
     pub name: String,
@@ -39,11 +39,14 @@ pub struct Func {
     /// Function&#039;s active deployment ID.
     pub deployment: String,
 
+    /// Allowed permission scopes.
+    pub scopes: Vec<Value>,
+
     /// Function variables.
     pub vars: Vec<Variable>,
 
     /// Function trigger events.
-    pub events: Value,
+    pub events: Vec<Value>,
 
     /// Function execution schedult in CRON format.
     pub schedule: String,
@@ -79,4 +82,7 @@ pub struct Func {
     /// Is VCS (Version Control System) connection is in silent mode? When in silence mode, no comments will be posted on the repository pull or merge requests
     #[serde(rename = "providerSilentMode")]
     pub provider_silent_mode: bool,
+
+    /// Machine specification for builds and executions.
+    pub specification: String,
 }

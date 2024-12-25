@@ -17,7 +17,7 @@ pub struct AttributeRelationship {
     pub error: String,
 
     /// Is attribute required?
-    pub xrequired: Option<bool>,
+    pub xrequired: bool,
 
     /// Is attribute an array?
     pub array: Option<bool>,
@@ -43,6 +43,5 @@ pub struct AttributeRelationship {
     pub on_delete: String,
 
     /// Whether this is the parent or child side of the relationship
-    #[serde(rename = "type")]
-    pub att_type: Option<String>,
+    pub side: String,
 }

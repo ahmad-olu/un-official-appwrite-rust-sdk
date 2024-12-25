@@ -34,6 +34,9 @@ pub struct Deployment {
     pub size: u64,
 
     /// The current build ID.
+    #[serde(rename = "buildSize")]
+    pub build_size: u64,
+
     #[serde(rename = "buildId")]
     pub build_id: String,
 
@@ -90,11 +93,4 @@ pub struct Deployment {
     /// The branch of the vcs repository
     #[serde(rename = "providerBranchUrl")]
     pub provider_branch_url: String,
-
-    #[serde(rename = "chunksTotal")]
-    pub chunks_total: usize,
-
-    /// Total number of chunks uploaded
-    #[serde(rename = "chunksUploaded")]
-    pub chunks_uploaded: usize,
 }

@@ -17,7 +17,7 @@ pub struct AttributeInteger {
     pub error: String,
 
     /// Is attribute required?
-    pub xrequired: Option<bool>,
+    pub xrequired: bool,
 
     /// Is attribute an array?
     pub array: Option<bool>,

@@ -18,7 +18,7 @@ pub struct Bucket {
 
     /// Bucket permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
     #[serde(rename = "$permissions")]
-    pub permissions: Value,
+    pub permissions: Vec<Value>,
 
     /// Whether file-level security is enabled. [Learn more about permissions](https://appwrite.io/docs/permissions).
     #[serde(rename = "fileSecurity")]

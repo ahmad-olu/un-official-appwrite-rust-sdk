@@ -63,4 +63,9 @@ pub struct Execution {
 
     /// Function execution duration in seconds.
     pub duration: f64,
+
+    /// The scheduled time for execution. If left empty, execution will be queued immediately.
+
+    #[serde(rename = "scheduleAt")]
+    pub schedule_at: Option<String>,
 }
