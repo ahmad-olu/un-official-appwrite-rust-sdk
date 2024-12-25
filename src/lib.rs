@@ -112,7 +112,7 @@
 //!    let att = Databases::create_boolean_attribute(
 //!        &client,"6618...76","6618...d4","isAdmin",true,None,None,).await?;
 //!    dbg!(att);
-//! 
+//!
 //!     // create string attribute
 //!    let name = Databases::create_string_attribute(
 //!        &client,"6618...76","6618...d4","title",255,true,None,None,None,).await?;
@@ -186,7 +186,7 @@
 //!   )
 //!   .await?;
 //!   dbg!(create_file_with_no_progress);
-//!   
+//!
 //!   //or create file with upload progress [stream]
 //!   let create_file_and_stream_upload_progress = Storage::create_files_streamed(
 //!   &client,
@@ -292,3 +292,4 @@ pub mod role;
 pub mod services;
 pub mod upload_progress;
 pub mod utils;
+pub mod value;

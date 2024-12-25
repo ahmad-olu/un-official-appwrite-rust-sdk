@@ -2,16 +2,15 @@
 //!
 //! The Account service allows you to authenticate and manage a user account.
 
-use serde_json::{json, Value};
+use std::collections::BTreeMap;
+
+use serde_json::json;
 
 use crate::{
-    api_params, app_json_header,
+    app_json_header,
     client::Client,
     enumm::HttpMethod,
-    enums::{
-        authentication_factor::AuthenticationFactor, authentication_type::AuthenticationType,
-        o_auth_provider::OAuthProvider,
-    },
+    enums::{authentication_type::AuthenticationType, o_auth_provider::OAuthProvider},
     error::Error,
     models::{
         identity_list::IdentityList, jwt::JWT, log_list::LogList, mfa_challenge::MfaChallenge,
@@ -20,6 +19,7 @@ use crate::{
         user::User,
     },
     utils::get_content_header_value,
+    value::Value,
 };
 
 pub struct Account;
@@ -31,12 +31,12 @@ impl Account {
     pub async fn get(client: &Client) -> Result<User, Error> {
         const API_PATH: &str = "/account";
 
-        let api_params = api_params! {};
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -51,26 +51,17 @@ impl Account {
     // route to start verifying the user email address. To allow the new user to
     // login to their new account, you need to create a new [account
     // session](https://appwrite.io/docs/references/cloud/client-web/account#createEmailSession).
-    pub async fn create(
-        client: &Client,
-        user_id: &str,
-        email: &str,
-        password: &str,
-        name: Option<&str>,
-    ) -> Result<User, Error> {
+    ///* userId => string
+    ///* email => string
+    ///* password => string
+    ///* name => string?
+    pub async fn create(client: &Client, args: BTreeMap<String, Value>) -> Result<User, Error> {
         const API_PATH: &str = "/account";
-
-        let api_params = api_params! {
-           "userId" => Some(user_id),
-            "email" => Some(email),
-            "password" => Some(password),
-            "name"=> name,
-        };
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::POST, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -86,18 +77,18 @@ impl Account {
     /// This endpoint can also be used to convert an anonymous account to a normal
     /// one, by passing an email address and a new password.
     ///
-    pub async fn update_email(client: &Client, email: &str, password: &str) -> Result<User, Error> {
+    ///* email => string
+    ///* password => string
+    pub async fn update_email(
+        client: &Client,
+        args: BTreeMap<String, Value>,
+    ) -> Result<User, Error> {
         const API_PATH: &str = "/account/email";
-
-        let api_params = api_params! {
-            "email" => Some(email),
-            "password" => Some(password),
-        };
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PATCH, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::PATCH, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -106,20 +97,17 @@ impl Account {
     /// List Identities
     ///
     /// Get the list of identities for the currently logged in user.
+    ///* queries => string?
     pub async fn list_identities(
         client: &Client,
-        queries: Option<String>,
+        args: BTreeMap<String, Value>,
     ) -> Result<IdentityList, Error> {
         const API_PATH: &str = "/account/identities";
-
-        let api_params = api_params! {
-            "queries"=> queries,
-        };
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -133,7 +121,7 @@ impl Account {
             .to_owned()
             .replace("{identityId}", identity_id);
 
-        let api_params = api_params! {};
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
@@ -142,7 +130,7 @@ impl Account {
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                &api_params,
+                args,
                 None,
             )
             .await?;
@@ -160,12 +148,12 @@ impl Account {
     pub async fn create_jwt(client: &Client) -> Result<JWT, Error> {
         let api_path = "/account/jwt";
 
-        let api_params = api_params! {};
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::POST, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -175,20 +163,17 @@ impl Account {
     ///
     /// Get the list of latest security activity logs for the currently logged in
     /// user. Each log returns user IP address, location and date and time of log.
+    ///* queries => vec(string)?
     pub async fn list_logs(
         client: &Client,
-        queries: Option<Vec<String>>,
+        args: BTreeMap<String, Value>,
     ) -> Result<LogList, Error> {
         const API_PATH: &str = "/account/logs";
-
-        let api_params = api_params! {
-            "queries"=> queries,
-        };
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -197,17 +182,14 @@ impl Account {
     /// Update MFA
     ///
     /// Enable or disable MFA on an account.
-    pub async fn update_mfa(client: &Client, mfa: bool) -> Result<User, Error> {
+    ///* mfa => bool
+    pub async fn update_mfa(client: &Client, args: BTreeMap<String, Value>) -> Result<User, Error> {
         let api_path = "/account/mfa";
-
-        let api_params = api_params! {
-            "mfa"=> Some(mfa),
-        };
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PATCH, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::PATCH, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -225,18 +207,12 @@ impl Account {
     ) -> Result<MfaType, Error> {
         let api_path = format!("/account/mfa/authenticators/{}", json!(x_type));
 
-        let api_params = api_params! {};
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(
-                HttpMethod::POST,
-                api_path.as_str(),
-                api_headers,
-                &api_params,
-                None,
-            )
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -247,27 +223,18 @@ impl Account {
     /// Verify an authenticator app after adding it using the [add
     /// authenticator](/docs/references/cloud/client-web/account#addAuthenticator)
     /// method.
+    ///* otp => string
     pub async fn update_mfa_authenticator(
         client: &Client,
         x_type: AuthenticationType,
-        otp: &str,
+        args: BTreeMap<String, Value>,
     ) -> Result<User, Error> {
         let api_path = format!("/account/mfa/authenticators/{}", json!(x_type));
-
-        let api_params = api_params! {
-            "otp"=> Some(otp),
-        };
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(
-                HttpMethod::PUT,
-                api_path.as_str(),
-                api_headers,
-                &api_params,
-                None,
-            )
+            .call(HttpMethod::PUT, api_path.as_str(), api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -279,22 +246,19 @@ impl Account {
     pub async fn delete_mfa_authenticator(
         client: &Client,
         x_type: AuthenticationType,
-        otp: &str,
     ) -> Result<User, Error> {
         let api_path = format!("/account/mfa/authenticators/{}", json!(x_type));
 
-        let api_params = api_params! {
-            "otp"=> Some(otp),
-        };
-
         let api_headers = app_json_header!();
+
+        let args = BTreeMap::new();
 
         let res = client
             .call(
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                &api_params,
+                args,
                 None,
             )
             .await?;
@@ -307,20 +271,17 @@ impl Account {
     /// Begin the process of MFA verification after sign-in. Finish the flow with
     /// [updateMfaChallenge](/docs/references/cloud/client-web/account#updateMfaChallenge)
     /// method.
+    ///* factor => AuthenticatorFactor
     pub async fn create_mfa_challenge(
         client: &Client,
-        factor: AuthenticationFactor,
+        args: BTreeMap<String, Value>,
     ) -> Result<MfaChallenge, Error> {
         let api_path = "/account/mfa/challenge";
-
-        let api_params = api_params! {
-            "factor"=> Some(factor),
-        };
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::POST, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -333,22 +294,18 @@ impl Account {
     /// the flow, use
     /// [createMfaChallenge](/docs/references/cloud/client-web/account#createMfaChallenge)
     /// method.
+    ///* otp => string
+    ///* challengeId => string
     pub async fn update_mfa_challenge(
         client: &Client,
-        challenge_id: &str,
-        otp: &str,
+        args: BTreeMap<String, Value>,
     ) -> Result<(), Error> {
         let api_path = "/account/mfa/challenge";
-
-        let api_params = api_params! {
-            "challengeId"=> Some(challenge_id),
-            "otp" =>Some(otp)
-        };
 
         let api_headers = app_json_header!();
 
         let _res = client
-            .call(HttpMethod::PUT, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::PUT, api_path, api_headers, args, None)
             .await?;
 
         Ok(())
@@ -360,12 +317,12 @@ impl Account {
     pub async fn list_mfa_factors(client: &Client) -> Result<MfaFactors, Error> {
         let api_path = "/account/mfa/factors";
 
-        let api_params = api_params! {};
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::GET, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -380,12 +337,12 @@ impl Account {
     pub async fn get_mfa_recovery_codes(client: &Client) -> Result<MfaRecoveryCodes, Error> {
         let api_path = "/account/mfa/recovery-codes";
 
-        let api_params = api_params! {};
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::GET, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -401,12 +358,12 @@ impl Account {
     pub async fn create_mfa_recovery_codes(client: &Client) -> Result<MfaRecoveryCodes, Error> {
         let api_path = "/account/mfa/recovery-codes";
 
-        let api_params = api_params! {};
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::POST, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -421,12 +378,12 @@ impl Account {
     pub async fn update_mfa_recovery_codes(client: &Client) -> Result<MfaRecoveryCodes, Error> {
         let api_path = "/account/mfa/recovery-codes";
 
-        let api_params = api_params! {};
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PATCH, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::PATCH, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -435,17 +392,17 @@ impl Account {
     /// Update name
     ///
     /// Update currently logged in user account name.
-    pub async fn update_name(client: &Client, name: &str) -> Result<User, Error> {
+    ///* name => string
+    pub async fn update_name(
+        client: &Client,
+        args: BTreeMap<String, Value>,
+    ) -> Result<User, Error> {
         const API_PATH: &str = "/account/name";
-
-        let api_params = api_params! {
-            "name"=> Some(name),
-        };
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PATCH, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::PATCH, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -456,22 +413,18 @@ impl Account {
     /// Update currently logged in user password. For validation, user is required
     /// to pass in the new password, and the old password. For users created with
     /// OAuth, Team Invites and Magic URL, oldPassword is optional.
+    ///* password => string
+    ///* oldPassword => string
     pub async fn update_password(
         client: &Client,
-        password: &str,
-        old_password: &str,
+        args: BTreeMap<String, Value>,
     ) -> Result<User, Error> {
         const API_PATH: &str = "/account/name";
-
-        let api_params = api_params! {
-            "password"=> Some(password),
-            "oldPassword"=> Some(old_password),
-        };
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PATCH, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::PATCH, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -484,18 +437,18 @@ impl Account {
     /// SMS is not sent automatically, however you can use the [POST
     /// /account/verification/phone](https://appwrite.io/docs/references/cloud/client-web/account#createPhoneVerification)
     /// endpoint to send a confirmation SMS.
-    pub async fn update_phone(client: &Client, phone: &str, password: &str) -> Result<User, Error> {
+    ///* phone => string
+    ///* password => string
+    pub async fn update_phone(
+        client: &Client,
+        args: BTreeMap<String, Value>,
+    ) -> Result<User, Error> {
         const API_PATH: &str = "/account/name";
-
-        let api_params = api_params! {
-            "phone"=> Some(phone),
-            "password"=>Some(password)
-        };
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PATCH, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::PATCH, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -507,12 +460,12 @@ impl Account {
     pub async fn get_preference(client: &Client) -> Result<Preferences, Error> {
         const API_PATH: &str = "/account/prefs";
 
-        let api_params = api_params! {};
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -523,17 +476,17 @@ impl Account {
     /// Update currently logged in user account preferences. The object you pass is
     /// stored as is, and replaces any previous value. The maximum allowed prefs
     /// size is 64kB and throws error if exceeded.
-    pub async fn update_preference(client: &Client, preference: Value) -> Result<User, Error> {
+    ///* prefs => BTreeMap<String, Value>
+    pub async fn update_preference(
+        client: &Client,
+        args: BTreeMap<String, Value>,
+    ) -> Result<User, Error> {
         const API_PATH: &str = "/account/prefs";
-
-        let api_params = api_params! {
-            "prefs"=> Some(preference),
-        };
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PATCH, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::PATCH, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -549,18 +502,18 @@ impl Account {
     /// /account/recovery](https://appwrite.io/docs/references/cloud/client-web/account#updateRecovery)
     /// endpoint to complete the process. The verification link sent to the user's
     /// email address is valid for 1 hour.
-    pub async fn create_recovery(client: &Client, email: &str, url: &str) -> Result<Token, Error> {
+    ///* email => string
+    ///* url => string
+    pub async fn create_recovery(
+        client: &Client,
+        args: BTreeMap<String, Value>,
+    ) -> Result<Token, Error> {
         const API_PATH: &str = "/account/recovery";
-
-        let api_params = api_params! {
-            "email"=> Some(email),
-            "url"=> Some(url)
-        };
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::POST, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -578,26 +531,19 @@ impl Account {
     /// Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md)
     /// the only valid redirect URLs are the ones from domains you have set when
     /// adding your platforms in the console interface.
+    ///* userId => string
+    ///* secret => string
+    ///* password => string
     pub async fn update_recovery(
         client: &Client,
-        user_id: &str,
-        secret: &str,
-        password: &str,
-        password_again: &str,
+        args: BTreeMap<String, Value>,
     ) -> Result<Token, Error> {
         const API_PATH: &str = "/account/recovery";
-
-        let api_params = api_params!(
-            "userId"=>Some(user_id),
-            "secret"=> Some(secret),
-            "password"=>Some(password),
-            "passwordAgain"=>Some(password_again),
-        );
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::PUT, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -610,12 +556,12 @@ impl Account {
     pub async fn list_sessions(client: &Client) -> Result<SessionList, Error> {
         const API_PATH: &str = "/account/sessions";
 
-        let api_params = api_params!();
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -628,12 +574,12 @@ impl Account {
     pub async fn delete_sessions(client: &Client) -> Result<(), Error> {
         const API_PATH: &str = "/account/sessions";
 
-        let api_params = api_params!();
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
         let _res = client
-            .call(HttpMethod::DELETE, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::DELETE, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(())
@@ -651,12 +597,12 @@ impl Account {
     pub async fn create_anonymous_session(client: &Client) -> Result<Session, Error> {
         let api_path = "/account/sessions/anonymous";
 
-        let api_params = api_params!();
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::POST, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -670,22 +616,18 @@ impl Account {
     /// A user is limited to 10 active sessions at a time by default. [Learn more
     /// about session
     /// limits](https://appwrite.io/docs/authentication-security#limits).
+    ///* email => string
+    ///* password => string
     pub async fn create_email_password_session(
         client: &Client,
-        email: &str,
-        password: &str,
+        args: BTreeMap<String, Value>,
     ) -> Result<Session, Error> {
         let api_path = "/account/sessions/email";
-
-        let api_params = api_params!(
-            "email"=>Some(email),
-            "password"=>Some(password),
-        );
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::POST, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -696,22 +638,18 @@ impl Account {
     /// Use this endpoint to create a session from token. Provide the **userId**
     /// and **secret** parameters from the successful response of authentication
     /// flows initiated by token creation. For example, magic URL and phone login.
+    ///* userId => string
+    ///* secret => string
     pub async fn create_magic_url_session(
         client: &Client,
-        user_id: &str,
-        secret: &str,
+        args: BTreeMap<String, Value>,
     ) -> Result<Session, Error> {
         let api_path = "/account/sessions/magic-url";
-
-        let api_params = api_params!(
-            "userId"=> Some(user_id),
-            "secret"=> Some(secret),
-        );
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::PUT, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -722,22 +660,18 @@ impl Account {
     /// Use this endpoint to create a session from token. Provide the **userId**
     /// and **secret** parameters from the successful response of authentication
     /// flows initiated by token creation. For example, magic URL and phone login.
+    ///* userId => string
+    ///* secret => string
     pub async fn update_phone_session(
         client: &Client,
-        user_id: &str,
-        secret: &str,
+        args: BTreeMap<String, Value>,
     ) -> Result<Session, Error> {
         let api_path = "/account/sessions/phone";
-
-        let api_params = api_params!(
-            "userId"=>Some(user_id),
-            "secret"=>Some(secret),
-        );
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::PUT, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -748,22 +682,18 @@ impl Account {
     /// Use this endpoint to create a session from token. Provide the **userId**
     /// and **secret** parameters from the successful response of authentication
     /// flows initiated by token creation. For example, magic URL and phone login.
+    ///* userId => string
+    ///* secret => string
     pub async fn create_session(
         client: &Client,
-        user_id: &str,
-        secret: &str,
+        args: BTreeMap<String, Value>,
     ) -> Result<Session, Error> {
         let api_path = "/account/sessions/token";
-
-        let api_params = api_params!(
-            "userId"=>Some(user_id),
-            "secret"=>Some(secret),
-        );
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::PUT, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -778,18 +708,12 @@ impl Account {
             .to_owned()
             .replace("{sessionId}", session_id);
 
-        let api_params = api_params!();
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(
-                HttpMethod::GET,
-                api_path.as_str(),
-                api_headers,
-                &api_params,
-                None,
-            )
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -805,7 +729,7 @@ impl Account {
             .to_owned()
             .replace("{sessionId}", session_id);
 
-        let api_params = api_params!();
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
@@ -814,7 +738,7 @@ impl Account {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                &api_params,
+                args,
                 None,
             )
             .await?;
@@ -834,7 +758,7 @@ impl Account {
             .to_owned()
             .replace("{sessionId}", session_id);
 
-        let api_params = api_params!();
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
@@ -843,7 +767,7 @@ impl Account {
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                &api_params,
+                args,
                 None,
             )
             .await;
@@ -859,12 +783,12 @@ impl Account {
     pub async fn update_status(client: &Client) -> Result<User, Error> {
         const API_PATH: &str = "/account/status";
 
-        let api_params = api_params!();
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::DELETE, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::DELETE, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -882,24 +806,19 @@ impl Account {
     /// A user is limited to 10 active sessions at a time by default. [Learn more
     /// about session
     /// limits](https://appwrite.io/docs/authentication-security#limits).
+    ///* userId => string
+    ///* email => string
+    ///* phrase => bool?
     pub async fn create_email_token(
         client: &Client,
-        user_id: &str,
-        email: &str,
-        phrase: Option<bool>,
+        args: BTreeMap<String, Value>,
     ) -> Result<Token, Error> {
         let api_path = "/account/token/email";
-
-        let api_params = api_params!(
-            "userId"=> Some(user_id),
-            "email"=> Some(email),
-            "phrase"=> phrase,
-        );
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::POST, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -923,26 +842,20 @@ impl Account {
     /// about session
     /// limits](https://appwrite.io/docs/authentication-security#limits).
     ///
+    ///* userId => string
+    ///* email => string
+    ///* url => string?
+    ///* phrase => bool?
     pub async fn create_magic_url_token(
         client: &Client,
-        user_id: &str,
-        email: &str,
-        url: Option<&str>,
-        phrase: Option<bool>,
+        args: BTreeMap<String, Value>,
     ) -> Result<Token, Error> {
         let api_path = "/account/token/magic-url";
-
-        let api_params = api_params!(
-            "userId"=> Some(user_id),
-            "email"=> Some(email),
-            "phrase"=> phrase,
-            "url"=>url,
-        );
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::POST, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -964,32 +877,26 @@ impl Account {
     /// A user is limited to 10 active sessions at a time by default. [Learn more
     /// about session
     /// limits](https://appwrite.io/docs/authentication-security#limits).
+    ///
+    ///* success => string
+    ///* failure => string
+    ///* scopes => vec(string)?
     pub async fn create_oauth2_token(
         client: &Client,
         provider: OAuthProvider,
-        success: Option<&str>,
-        failure: Option<&str>,
-        scopes: Option<Vec<&str>>,
+        mut args: BTreeMap<String, Value>,
     ) -> Result<(), Error> {
         let api_path = format!("/account/token/oauth2/{}", json!(provider));
 
-        let api_params = api_params!(
-            "success"=> success,
-            "failure"=> failure,
-            "scopes"=> scopes,
-            "project"=>get_content_header_value(&client, "project"),
+        args.insert(
+            "project".to_string(),
+            get_content_header_value(&client, "project").into(),
         );
 
         let api_headers = app_json_header!();
 
         let _res = client
-            .call(
-                HttpMethod::POST,
-                api_path.as_str(),
-                api_headers,
-                &api_params,
-                None,
-            )
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
             .await?;
         //todo ! return client.webauth(url);
         Ok(())
@@ -1007,22 +914,19 @@ impl Account {
     /// A user is limited to 10 active sessions at a time by default. [Learn more
     /// about session
     /// limits](https://appwrite.io/docs/authentication-security#limits).
+    ///
+    ///* userId => string
+    ///* phone => string
     pub async fn create_phone_token(
         client: &Client,
-        user_id: &str,
-        phone: &str,
+        args: BTreeMap<String, Value>,
     ) -> Result<Token, Error> {
         let api_path = "/account/token/phone";
-
-        let api_params = api_params!(
-            "userId"=> Some(user_id),
-            "phone"=> Some(phone),
-        );
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, &api_params, None)
+            .call(HttpMethod::POST, api_path, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1045,17 +949,17 @@ impl Account {
     /// the only valid redirect URLs are the ones from domains you have set when
     /// adding your platforms in the console interface.
     ///
-    pub async fn create_verification(client: &Client, url: &str) -> Result<Token, Error> {
+    ///* url => string
+    pub async fn create_verification(
+        client: &Client,
+        args: BTreeMap<String, Value>,
+    ) -> Result<Token, Error> {
         const API_PATH: &str = "/account/verification";
-
-        let api_params = api_params!(
-            "url"=>Some(url)
-        );
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::POST, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1067,22 +971,19 @@ impl Account {
     /// the **userId** and **secret** parameters that were attached to your app URL
     /// to verify the user email ownership. If confirmed this route will return a
     /// 200 status code.
+    ///
+    ///* userId => string
+    ///* secret => string
     pub async fn update_verification(
         client: &Client,
-        user_id: &str,
-        secret: &str,
+        args: BTreeMap<String, Value>,
     ) -> Result<Token, Error> {
         const API_PATH: &str = "/account/verification";
-
-        let api_params = api_params!(
-            "userId"=> Some(user_id),
-            "secret"=> Some(secret),
-        );
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::PUT, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1101,12 +1002,12 @@ impl Account {
     pub async fn create_phone_verification(client: &Client) -> Result<Token, Error> {
         const API_PATH: &str = "/account/verification/phone";
 
-        let api_params = api_params!();
+        let args: BTreeMap<String, Value> = BTreeMap::new();
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::POST, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1118,24 +1019,52 @@ impl Account {
     /// **userId** and **secret** that were sent to your user's phone number to
     /// verify the user email ownership. If confirmed this route will return a 200
     /// status code.
+    ///* userId => string
+    ///* secret => string
     pub async fn update_phone_verification(
         client: &Client,
-        user_id: &str,
-        secret: &str,
+        args: BTreeMap<String, Value>,
     ) -> Result<Token, Error> {
         const API_PATH: &str = "/account/verification/phone";
-
-        let api_params = api_params!(
-            "userId"=>Some(user_id),
-            "secret"=>Some(secret),
-        );
 
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, API_PATH, api_headers, &api_params, None)
+            .call(HttpMethod::PUT, API_PATH, api_headers, args, None)
             .await?;
 
         Ok(res.json().await?)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{client::ClientBuilder, error::Error, id::ID};
+
+    use super::Account;
+
+    #[tokio::test]
+    async fn test_account() -> Result<(), Error> {
+        let client = ClientBuilder::default()
+            .set_endpoint("http://127.0.0.1/")?
+            .set_project("676c2b7b000c834e1fce")?
+            .set_key("standard_5d84014ebaf0de52308eff28946a43062921240c10b81c2fd037ab60b02f0257b7f0a53fe94065170fe7c7d0af2d4136d4cbf32a4055baeada3d27f2e323b70aeda87e97f676207cf10cbb18b7a80f8d1103803617454c89138f217dad701bbe9dc6950bc58853fdb2a0b4b67d2a8b8b6b7b9b2e6d9b94e0a2fcfee794688e2e")?
+            //.set_self_signed(false)?
+            .build()?;
+
+        // ! create user
+        // let user_res = Account::create(
+        //     &client,
+        //     maplit::btreemap! {
+        //         "userId".into() => ID::unique(7).into(),
+        //         "email".into()=> "fakeEmail@Email.com".into(),
+        //         "password".into()=> "VeryVerySecurePassword@123456789".into(),
+        //     },
+        // )
+        // .await?;
+
+        // assert_eq!(user_res.email, "fakeEmail@Email.com");
+
+        Ok(())
     }
 }

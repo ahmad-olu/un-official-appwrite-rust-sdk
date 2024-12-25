@@ -1,5 +1,5 @@
 {
     "rust-analyzer.linkedProjects": [
-        ".\\Cargo.toml"
+        "/home/r2/Documents/playground/rust/un-official-appwrite-rust-sdk/Cargo.toml"
     ]
 }

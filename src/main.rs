@@ -1,10 +1,18 @@
+use std::collections::BTreeMap;
+
 // use futures_util::{pin_mut, StreamExt};
 // use std::sync::{Arc, Mutex};
 // use tokio::task;
-use unofficial_appwrite::error::Error;
+use unofficial_appwrite::{error::Error, id::ID, value::Value};
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
+    let mut a: BTreeMap<String, Value> = BTreeMap::new();
+
+    a.insert("email".into(), "fakeEmail@Email.com".into());
+    a.insert("password".into(), "VeryVerySecurePassword@123456789".into());
+    a.insert("userId".into(), "unique()".into());
+    dbg!(a);
     // let client = ClientBuilder::default()
     //     .set_project("65d20d....")?
     //     .set_key("ae07b88634eacfb42a2fc4c4a7f278d96....")?

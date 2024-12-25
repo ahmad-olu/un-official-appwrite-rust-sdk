@@ -1,4 +1,4 @@
-use std::{fs, str::FromStr};
+use std::{collections::BTreeMap, fs, str::FromStr};
 
 use async_fn_stream::try_fn_stream;
 use futures_util::Stream;
@@ -8,7 +8,7 @@ use reqwest::{
     Response, StatusCode,
 };
 use serde::Serialize;
-use serde_json::{json, Value};
+use serde_json::json;
 use uuid::Uuid;
 
 use crate::{
@@ -16,6 +16,7 @@ use crate::{
     error::{AppWriteError, Error},
     models::{deployment::Deployment, file::File, UploadType},
     upload_progress::UploadProgress,
+    value::Value as val,
 };
 
 #[derive(Debug, Clone)]
@@ -115,12 +116,12 @@ impl ClientBuilder {
 }
 
 impl Client {
-    pub async fn call<T: Serialize + ?Sized>(
+    pub async fn call(
         &self,
         method: HttpMethod,
         path: &str,
         headers: HeaderMap,
-        params: &T,
+        params: BTreeMap<String, val>,
         form: Option<Form>,
     ) -> Result<Response, Error> {
         let res = reqwest::Client::new();
@@ -169,7 +170,7 @@ impl Client {
         }
     }
 
-    fn _flatten_params_for_get(api_params: &Value) -> Result<String, Error> {
+    fn _flatten_params_for_get(api_params: &serde_json::Value) -> Result<String, Error> {
         let mut params_chain = String::new();
         let mut i = 0;
 
@@ -213,7 +214,7 @@ impl Client {
         file_path: &str,
         api_path: &str,
         file_id: String,
-        params: &T,
+        params: BTreeMap<String, val>,
         file_name: String,
         //on_progress: Option<fn(UploadProgress)>,
         is_file: bool,
@@ -248,7 +249,7 @@ impl Client {
             match is_file {
                 true => {
                     let file = self
-                        .call(HttpMethod::POST, uri, headers, &params, Some(form))
+                        .call(HttpMethod::POST, uri, headers, params.clone(), Some(form))
                         .await?
                         .json::<File>()
                         .await?;
@@ -266,7 +267,7 @@ impl Client {
                 }
                 false => {
                     let deployment = self
-                        .call(HttpMethod::POST, uri, headers, &params, Some(form))
+                        .call(HttpMethod::POST, uri, headers, params.clone(), Some(form))
                         .await?
                         .json::<Deployment>()
                         .await?;
@@ -300,7 +301,7 @@ impl Client {
                     format!("multipart/form-data; boundary={}", boundary).as_str(),
                 )?,
             );
-            let params = serde_json::json!({});
+            let params: BTreeMap<String, val> = BTreeMap::new();
             match is_file {
                 true => {
                     let res = self
@@ -308,7 +309,7 @@ impl Client {
                             HttpMethod::GET,
                             format!("{}{}/{}", self.end_point, api_path, file_id).as_str(),
                             headers,
-                            &params,
+                            params.clone(),
                             None,
                         )
                         .await?
@@ -322,7 +323,7 @@ impl Client {
                             HttpMethod::GET,
                             format!("{}{}/{}", self.end_point, api_path, file_id).as_str(),
                             headers,
-                            &params,
+                            params.clone(),
                             None,
                         )
                         .await?
@@ -374,7 +375,13 @@ impl Client {
             //     "permissions": &[] as &[String]
             // });
             let response = self
-                .call(HttpMethod::POST, uri, headers, &params, Some(chunk_form))
+                .call(
+                    HttpMethod::POST,
+                    uri,
+                    headers,
+                    params.clone(),
+                    Some(chunk_form),
+                )
                 .await?;
             if response.status() != StatusCode::CREATED {
                 let err = response.json::<AppWriteError>().await?;
@@ -438,7 +445,7 @@ impl Client {
         file_path: &'a str,
         api_path: String,
         file_id: String,
-        params: Value,
+        params: BTreeMap<String, val>,
         file_name: String,
         is_file: bool,
     ) -> impl Stream<Item = Result<(UploadType, UploadProgress), Error>> + 'a {
@@ -472,7 +479,13 @@ impl Client {
                 match is_file {
                     true => {
                         let file = self
-                            .call(HttpMethod::POST, uri.as_str(), headers, &params, Some(form))
+                            .call(
+                                HttpMethod::POST,
+                                uri.as_str(),
+                                headers,
+                                params.clone(),
+                                Some(form),
+                            )
                             .await?
                             .json::<File>()
                             .await?;
@@ -494,7 +507,13 @@ impl Client {
                     }
                     false => {
                         let deployment = self
-                            .call(HttpMethod::POST, uri.as_str(), headers, &params, Some(form))
+                            .call(
+                                HttpMethod::POST,
+                                uri.as_str(),
+                                headers,
+                                params.clone(),
+                                Some(form),
+                            )
                             .await?
                             .json::<Deployment>()
                             .await?;
@@ -531,7 +550,7 @@ impl Client {
                         format!("multipart/form-data; boundary={}", boundary).as_str(),
                     )?,
                 );
-                let params = serde_json::json!({});
+                let params: BTreeMap<String, val> = BTreeMap::new();
                 match is_file {
                     true => {
                         let res = self
@@ -539,7 +558,7 @@ impl Client {
                                 HttpMethod::GET,
                                 format!("{}{}/{}", self.end_point, api_path, file_id).as_str(),
                                 headers,
-                                &params,
+                                params.clone(),
                                 None,
                             )
                             .await?
@@ -553,7 +572,7 @@ impl Client {
                                 HttpMethod::GET,
                                 format!("{}{}/{}", self.end_point, api_path, file_id).as_str(),
                                 headers,
-                                &params,
+                                params.clone(),
                                 None,
                             )
                             .await?
@@ -609,7 +628,7 @@ impl Client {
                         HttpMethod::POST,
                         uri.as_str(),
                         headers,
-                        &params,
+                        params.clone(),
                         Some(chunk_form),
                     )
                     .await?;
