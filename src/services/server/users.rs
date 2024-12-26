@@ -7,13 +7,10 @@ use std::collections::HashMap;
 use serde_json::{json, Value};
 
 use crate::{
-    api_params, app_json_header,
+    app_json_header,
     client::Client,
     enumm::HttpMethod,
-    enums::{
-        authentication_type::AuthenticationType, messaging_provider_type::MessagingProviderType,
-        password_hash::PasswordHash,
-    },
+    enums::authentication_type::AuthenticationType,
     error::Error,
     models::{
         identity_list::IdentityList, log_list::LogList, membership_list::MembershipList,

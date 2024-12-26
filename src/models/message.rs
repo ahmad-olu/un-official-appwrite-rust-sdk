@@ -1,5 +1,7 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
+use serde_json::Value;
 
 /// Message
 #[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
@@ -46,7 +48,7 @@ pub struct Message {
     pub delivered_total: usize,
 
     /// Data of the message.
-    pub data: Map<String, Value>,
+    pub data: HashMap<String, Value>,
 
     /// Status of delivery.
     pub status: String,

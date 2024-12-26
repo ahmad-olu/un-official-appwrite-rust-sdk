@@ -9,7 +9,7 @@ use unofficial_appwrite::{error::Error, id::ID};
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    let params = json!({
+    let _params = json!({
         "userId":ID::unique(7),
         "email": "fakeEmail@Email.com",
         "password": "VeryVerySecurePassword@123456789",

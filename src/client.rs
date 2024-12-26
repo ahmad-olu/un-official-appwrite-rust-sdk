@@ -24,7 +24,7 @@ pub struct Client {
     pub end_point_realtime: Option<String>, //todo set this
     pub header: HeaderMap,
     chunk_size: usize,
-    self_signed: bool,
+    _self_signed: bool,
 }
 
 #[derive(Clone)]
@@ -61,9 +61,9 @@ impl ClientBuilder {
     pub fn set_endpoint(&mut self, endpoint: &str) -> Result<&mut Self, Error> {
         self.end_point = Some(String::from(endpoint));
         if self.end_point_realtime.as_ref().is_none() {
-            self.end_point_realtime = self.end_point.clone().and_then(|Value| {
+            self.end_point_realtime = self.end_point.clone().and_then(|value| {
                 Some(
-                    Value
+                    value
                         .replace("https://", "wss://")
                         .replace("http://", "ws://"),
                 )
@@ -110,7 +110,7 @@ impl ClientBuilder {
             end_point_realtime: self.end_point_realtime.clone(),
             header: self.header.clone(),
             chunk_size: self.chunk_size.clone().unwrap_or_else(|| 5 * 1024 * 1024),
-            self_signed: self.self_signed.clone().unwrap_or_else(|| false),
+            _self_signed: self.self_signed.clone().unwrap_or_else(|| false),
         })
     }
 }
@@ -180,9 +180,9 @@ impl Client {
                 "Unable to convert value because it's not an object".to_string(),
             ))?
             .iter()
-            .for_each(|Value| match Value.0.contains("queries") {
+            .for_each(|value| match value.0.contains("queries") {
                 true => {
-                    let v = Value.1.as_array().unwrap();
+                    let v = value.1.as_array().unwrap();
                     v.iter().for_each(|query| {
                         let start_string = match i == 0 {
                             true => "?",
@@ -204,8 +204,8 @@ impl Client {
                         format!(
                             "{}{}={}",
                             start_character,
-                            Value.0,
-                            Value.1.as_str().unwrap()
+                            value.0,
+                            value.1.as_str().unwrap()
                         )
                         .as_str(),
                     )

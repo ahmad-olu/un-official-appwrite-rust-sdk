@@ -1035,14 +1035,17 @@ impl Account {
 
 #[cfg(test)]
 mod tests {
-    use crate::{client::ClientBuilder, error::Error, id::ID, models::message};
+    use crate::{
+        client::ClientBuilder, error::Error, id::ID, models::message,
+        services::server::users::Users,
+    };
 
     use super::Account;
 
     #[tokio::test]
     async fn test_account() -> Result<(), Error> {
         let client = ClientBuilder::default()
-            .set_endpoint("http://127.0.0.1/")?
+            .set_endpoint("http://127.0.0.1/v1")?
             .set_project("676c2b7b000c834e1fce")?
             .set_key("standard_5d84014ebaf0de52308eff28946a43062921240c10b81c2fd037ab60b02f0257b7f0a53fe94065170fe7c7d0af2d4136d4cbf32a4055baeada3d27f2e323b70aeda87e97f676207cf10cbb18b7a80f8d1103803617454c89138f217dad701bbe9dc6950bc58853fdb2a0b4b67d2a8b8b6b7b9b2e6d9b94e0a2fcfee794688e2e")?
             //.set_self_signed(false)?
@@ -1053,24 +1056,15 @@ mod tests {
             &client,
             maplit::hashmap! {
                 "userId".into() => ID::unique(7).into(),
-                "email".into()=> "fakeEmail@Email.com".into(),
+                "email".into()=> "fakeEmailAcc@Email.com".into(),
                 "password".into()=> "VeryVerySecurePassword@123456789".into(),
             },
         )
-        .await
-        .unwrap_err();
+        .await?;
+        assert_eq!(user_res.email, "fakeemailacc@email.com");
 
-        let err = match user_res {
-            Error::AppWriteError {
-                message,
-                code: _,
-                response: _,
-                error_type: _,
-            } => message,
-            _ => "".to_string(),
-        };
-
-        assert_eq!(err, "Error: Server Error");
+        let delete_user = Users::delete(&client, &user_res.id).await?;
+        assert_eq!(delete_user, ());
 
         Ok(())
     }

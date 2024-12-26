@@ -1,5 +1,7 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
+use serde_json::Value;
 
 use super::{preferences::Preferences, target::Target};
 
@@ -29,7 +31,7 @@ pub struct User {
 
     /// Password hashing algorithm configuration.
     #[serde(rename = "hashOptions")]
-    pub hash_options: Option<Map<String, Value>>,
+    pub hash_options: Option<HashMap<String, Value>>,
 
     /// User registration date in ISO 8601 format.
     pub registration: String,

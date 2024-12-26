@@ -1,5 +1,7 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
+use serde_json::Value;
 
 /// Document
 #[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
@@ -29,5 +31,5 @@ pub struct Document {
     pub permissions: Vec<String>,
 
     #[serde(flatten)]
-    pub data: Map<String, Value>,
+    pub data: HashMap<String, Value>,
 }

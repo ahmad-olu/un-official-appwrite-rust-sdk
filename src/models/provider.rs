@@ -1,5 +1,7 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
+use serde_json::Value;
 
 /// Provider
 #[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
@@ -30,8 +32,8 @@ pub struct Provider {
     pub provider_type: String,
 
     /// Provider credentials.
-    pub credentials: Map<String, Value>,
+    pub credentials: HashMap<String, Value>,
 
     /// Provider options.
-    pub options: Option<Map<String, Value>>,
+    pub options: Option<HashMap<String, Value>>,
 }
