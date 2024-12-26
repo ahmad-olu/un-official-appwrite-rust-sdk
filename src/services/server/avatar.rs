@@ -6,8 +6,8 @@
 use std::collections::HashMap;
 
 use crate::{
-    api_params, app_json_header, client::Client, enumm::HttpMethod, enums::flag::Flag,
-    error::Error, utils::get_content_header_value,
+    app_json_header, client::Client, enumm::HttpMethod, enums::flag::Flag, error::Error,
+    utils::get_content_header_value,
 };
 use serde_json::{json, Value};
 
