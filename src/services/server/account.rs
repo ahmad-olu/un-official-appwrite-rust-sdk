@@ -2,7 +2,7 @@
 //!
 //! The Account service allows you to authenticate and manage a user account.
 
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 
 use serde_json::{json, Value};
 
@@ -30,7 +30,7 @@ impl Account {
     pub async fn get(client: &Client) -> Result<User, Error> {
         const API_PATH: &str = "/account";
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -54,7 +54,7 @@ impl Account {
     ///* email => string
     ///* password => string
     ///* name => string?
-    pub async fn create(client: &Client, args: BTreeMap<String, Value>) -> Result<User, Error> {
+    pub async fn create(client: &Client, args: HashMap<String, Value>) -> Result<User, Error> {
         const API_PATH: &str = "/account";
 
         let api_headers = app_json_header!();
@@ -80,7 +80,7 @@ impl Account {
     ///* password => string
     pub async fn update_email(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<User, Error> {
         const API_PATH: &str = "/account/email";
 
@@ -99,7 +99,7 @@ impl Account {
     ///* queries => string?
     pub async fn list_identities(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<IdentityList, Error> {
         const API_PATH: &str = "/account/identities";
 
@@ -120,7 +120,7 @@ impl Account {
             .to_owned()
             .replace("{identityId}", identity_id);
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -147,7 +147,7 @@ impl Account {
     pub async fn create_jwt(client: &Client) -> Result<JWT, Error> {
         let api_path = "/account/jwt";
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -165,7 +165,7 @@ impl Account {
     ///* queries => vec(string)?
     pub async fn list_logs(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<LogList, Error> {
         const API_PATH: &str = "/account/logs";
 
@@ -182,7 +182,7 @@ impl Account {
     ///
     /// Enable or disable MFA on an account.
     ///* mfa => bool
-    pub async fn update_mfa(client: &Client, args: BTreeMap<String, Value>) -> Result<User, Error> {
+    pub async fn update_mfa(client: &Client, args: HashMap<String, Value>) -> Result<User, Error> {
         let api_path = "/account/mfa";
 
         let api_headers = app_json_header!();
@@ -206,7 +206,7 @@ impl Account {
     ) -> Result<MfaType, Error> {
         let api_path = format!("/account/mfa/authenticators/{}", json!(x_type));
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -226,7 +226,7 @@ impl Account {
     pub async fn update_mfa_authenticator(
         client: &Client,
         x_type: AuthenticationType,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<User, Error> {
         let api_path = format!("/account/mfa/authenticators/{}", json!(x_type));
 
@@ -250,7 +250,7 @@ impl Account {
 
         let api_headers = app_json_header!();
 
-        let args = BTreeMap::new();
+        let args = HashMap::new();
 
         let res = client
             .call(
@@ -273,7 +273,7 @@ impl Account {
     ///* factor => AuthenticatorFactor
     pub async fn create_mfa_challenge(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<MfaChallenge, Error> {
         let api_path = "/account/mfa/challenge";
 
@@ -297,7 +297,7 @@ impl Account {
     ///* challengeId => string
     pub async fn update_mfa_challenge(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<(), Error> {
         let api_path = "/account/mfa/challenge";
 
@@ -316,7 +316,7 @@ impl Account {
     pub async fn list_mfa_factors(client: &Client) -> Result<MfaFactors, Error> {
         let api_path = "/account/mfa/factors";
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -336,7 +336,7 @@ impl Account {
     pub async fn get_mfa_recovery_codes(client: &Client) -> Result<MfaRecoveryCodes, Error> {
         let api_path = "/account/mfa/recovery-codes";
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -357,7 +357,7 @@ impl Account {
     pub async fn create_mfa_recovery_codes(client: &Client) -> Result<MfaRecoveryCodes, Error> {
         let api_path = "/account/mfa/recovery-codes";
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -377,7 +377,7 @@ impl Account {
     pub async fn update_mfa_recovery_codes(client: &Client) -> Result<MfaRecoveryCodes, Error> {
         let api_path = "/account/mfa/recovery-codes";
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -392,10 +392,7 @@ impl Account {
     ///
     /// Update currently logged in user account name.
     ///* name => string
-    pub async fn update_name(
-        client: &Client,
-        args: BTreeMap<String, Value>,
-    ) -> Result<User, Error> {
+    pub async fn update_name(client: &Client, args: HashMap<String, Value>) -> Result<User, Error> {
         const API_PATH: &str = "/account/name";
 
         let api_headers = app_json_header!();
@@ -416,7 +413,7 @@ impl Account {
     ///* oldPassword => string
     pub async fn update_password(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<User, Error> {
         const API_PATH: &str = "/account/name";
 
@@ -440,7 +437,7 @@ impl Account {
     ///* password => string
     pub async fn update_phone(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<User, Error> {
         const API_PATH: &str = "/account/name";
 
@@ -459,7 +456,7 @@ impl Account {
     pub async fn get_preference(client: &Client) -> Result<Preferences, Error> {
         const API_PATH: &str = "/account/prefs";
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -475,10 +472,10 @@ impl Account {
     /// Update currently logged in user account preferences. The object you pass is
     /// stored as is, and replaces any previous value. The maximum allowed prefs
     /// size is 64kB and throws error if exceeded.
-    ///* prefs => BTreeMap<String, Value>
+    ///* prefs => HashMap<String, Value>
     pub async fn update_preference(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<User, Error> {
         const API_PATH: &str = "/account/prefs";
 
@@ -505,7 +502,7 @@ impl Account {
     ///* url => string
     pub async fn create_recovery(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<Token, Error> {
         const API_PATH: &str = "/account/recovery";
 
@@ -535,7 +532,7 @@ impl Account {
     ///* password => string
     pub async fn update_recovery(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<Token, Error> {
         const API_PATH: &str = "/account/recovery";
 
@@ -555,7 +552,7 @@ impl Account {
     pub async fn list_sessions(client: &Client) -> Result<SessionList, Error> {
         const API_PATH: &str = "/account/sessions";
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -573,7 +570,7 @@ impl Account {
     pub async fn delete_sessions(client: &Client) -> Result<(), Error> {
         const API_PATH: &str = "/account/sessions";
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -596,7 +593,7 @@ impl Account {
     pub async fn create_anonymous_session(client: &Client) -> Result<Session, Error> {
         let api_path = "/account/sessions/anonymous";
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -619,7 +616,7 @@ impl Account {
     ///* password => string
     pub async fn create_email_password_session(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<Session, Error> {
         let api_path = "/account/sessions/email";
 
@@ -641,7 +638,7 @@ impl Account {
     ///* secret => string
     pub async fn create_magic_url_session(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<Session, Error> {
         let api_path = "/account/sessions/magic-url";
 
@@ -663,7 +660,7 @@ impl Account {
     ///* secret => string
     pub async fn update_phone_session(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<Session, Error> {
         let api_path = "/account/sessions/phone";
 
@@ -685,7 +682,7 @@ impl Account {
     ///* secret => string
     pub async fn create_session(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<Session, Error> {
         let api_path = "/account/sessions/token";
 
@@ -707,7 +704,7 @@ impl Account {
             .to_owned()
             .replace("{sessionId}", session_id);
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -728,7 +725,7 @@ impl Account {
             .to_owned()
             .replace("{sessionId}", session_id);
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -757,7 +754,7 @@ impl Account {
             .to_owned()
             .replace("{sessionId}", session_id);
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -782,7 +779,7 @@ impl Account {
     pub async fn update_status(client: &Client) -> Result<User, Error> {
         const API_PATH: &str = "/account/status";
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -810,7 +807,7 @@ impl Account {
     ///* phrase => bool?
     pub async fn create_email_token(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<Token, Error> {
         let api_path = "/account/token/email";
 
@@ -847,7 +844,7 @@ impl Account {
     ///* phrase => bool?
     pub async fn create_magic_url_token(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<Token, Error> {
         let api_path = "/account/token/magic-url";
 
@@ -883,7 +880,7 @@ impl Account {
     pub async fn create_oauth2_token(
         client: &Client,
         provider: OAuthProvider,
-        mut args: BTreeMap<String, Value>,
+        mut args: HashMap<String, Value>,
     ) -> Result<(), Error> {
         let api_path = format!("/account/token/oauth2/{}", json!(provider));
 
@@ -918,7 +915,7 @@ impl Account {
     ///* phone => string
     pub async fn create_phone_token(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<Token, Error> {
         let api_path = "/account/token/phone";
 
@@ -951,7 +948,7 @@ impl Account {
     ///* url => string
     pub async fn create_verification(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<Token, Error> {
         const API_PATH: &str = "/account/verification";
 
@@ -975,7 +972,7 @@ impl Account {
     ///* secret => string
     pub async fn update_verification(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<Token, Error> {
         const API_PATH: &str = "/account/verification";
 
@@ -1001,7 +998,7 @@ impl Account {
     pub async fn create_phone_verification(client: &Client) -> Result<Token, Error> {
         const API_PATH: &str = "/account/verification/phone";
 
-        let args: BTreeMap<String, Value> = BTreeMap::new();
+        let args: HashMap<String, Value> = HashMap::new();
 
         let api_headers = app_json_header!();
 
@@ -1022,7 +1019,7 @@ impl Account {
     ///* secret => string
     pub async fn update_phone_verification(
         client: &Client,
-        args: BTreeMap<String, Value>,
+        args: HashMap<String, Value>,
     ) -> Result<Token, Error> {
         const API_PATH: &str = "/account/verification/phone";
 
@@ -1054,7 +1051,7 @@ mod tests {
         // ! create user
         let user_res = Account::create(
             &client,
-            maplit::btreemap! {
+            maplit::hashmap! {
                 "userId".into() => ID::unique(7).into(),
                 "email".into()=> "fakeEmail@Email.com".into(),
                 "password".into()=> "VeryVerySecurePassword@123456789".into(),

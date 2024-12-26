@@ -1,4 +1,4 @@
-use std::{collections::BTreeMap, fs, str::FromStr};
+use std::{collections::HashMap, fs, str::FromStr};
 
 use async_fn_stream::try_fn_stream;
 use futures_util::Stream;
@@ -121,7 +121,7 @@ impl Client {
         method: HttpMethod,
         path: &str,
         headers: HeaderMap,
-        params: BTreeMap<String, Value>,
+        params: HashMap<String, Value>,
         form: Option<Form>,
     ) -> Result<Response, Error> {
         let res = reqwest::Client::new();
@@ -219,7 +219,7 @@ impl Client {
         file_path: &str,
         api_path: &str,
         file_id: String,
-        params: BTreeMap<String, Value>,
+        params: HashMap<String, Value>,
         file_name: String,
         //on_progress: Option<fn(UploadProgress)>,
         is_file: bool,
@@ -306,7 +306,7 @@ impl Client {
                     format!("multipart/form-data; boundary={}", boundary).as_str(),
                 )?,
             );
-            let params: BTreeMap<String, Value> = BTreeMap::new();
+            let params: HashMap<String, Value> = HashMap::new();
             match is_file {
                 true => {
                     let res = self
@@ -450,7 +450,7 @@ impl Client {
         file_path: &'a str,
         api_path: String,
         file_id: String,
-        params: BTreeMap<String, Value>,
+        params: HashMap<String, Value>,
         file_name: String,
         is_file: bool,
     ) -> impl Stream<Item = Result<(UploadType, UploadProgress), Error>> + 'a {
@@ -555,7 +555,7 @@ impl Client {
                         format!("multipart/form-data; boundary={}", boundary).as_str(),
                     )?,
                 );
-                let params: BTreeMap<String, Value> = BTreeMap::new();
+                let params: HashMap<String, Value> = HashMap::new();
                 match is_file {
                     true => {
                         let res = self

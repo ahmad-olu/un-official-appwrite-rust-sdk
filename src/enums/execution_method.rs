@@ -16,3 +16,13 @@ pub enum ExecutionMethod {
     #[serde(rename = "OPTIONS")]
     OPTIONS,
 }
+
+impl ExecutionMethod {
+    /// Converts the enum to its serialized string representation
+    pub fn as_serialized(&self) -> String {
+        serde_json::to_string(self)
+            .unwrap_or_else(|_| panic!("Failed to serialize ExecutionMethod: {:?}", self))
+            .trim_matches('"') // Remove surrounding quotes from the JSON string
+            .to_string()
+    }
+}
