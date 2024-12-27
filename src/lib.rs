@@ -287,6 +287,7 @@ pub mod id;
 pub mod models;
 pub mod permission;
 pub mod query;
+pub mod query_value;
 pub mod realtime;
 pub mod role;
 pub mod services;

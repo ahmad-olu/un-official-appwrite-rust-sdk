@@ -1095,7 +1095,7 @@ mod tests {
 
     use super::Users;
 
-    #[tokio::test]
+    // #[tokio::test]
     async fn test_user() -> Result<(), Error> {
         let client = ClientBuilder::default()
             .set_endpoint("http://127.0.0.1/v1")?

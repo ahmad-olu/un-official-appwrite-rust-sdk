@@ -1,49 +1,5 @@
+use crate::query_value::{Query as Q, QueryValue};
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
-
-#[derive(Serialize, Deserialize, Debug)]
-struct QueryString {
-    method: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    attribute: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    values: Option<Value>, // Use serde_json::Value for dynamic values
-}
-impl QueryString {
-    fn new(method: &str, attribute: Option<String>, values: Option<Value>) -> Self {
-        Self {
-            method: method.to_string(),
-            attribute,
-            values,
-        }
-    }
-
-    pub fn to_string(&self) -> String {
-        serde_json::to_string(self).unwrap()
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct QueryDynamic {
-    method: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    attribute: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    values: Option<Vec<serde_json::Value>>, // Use serde_json::Value for dynamic values
-}
-impl QueryDynamic {
-    fn new(method: &str, attribute: Option<String>, values: Option<Vec<Value>>) -> Self {
-        Self {
-            method: method.to_string(),
-            attribute,
-            values,
-        }
-    }
-
-    pub fn to_string(&self) -> String {
-        serde_json::to_string(self).unwrap()
-    }
-}
 
 /// Helper class to generate query strings.
 #[derive(Serialize, Deserialize, Debug)]
@@ -56,266 +12,245 @@ impl Query {
     /// the query will return resources where [attribute] is equal
     /// to any of the values in the list.
     /// ```
-    /// // assert_eq!(
-    /// // Query::equal("title", json!(vec!["bamboo", "ace"])),
-    /// // r#"{"method":"equal","attribute":"title","values":["bamboo","ace"]}"#,
-    /// // );
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::equal("title".into(), vec!["bamboo", "ace"].into()),
+    ///         r#"{"method":"equal","attribute":"title","values":["bamboo","ace"]}"#
+    ///     );
     /// ```
     /// or
     /// ```
-    /// //assert_eq!(
-    /// //Query::equal("title", json!(vec!["Iron Man"])),
-    /// //r#"{"method":"equal","attribute":"title","values":["Iron Man"]}"#,
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::equal("title".into(), vec!["Iron Man"].into()),
+    ///         r#"{"method":"equal","attribute":"title","values":["Iron Man"]}"#
+    ///     );
     /// ```
-    pub fn equal(attribute: &str, value: Value) -> String {
-        QueryString::new("equal", Some(attribute.to_string()), Some(value)).to_string()
+    pub fn equal(attribute: QueryValue, values: QueryValue) -> String {
+        Q::new("equal", attribute, values).to_string()
     }
 
     /// Filter resources where [attribute] is not equal to [value].
     /// ```
-    /// //assert_eq!(
-    /// //Query::not_equal("title", json!(vec!["Iron Man"])),
-    /// //r#"{"method":"notEqual","attribute":"title","values":["Iron Man"]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::not_equal("title".into(), vec!["Iron Man"].into()),
+    ///         r#"{"method":"notEqual","attribute":"title","values":["Iron Man"]}"#
+    ///     );
     /// ```
-    pub fn not_equal(attribute: &str, value: Value) -> String {
-        QueryString::new("notEqual", Some(attribute.to_string()), Some(value)).to_string()
+    pub fn not_equal(attribute: QueryValue, values: QueryValue) -> String {
+        Q::new("notEqual", attribute, values).to_string()
     }
 
     /// Filter resources where [attribute] is less than [value].
     /// ```
-    /// //assert_eq!(
-    /// //Query::less_than("score", json!(10)),
-    /// //r#"{"method":"lessThan","attribute":"score","values":[10]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::less_than("score".into(), 10.into()),
+    ///         r#"{"method":"lessThan","attribute":"score","values":[10]}"#
+    ///     );
     /// ```
-    pub fn less_than(attribute: &str, value: Value) -> String {
-        QueryDynamic::new("lessThan", Some(attribute.to_string()), Some(vec![value])).to_string()
+    pub fn less_than(attribute: QueryValue, value: QueryValue) -> String {
+        Q::new("lessThan", attribute, value.convert_to_array_if_not_array()).to_string()
     }
 
     /// Filter resources where [attribute] is less than or equal to [value].
     /// ```
-    /// //assert_eq!(
-    /// //Query::less_than_equal("score", json!(10)),
-    /// //r#"{"method":"lessThanEqual","attribute":"score","values":[10]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::less_than_equal("score".into(), 10.into()),
+    ///         r#"{"method":"lessThanEqual","attribute":"score","values":[10]}"#
+    ///     );
     /// ```
-    pub fn less_than_equal(attribute: &str, value: Value) -> String {
-        QueryDynamic::new(
+    pub fn less_than_equal(attribute: QueryValue, value: QueryValue) -> String {
+        Q::new(
             "lessThanEqual",
-            Some(attribute.to_string()),
-            Some(vec![value]),
+            attribute,
+            value.convert_to_array_if_not_array(),
         )
         .to_string()
     }
 
     /// Filter resources where [attribute] is greater than [value].
     /// ```
-    /// // assert_eq!(
-    /// //Query::greater_than("score", json!(10)),
-    /// //r#"{"method":"greaterThan","attribute":"score","values":[10]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::greater_than("score".into(), 10.into()),
+    ///         r#"{"method":"greaterThan","attribute":"score","values":[10]}"#
+    ///     );
     /// ```
-    pub fn greater_than(attribute: &str, value: Value) -> String {
-        QueryDynamic::new(
+    pub fn greater_than(attribute: QueryValue, value: QueryValue) -> String {
+        Q::new(
             "greaterThan",
-            Some(attribute.to_string()),
-            Some(vec![value]),
+            attribute,
+            value.convert_to_array_if_not_array(),
         )
         .to_string()
     }
 
     /// Filter resources where [attribute] is greater than or equal to [value].
     /// ```
-    /// //assert_eq!(
-    /// //Query::greater_than_equal("score", json!(10)),
-    /// //r#"{"method":"greaterThanEqual","attribute":"score","values":[10]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::greater_than_equal("score".into(), 10.into()),
+    ///         r#"{"method":"greaterThanEqual","attribute":"score","values":[10]}"#
+    ///     );
     /// ```
-    pub fn greater_than_equal(attribute: &str, value: Value) -> String {
-        QueryDynamic::new(
+    pub fn greater_than_equal(attribute: QueryValue, value: QueryValue) -> String {
+        Q::new(
             "greaterThanEqual",
-            Some(attribute.to_string()),
-            Some(vec![value]),
+            attribute,
+            value.convert_to_array_if_not_array(),
         )
         .to_string()
     }
 
     /// Filter resources where by searching [attribute] for [value].
     /// ```
-    /// //assert_eq!(
-    /// //Query::search("text", "key words"),
-    /// //r#"{"method":"search","attribute":"text","values":["key words"]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::search("text".into(), "key words".into()),
+    ///         r#"{"method":"search","attribute":"text","values":["key words"]}"#
+    ///     );
     /// ```
-    pub fn search(attribute: &str, value: &str) -> String {
-        QueryString::new(
-            "search",
-            Some(attribute.to_string()),
-            Some(json!(vec![value])),
-        )
-        .to_string()
+    pub fn search(attribute: QueryValue, value: QueryValue) -> String {
+        Q::new("search", attribute, value.convert_to_array_if_not_array()).to_string()
     }
 
     /// Filter resources where [attribute] is null.
     /// ```
-    /// // assert_eq!(
-    /// //Query::is_null("name"),
-    /// //r#"{"method":"isNull","attribute":"name"}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::is_null("name".into()),
+    ///         r#"{"method":"isNull","attribute":"name"}"#
+    ///     );
     /// ```
-    pub fn is_null(attribute: &str) -> String {
-        QueryString::new("isNull", Some(attribute.to_string()), None).to_string()
+    pub fn is_null(attribute: QueryValue) -> String {
+        Q::new("isNull", attribute, None::<&str>.into()).to_string()
     }
 
     /// Filter resources where [attribute] is not null.
     /// ```
-    /// //assert_eq!(
-    /// //Query::is_not_null("name"),
-    /// //r#"{"method":"isNotNull","attribute":"name"}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::is_not_null("name".into()),
+    ///         r#"{"method":"isNotNull","attribute":"name"}"#
+    ///     );
     /// ```
-    pub fn is_not_null(attribute: &str) -> String {
-        QueryString::new("isNotNull", Some(attribute.to_string()), None).to_string()
+    pub fn is_not_null(attribute: QueryValue) -> String {
+        Q::new("isNotNull", attribute, None::<&str>.into()).to_string()
     }
 
     /// Filter resources where [attribute] is between [start] and [end] (inclusive).
     /// ```
-    /// // assert_eq!(
-    /// //Query::between("price", json!(5), json!(10)),
-    /// //r#"{"method":"between","attribute":"price","values":[5,10]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::between("price".into(), 5.into(), 10.into()),
+    ///         r#"{"method":"between","attribute":"price","values":[5,10]}"#
+    ///     );
     /// ```
-    pub fn between(attribute: &str, start: Value, end: Value) -> String {
-        QueryDynamic::new(
-            "between",
-            Some(attribute.to_string()),
-            Some(vec![start, end]),
-        )
-        .to_string()
+    pub fn between(attribute: QueryValue, start: QueryValue, end: QueryValue) -> String {
+        Q::new("between", attribute, vec![start, end].into()).to_string()
     }
 
     /// Filter resources where [attribute] starts with [value].
     /// ```
-    /// // assert_eq!(
-    /// //Query::starts_with("name", "Once upon a time"),
-    /// //r#"{"method":"startsWith","attribute":"name","values":["Once upon a time"]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::starts_with("name".into(), "Once upon a time".into()),
+    ///         r#"{"method":"startsWith","attribute":"name","values":["Once upon a time"]}"#
+    ///     );
     /// ```
-    pub fn starts_with(attribute: &str, value: &str) -> String {
-        QueryString::new(
+    pub fn starts_with(attribute: QueryValue, value: QueryValue) -> String {
+        Q::new(
             "startsWith",
-            Some(attribute.to_string()),
-            Some(json!(vec![value])),
+            attribute,
+            value.convert_to_array_if_not_array(),
         )
         .to_string()
     }
 
     /// Filter resources where [attribute] ends with [value].
     /// ```
-    /// //assert_eq!(
-    /// //Query::ends_with("name", "happily ever after."),
-    /// //r#"{"method":"endsWith","attribute":"name","values":["happily ever after."]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::ends_with("name".into(), "happily ever after.".into()),
+    ///         r#"{"method":"endsWith","attribute":"name","values":["happily ever after."]}"#
+    ///     );
     /// ```
-    pub fn ends_with(attribute: &str, value: &str) -> String {
-        QueryString::new(
-            "endsWith",
-            Some(attribute.to_string()),
-            Some(json!(vec![value])),
-        )
-        .to_string()
+    pub fn ends_with(attribute: QueryValue, value: QueryValue) -> String {
+        Q::new("endsWith", attribute, value.convert_to_array_if_not_array()).to_string()
     }
 
     /// Filter resources where [attribute] contains [value]
     /// [value] can be a single value or a list.
     /// ```
-    /// // assert_eq!(
-    /// //Query::contains("ingredients", json!(vec!["apple", "banana"])),
-    /// //r#"{"method":"contains","attribute":"ingredients","values":["apple","banana"]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::contains("ingredients".into(), vec!["apple", "banana"].into()),
+    ///         r#"{"method":"contains","attribute":"ingredients","values":["apple","banana"]}"#
+    ///     );
     /// ```
     /// or
     /// ```
-    /// //assert_eq!(
-    /// //Query::contains("ingredients", json!(vec!["apple", "banana"])),
-    /// //r#"{"method":"contains","attribute":"ingredients","values":["apple","banana"]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::contains("name".into(), vec!["Tom"].into()),
+    ///         r#"{"method":"contains","attribute":"name","values":["Tom"]}"#
+    ///     );
     /// ```
-    pub fn contains(attribute: &str, value: Value) -> String {
-        QueryString::new("contains", Some(attribute.to_string()), Some(value)).to_string()
+    pub fn contains(attribute: QueryValue, value: QueryValue) -> String {
+        Q::new("contains", attribute, value).to_string()
     }
 
     ///```
-    /// //assert_eq!(
-    /// //Query::or(vec![
-    /// //    Query::less_than("size", json!(5)),
-    /// //    Query::greater_than("size", json!(10))
-    /// //]),
-    /// //r#"{"method":"or","values":[{"attribute":"size","method":"lessThan","values":[5]},{"attribute":"size","method":"greaterThan","values":[10]}]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::or(
+    ///             vec![
+    ///                 unofficial_appwrite::query::Query::less_than("size".into(), 5.into()),
+    ///                 unofficial_appwrite::query::Query::greater_than("size".into(), 10.into())
+    ///             ]
+    ///             .into()
+    ///         ),
+    ///         r#"{"method":"or","values":[{"attribute":"size","method":"lessThan","values":[5]},{"attribute":"size","method":"greaterThan","values":[10]}]}"#
+    ///     );
     /// ```
     pub fn or(queries: Vec<String>) -> String {
-        let parsed_queries: Vec<serde_json::Value> = queries
-            .iter()
-            .map(|q| serde_json::from_str(q).unwrap())
+        let values = queries
+            .into_iter()
+            .map(|q| QueryValue::JsonObject(serde_json::from_str(&q).expect("Invalid JSON string")))
             .collect();
-        QueryDynamic::new("or", None, Some(parsed_queries)).to_string()
+
+        Q::new("or", None::<&str>.into(), QueryValue::Array(values)).to_string()
     }
 
     ///```
-    /// // assert_eq!(
-    /// //Query::and(vec![
-    /// //    Query::less_than("size", json!(10)),
-    /// //    Query::greater_than("size", json!(5))
-    /// //]),
-    /// //r#"{"method":"and","values":[{"attribute":"size","method":"lessThan","values":[10]},{"attribute":"size","method":"greaterThan","values":[5]}]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::and(vec![
+    ///             unofficial_appwrite::query::Query::less_than("size".into(), 10.into()),
+    ///             unofficial_appwrite::query::Query::greater_than("size".into(), vec![5].into())
+    ///         ]),
+    ///         r#"{"method":"and","values":[{"attribute":"size","method":"lessThan","values":[10]},{"attribute":"size","method":"greaterThan","values":[5]}]}"#
+    ///     );
     /// ```
     pub fn and(queries: Vec<String>) -> String {
-        let parsed_queries: Vec<serde_json::Value> = queries
-            .iter()
-            .map(|q| serde_json::from_str(q).unwrap())
+        let values = queries
+            .into_iter()
+            .map(|q| QueryValue::JsonObject(serde_json::from_str(&q).expect("Invalid JSON string")))
             .collect();
-        QueryDynamic::new("and", None, Some(parsed_queries)).to_string()
+        Q::new("and", None::<&str>.into(), QueryValue::Array(values)).to_string()
     }
 
     /// Specify which attributes should be returned by the API call.
-    pub fn select(attributes: Vec<&str>) -> String {
-        QueryDynamic::new(
-            "select",
-            None,
-            Some(
-                attributes
-                    .iter()
-                    .map(|attr| serde_json::Value::String(attr.to_string()))
-                    .collect(),
-            ),
-        )
-        .to_string()
+    pub fn select(attributes: QueryValue) -> String {
+        Q::new("select", None::<&str>.into(), attributes).to_string()
     }
 
     /// Sort results by [attribute] ascending.
     /// ```
-    /// //assert_eq!(
-    /// //Query::order_asc("attribute"),
-    /// //r#"{"method":"orderAsc","attribute":"attribute"}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::order_asc("attribute".into()),
+    ///         r#"{"method":"orderAsc","attribute":"attribute"}"#
+    ///     );
     /// ```
-    pub fn order_asc(attribute: &str) -> String {
-        QueryDynamic::new("orderAsc", Some(attribute.to_string()), None).to_string()
+    pub fn order_asc(attribute: QueryValue) -> String {
+        Q::new("orderAsc", attribute, None::<&str>.into()).to_string()
     }
 
     /// Sort results by [attribute] descending.
     /// ```
-    /// //  assert_eq!(
-    /// //Query::order_desc("attribute"),
-    /// //r#"{"method":"orderDesc","attribute":"attribute"}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::order_desc("attribute".into()),
+    ///         r#"{"method":"orderDesc","attribute":"attribute"}"#
+    ///     );
     /// ```
-    pub fn order_desc(attribute: &str) -> String {
-        QueryDynamic::new("orderDesc", Some(attribute.to_string()), None).to_string()
+    pub fn order_desc(attribute: QueryValue) -> String {
+        Q::new("orderDesc", attribute, None::<&str>.into()).to_string()
     }
 
     /// Return results before [id].
@@ -323,13 +258,18 @@ impl Query {
     /// Refer to the [Cursor Based Pagination](https://appwrite.io/docs/pagination#cursor-pagination)
     /// docs for more information.
     /// ```
-    /// //assert_eq!(
-    /// //Query::cursor_before("62a7...a600"),
-    /// //r#"{"method":"cursorBefore","values":["62a7...a600"]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::cursor_before("62a7...a600".into()),
+    ///         r#"{"method":"cursorBefore","values":["62a7...a600"]}"#
+    ///     );
     /// ```
-    pub fn cursor_before(id: &str) -> String {
-        QueryString::new("cursorBefore", None, Some(json!(vec![id]))).to_string()
+    pub fn cursor_before(id: QueryValue) -> String {
+        Q::new(
+            "cursorBefore",
+            None::<&str>.into(),
+            id.convert_to_array_if_not_array(),
+        )
+        .to_string()
     }
 
     /// Return results after [id].
@@ -337,21 +277,34 @@ impl Query {
     /// Refer to the [Cursor Based Pagination](https://appwrite.io/docs/pagination#cursor-pagination)
     /// docs for more information.
     /// ```
-    /// //assert_eq!(
-    /// //Query::cursor_after("62a7...f620"),
-    /// //r#"{"method":"cursorAfter","values":["62a7...f620"]}"#
-    /// //);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::cursor_after("62a7...f620".into()),
+    ///         r#"{"method":"cursorAfter","values":["62a7...f620"]}"#
+    ///     );
     /// ```
-    pub fn cursor_after(id: &str) -> String {
-        QueryString::new("cursorAfter", None, Some(json!(vec![id]))).to_string()
+    pub fn cursor_after(id: QueryValue) -> String {
+        Q::new(
+            "cursorAfter",
+            None::<&str>.into(),
+            id.convert_to_array_if_not_array(),
+        )
+        .to_string()
     }
 
     /// Return only [limit] results.
     /// ```
-    /// //assert_eq!(Query::limit(25), r#"{"method":"limit","values":[25]}"#);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::limit(25.into()),
+    ///         r#"{"method":"limit","values":[25]}"#
+    ///     );
     /// ```
-    pub fn limit(limit: usize) -> String {
-        QueryString::new("limit", None, Some(json!(vec![limit]))).to_string()
+    pub fn limit(limit: QueryValue) -> String {
+        Q::new(
+            "limit",
+            None::<&str>.into(),
+            limit.convert_to_array_if_not_array(),
+        )
+        .to_string()
     }
 
     /// Return results from [offset].
@@ -359,10 +312,18 @@ impl Query {
     /// Refer to the [Offset Pagination](https://appwrite.io/docs/pagination#offset-pagination)
     /// docs for more information.
     /// ```
-    /// //assert_eq!(Query::offset(0), r#"{"method":"offset","values":[0]}"#);
+    /// assert_eq!(
+    ///         unofficial_appwrite::query::Query::offset(0.into()),
+    ///         r#"{"method":"offset","values":[0]}"#
+    ///     );
     /// ```
-    pub fn offset(offset: usize) -> String {
-        QueryString::new("offset", None, Some(json!(vec![offset]))).to_string()
+    pub fn offset(offset: QueryValue) -> String {
+        Q::new(
+            "offset",
+            None::<&str>.into(),
+            offset.convert_to_array_if_not_array(),
+        )
+        .to_string()
     }
 }
 
@@ -373,95 +334,104 @@ mod tests {
     #[test]
     fn test_all_query_at_once() {
         assert_eq!(
-            Query::equal("title", json!(vec!["bamboo", "ace"])),
+            Query::equal("title".into(), vec!["bamboo", "ace"].into()),
             r#"{"method":"equal","attribute":"title","values":["bamboo","ace"]}"#
         );
         assert_eq!(
             Query::and(vec![
-                Query::less_than("size", json!(10)),
-                Query::greater_than("size", json!(5))
+                Query::less_than("size".into(), 10.into()),
+                Query::greater_than("size".into(), vec![5].into())
             ]),
             r#"{"method":"and","values":[{"attribute":"size","method":"lessThan","values":[10]},{"attribute":"size","method":"greaterThan","values":[5]}]}"#
         );
         assert_eq!(
-            Query::or(vec![
-                Query::less_than("size", json!(5)),
-                Query::greater_than("size", json!(10))
-            ]),
+            Query::or(
+                vec![
+                    Query::less_than("size".into(), 5.into()),
+                    Query::greater_than("size".into(), 10.into())
+                ]
+                .into()
+            ),
             r#"{"method":"or","values":[{"attribute":"size","method":"lessThan","values":[5]},{"attribute":"size","method":"greaterThan","values":[10]}]}"#
         );
         assert_eq!(
-            Query::equal("title", json!(vec!["Iron Man"])),
+            Query::equal("title".into(), vec!["Iron Man"].into()),
             r#"{"method":"equal","attribute":"title","values":["Iron Man"]}"#
         );
         assert_eq!(
-            Query::not_equal("title", json!(vec!["Iron Man"])),
+            Query::not_equal("title".into(), vec!["Iron Man"].into()),
             r#"{"method":"notEqual","attribute":"title","values":["Iron Man"]}"#
         );
         assert_eq!(
-            Query::less_than("score", json!(10)),
+            Query::less_than("score".into(), 10.into()),
             r#"{"method":"lessThan","attribute":"score","values":[10]}"#
         );
         assert_eq!(
-            Query::less_than_equal("score", json!(10)),
+            Query::less_than_equal("score".into(), 10.into()),
             r#"{"method":"lessThanEqual","attribute":"score","values":[10]}"#
         );
         assert_eq!(
-            Query::greater_than("score", json!(10)),
+            Query::greater_than("score".into(), 10.into()),
             r#"{"method":"greaterThan","attribute":"score","values":[10]}"#
         );
         assert_eq!(
-            Query::greater_than_equal("score", json!(10)),
+            Query::greater_than_equal("score".into(), 10.into()),
             r#"{"method":"greaterThanEqual","attribute":"score","values":[10]}"#
         );
         assert_eq!(
-            Query::between("price", json!(5), json!(10)),
+            Query::between("price".into(), 5.into(), 10.into()),
             r#"{"method":"between","attribute":"price","values":[5,10]}"#
         );
         assert_eq!(
-            Query::is_null("name"),
+            Query::is_null("name".into()),
             r#"{"method":"isNull","attribute":"name"}"#
         );
         assert_eq!(
-            Query::is_not_null("name"),
+            Query::is_not_null("name".into()),
             r#"{"method":"isNotNull","attribute":"name"}"#
         );
         assert_eq!(
-            Query::starts_with("name", "Once upon a time"),
+            Query::starts_with("name".into(), "Once upon a time".into()),
             r#"{"method":"startsWith","attribute":"name","values":["Once upon a time"]}"#
         );
         assert_eq!(
-            Query::ends_with("name", "happily ever after."),
+            Query::ends_with("name".into(), "happily ever after.".into()),
             r#"{"method":"endsWith","attribute":"name","values":["happily ever after."]}"#
         );
         assert_eq!(
-            Query::contains("ingredients", json!(vec!["apple", "banana"])),
+            Query::contains("ingredients".into(), vec!["apple", "banana"].into()),
             r#"{"method":"contains","attribute":"ingredients","values":["apple","banana"]}"#
         );
         assert_eq!(
-            Query::contains("name", json!(vec!["Tom"])),
+            Query::contains("name".into(), vec!["Tom"].into()),
             r#"{"method":"contains","attribute":"name","values":["Tom"]}"#
         );
         assert_eq!(
-            Query::search("text", "key words"),
+            Query::search("text".into(), "key words".into()),
             r#"{"method":"search","attribute":"text","values":["key words"]}"#
         );
         assert_eq!(
-            Query::order_desc("attribute"),
+            Query::order_desc("attribute".into()),
             r#"{"method":"orderDesc","attribute":"attribute"}"#
         );
         assert_eq!(
-            Query::order_asc("attribute"),
+            Query::order_asc("attribute".into()),
             r#"{"method":"orderAsc","attribute":"attribute"}"#
         );
-        assert_eq!(Query::limit(25), r#"{"method":"limit","values":[25]}"#);
-        assert_eq!(Query::offset(0), r#"{"method":"offset","values":[0]}"#);
         assert_eq!(
-            Query::cursor_after("62a7...f620"),
+            Query::limit(25.into()),
+            r#"{"method":"limit","values":[25]}"#
+        );
+        assert_eq!(
+            Query::offset(0.into()),
+            r#"{"method":"offset","values":[0]}"#
+        );
+        assert_eq!(
+            Query::cursor_after("62a7...f620".into()),
             r#"{"method":"cursorAfter","values":["62a7...f620"]}"#
         );
         assert_eq!(
-            Query::cursor_before("62a7...a600"),
+            Query::cursor_before("62a7...a600".into()),
             r#"{"method":"cursorBefore","values":["62a7...a600"]}"#
         );
     }
@@ -473,15 +443,5 @@ mod tests {
     //         query.to_string(),
     //         r#"{"method":"select","values":["name","age"]}"#
     //     );
-    // }
-
-    // #[test]
-    // fn test_or_query() {
-    //     let queries = vec![
-    //         r#"{"method":"equal","attribute":"name","values":["John"]}"#.to_string(),
-    //         r#"{"method":"equal","attribute":"age","values":[30]}"#.to_string(),
-    //     ];
-    //     let query = Query::or_queries(queries);
-    //     assert!(query.to_string().starts_with(r#"{"method":"or","values":[{"method":"equal"..."#));
     // }
 }
