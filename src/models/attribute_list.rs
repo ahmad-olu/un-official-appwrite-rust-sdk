@@ -5,7 +5,7 @@ use serde_json::Value;
 #[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq)]
 pub struct AttributeList {
     /// Total number of attributes in the given collection.
-    total: u64,
+    pub total: u64,
     /// List of attributes.
-    attributes: Vec<Value>,
+    pub attributes: Vec<Value>,
 }

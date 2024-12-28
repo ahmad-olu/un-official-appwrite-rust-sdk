@@ -114,5 +114,5 @@ async fn main() -> Result<(), Error> {
     Ok(())
 }
 
-// ~/Documents/playground/docker/appwrite $ cd /home/r2/Documents/playground/docker/appwrite && \
+// cd /home/r2/Documents/playground/docker/appwrite && \
 // docker compose up -d --remove-orphans
