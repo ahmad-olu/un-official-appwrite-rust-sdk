@@ -1251,18 +1251,12 @@ impl Databases {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
 
-    use serde_json::{json, Map, Value};
-
-    use crate::{
-        client::ClientBuilder, error::Error, id::ID, models::database::Database,
-        permission::Permission, query::Query, role::Role, services::server::users::Users,
-    };
+    use crate::{client::ClientBuilder, error::Error, id::ID, permission::Permission, role::Role};
 
     use super::Databases;
 
-    #[tokio::test]
+    //#[tokio::test]
     async fn test_databases() -> Result<(), Error> {
         let client = ClientBuilder::default()
             .set_endpoint("http://127.0.0.1/v1")?

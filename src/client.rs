@@ -214,7 +214,7 @@ impl Client {
         Ok(params_chain)
     }
 
-    pub async fn chunk_upload_file<T: Serialize + ?Sized>(
+    pub async fn chunk_upload_file(
         &self,
         file_path: &str,
         api_path: &str,

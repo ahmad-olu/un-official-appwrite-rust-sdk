@@ -1035,10 +1035,7 @@ impl Account {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        client::ClientBuilder, error::Error, id::ID, models::message,
-        services::server::users::Users,
-    };
+    use crate::{client::ClientBuilder, error::Error, id::ID, services::server::users::Users};
 
     use super::Account;
 
