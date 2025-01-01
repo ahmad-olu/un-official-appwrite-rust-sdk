@@ -36,7 +36,7 @@ impl Locale {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -55,7 +55,7 @@ impl Locale {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -74,7 +74,7 @@ impl Locale {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -93,7 +93,7 @@ impl Locale {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -112,7 +112,7 @@ impl Locale {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -131,7 +131,7 @@ impl Locale {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -151,7 +151,7 @@ impl Locale {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -170,7 +170,7 @@ impl Locale {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)

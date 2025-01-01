@@ -40,7 +40,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -59,7 +59,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, API_PATH, api_headers, args, None)
+            .call(HttpMethod::POST, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -77,7 +77,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -98,7 +98,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::PUT, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -121,7 +121,7 @@ impl Databases {
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -146,7 +146,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -174,7 +174,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -199,7 +199,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -226,7 +226,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::PUT, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -255,7 +255,7 @@ impl Databases {
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -281,7 +281,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -309,7 +309,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -342,7 +342,7 @@ impl Databases {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -371,7 +371,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -404,7 +404,7 @@ impl Databases {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -434,7 +434,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -467,7 +467,7 @@ impl Databases {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -496,7 +496,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -530,7 +530,7 @@ impl Databases {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -563,7 +563,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -598,7 +598,7 @@ impl Databases {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -631,7 +631,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -667,7 +667,7 @@ impl Databases {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -697,7 +697,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -730,7 +730,7 @@ impl Databases {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -763,7 +763,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -793,7 +793,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -826,7 +826,7 @@ impl Databases {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -856,7 +856,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -889,7 +889,7 @@ impl Databases {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -917,7 +917,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json::<Value>().await?)
@@ -947,7 +947,7 @@ impl Databases {
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -982,7 +982,7 @@ impl Databases {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -1009,7 +1009,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1038,7 +1038,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1065,7 +1065,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1097,7 +1097,7 @@ impl Databases {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -1129,7 +1129,7 @@ impl Databases {
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -1155,7 +1155,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1184,7 +1184,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::POST, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1210,7 +1210,7 @@ impl Databases {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1240,7 +1240,7 @@ impl Databases {
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;

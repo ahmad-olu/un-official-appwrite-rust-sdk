@@ -37,7 +37,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -68,7 +68,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -103,7 +103,7 @@ impl Messaging {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -139,7 +139,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -178,7 +178,7 @@ impl Messaging {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -206,7 +206,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -237,7 +237,7 @@ impl Messaging {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -258,7 +258,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -281,7 +281,7 @@ impl Messaging {
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -304,7 +304,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -325,7 +325,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -346,7 +346,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -373,7 +373,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -404,7 +404,7 @@ impl Messaging {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -429,7 +429,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -456,7 +456,7 @@ impl Messaging {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -487,7 +487,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -520,7 +520,7 @@ impl Messaging {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -547,7 +547,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -576,7 +576,7 @@ impl Messaging {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -605,7 +605,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -636,7 +636,7 @@ impl Messaging {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -671,7 +671,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -708,7 +708,7 @@ impl Messaging {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -735,7 +735,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -764,7 +764,7 @@ impl Messaging {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -791,7 +791,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -820,7 +820,7 @@ impl Messaging {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -847,7 +847,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -876,7 +876,7 @@ impl Messaging {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -903,7 +903,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -932,7 +932,7 @@ impl Messaging {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -953,7 +953,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -975,7 +975,7 @@ impl Messaging {
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -998,7 +998,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1019,7 +1019,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1040,7 +1040,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1062,7 +1062,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1081,7 +1081,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1108,7 +1108,7 @@ impl Messaging {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -1132,7 +1132,7 @@ impl Messaging {
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -1155,7 +1155,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1177,7 +1177,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1199,7 +1199,13 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(
+                HttpMethod::POST,
+                api_path.as_str(),
+                api_headers,
+                &args,
+                None,
+            )
             .await?;
 
         Ok(res.json().await?)
@@ -1225,7 +1231,7 @@ impl Messaging {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1254,7 +1260,7 @@ impl Messaging {
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;

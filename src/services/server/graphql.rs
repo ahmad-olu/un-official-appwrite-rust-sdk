@@ -25,7 +25,7 @@ impl Graphql {
         api_headers.insert("x-sdk-graphql", "true".parse()?);
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -44,7 +44,7 @@ impl Graphql {
         api_headers.insert("x-sdk-graphql", "true".parse()?);
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)

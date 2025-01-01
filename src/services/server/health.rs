@@ -34,7 +34,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -52,7 +52,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -71,7 +71,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -91,7 +91,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -109,7 +109,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -127,7 +127,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -146,7 +146,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -167,7 +167,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -189,7 +189,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -211,7 +211,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -232,7 +232,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -254,7 +254,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -275,7 +275,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -296,7 +296,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -317,7 +317,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -338,7 +338,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -359,7 +359,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -380,7 +380,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -401,7 +401,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -422,7 +422,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -440,7 +440,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -458,7 +458,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -482,7 +482,7 @@ impl Health {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)

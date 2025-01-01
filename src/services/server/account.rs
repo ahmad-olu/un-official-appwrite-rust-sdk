@@ -35,7 +35,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -60,7 +60,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, API_PATH, api_headers, args, None)
+            .call(HttpMethod::POST, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -87,7 +87,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PATCH, API_PATH, api_headers, args, None)
+            .call(HttpMethod::PATCH, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -106,7 +106,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -129,7 +129,7 @@ impl Account {
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -152,7 +152,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -172,7 +172,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -188,7 +188,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PATCH, api_path, api_headers, args, None)
+            .call(HttpMethod::PATCH, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -211,7 +211,13 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(
+                HttpMethod::POST,
+                api_path.as_str(),
+                api_headers,
+                &args,
+                None,
+            )
             .await?;
 
         Ok(res.json().await?)
@@ -233,7 +239,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::PUT, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -257,7 +263,7 @@ impl Account {
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -280,7 +286,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -304,7 +310,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let _res = client
-            .call(HttpMethod::PUT, api_path, api_headers, args, None)
+            .call(HttpMethod::PUT, api_path, api_headers, &args, None)
             .await?;
 
         Ok(())
@@ -321,7 +327,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -341,7 +347,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path, api_headers, args, None)
+            .call(HttpMethod::GET, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -362,7 +368,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -382,7 +388,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PATCH, api_path, api_headers, args, None)
+            .call(HttpMethod::PATCH, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -398,7 +404,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PATCH, API_PATH, api_headers, args, None)
+            .call(HttpMethod::PATCH, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -420,7 +426,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PATCH, API_PATH, api_headers, args, None)
+            .call(HttpMethod::PATCH, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -444,7 +450,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PATCH, API_PATH, api_headers, args, None)
+            .call(HttpMethod::PATCH, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -461,7 +467,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -482,7 +488,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PATCH, API_PATH, api_headers, args, None)
+            .call(HttpMethod::PATCH, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -509,7 +515,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, API_PATH, api_headers, args, None)
+            .call(HttpMethod::POST, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -539,7 +545,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, API_PATH, api_headers, args, None)
+            .call(HttpMethod::PUT, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -557,7 +563,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -575,7 +581,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let _res = client
-            .call(HttpMethod::DELETE, API_PATH, api_headers, args, None)
+            .call(HttpMethod::DELETE, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(())
@@ -598,7 +604,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -623,7 +629,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -645,7 +651,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, api_path, api_headers, args, None)
+            .call(HttpMethod::PUT, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -667,7 +673,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, api_path, api_headers, args, None)
+            .call(HttpMethod::PUT, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -689,7 +695,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, api_path, api_headers, args, None)
+            .call(HttpMethod::PUT, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -709,7 +715,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -734,7 +740,7 @@ impl Account {
                 HttpMethod::PATCH,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await?;
@@ -763,7 +769,7 @@ impl Account {
                 HttpMethod::DELETE,
                 api_path.as_str(),
                 api_headers,
-                args,
+                &args,
                 None,
             )
             .await;
@@ -784,7 +790,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::DELETE, API_PATH, api_headers, args, None)
+            .call(HttpMethod::DELETE, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -814,7 +820,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -851,7 +857,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -892,7 +898,13 @@ impl Account {
         let api_headers = app_json_header!();
 
         let _res = client
-            .call(HttpMethod::POST, api_path.as_str(), api_headers, args, None)
+            .call(
+                HttpMethod::POST,
+                api_path.as_str(),
+                api_headers,
+                &args,
+                None,
+            )
             .await?;
         //todo ! return client.webauth(url);
         Ok(())
@@ -922,7 +934,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, api_path, api_headers, args, None)
+            .call(HttpMethod::POST, api_path, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -955,7 +967,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, API_PATH, api_headers, args, None)
+            .call(HttpMethod::POST, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -979,7 +991,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, API_PATH, api_headers, args, None)
+            .call(HttpMethod::PUT, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1003,7 +1015,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::POST, API_PATH, api_headers, args, None)
+            .call(HttpMethod::POST, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)
@@ -1026,7 +1038,7 @@ impl Account {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::PUT, API_PATH, api_headers, args, None)
+            .call(HttpMethod::PUT, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.json().await?)

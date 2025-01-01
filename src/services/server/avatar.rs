@@ -47,7 +47,7 @@ impl Avatars {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.bytes().await?.to_vec())
@@ -86,7 +86,7 @@ impl Avatars {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.bytes().await?.to_vec())
@@ -116,7 +116,7 @@ impl Avatars {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.bytes().await?.to_vec())
@@ -156,7 +156,7 @@ impl Avatars {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, api_path.as_str(), api_headers, args, None)
+            .call(HttpMethod::GET, api_path.as_str(), api_headers, &args, None)
             .await?;
 
         Ok(res.bytes().await?.to_vec())
@@ -195,7 +195,7 @@ impl Avatars {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.bytes().await?.to_vec())
@@ -241,7 +241,7 @@ impl Avatars {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.bytes().await?.to_vec())
@@ -274,7 +274,7 @@ impl Avatars {
         let api_headers = app_json_header!();
 
         let res = client
-            .call(HttpMethod::GET, API_PATH, api_headers, args, None)
+            .call(HttpMethod::GET, API_PATH, api_headers, &args, None)
             .await?;
 
         Ok(res.bytes().await?.to_vec())

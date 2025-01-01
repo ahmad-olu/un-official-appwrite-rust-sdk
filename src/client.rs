@@ -19,6 +19,15 @@ use crate::{
 };
 
 #[derive(Debug, Clone)]
+pub struct ChunkProgress {
+    pub chunks_uploaded: u64,
+    pub chunks_total: u64,
+    pub size_uploaded: usize,
+    pub progress: f64,
+    pub id: String,
+}
+
+#[derive(Debug, Clone)]
 pub struct Client {
     end_point: String,
     pub end_point_realtime: Option<String>, //todo set this
@@ -121,7 +130,7 @@ impl Client {
         method: HttpMethod,
         path: &str,
         headers: HeaderMap,
-        params: HashMap<String, Value>,
+        params: &HashMap<String, Value>,
         form: Option<Form>,
     ) -> Result<Response, Error> {
         let res = reqwest::Client::new();
@@ -214,6 +223,213 @@ impl Client {
         Ok(params_chain)
     }
 
+    async fn upload_large_callbackk_image<F>(
+        &self,
+        file_path: String,
+        api_path: String,
+        file_id: String,
+        params: HashMap<String, Value>,
+        file_name: String,
+        is_file: bool,
+
+        mut on_progress: F,
+    ) -> Result<UploadType, Error>
+    where
+        F: FnMut(ChunkProgress) + Send + 'static,
+    {
+        let boundary = Uuid::new_v4();
+        let file = match fs::read(file_path) {
+            Ok(size) => size,
+            Err(err) => return Err(Error::Io(err)),
+        };
+        let file_size = file.len();
+
+        //let uri = api_path;
+
+        if file_size <= self.chunk_size {
+            let part = Part::bytes(file.clone()).file_name(file_name.clone());
+
+            let form = multipart::Form::new()
+                .text("fileId", file_id.clone())
+                .part("file", part);
+            let mut headers = HeaderMap::new();
+            headers.insert(
+                CONTENT_TYPE,
+                HeaderValue::from_str(
+                    format!("multipart/form-data; boundary={}", boundary).as_str(),
+                )?,
+            );
+
+            let res = self
+                .call(HttpMethod::POST, &api_path, headers, &params, Some(form))
+                .await?;
+            match is_file {
+                true => {
+                    return Ok(UploadType::File(res.json::<File>().await?));
+                }
+                false => {
+                    return Ok(UploadType::Deployment(res.json::<Deployment>().await?));
+                }
+            }
+        }
+
+        let mut offset: usize = 0;
+
+        let mut first_upload = true; // Track if it's the first upload for x-appwrite-id
+        let mut x_appwrite_id: Option<String> = None;
+        let mut res: Option<UploadType> = None;
+
+        if file_id != "unique()" {
+            let mut headers = HeaderMap::new();
+            headers.insert(
+                CONTENT_TYPE,
+                HeaderValue::from_str(
+                    format!("multipart/form-data; boundary={}", boundary).as_str(),
+                )?,
+            );
+
+            let res = self
+                .call(
+                    HttpMethod::GET,
+                    format!("{}{}/{}", self.end_point, api_path, file_id).as_str(),
+                    headers,
+                    &params,
+                    None,
+                )
+                .await?;
+            match is_file {
+                true => {
+                    offset = res.json::<File>().await?.chunks_uploaded;
+                }
+                false => {
+                    offset = res.json::<Deployment>().await?.chunks_uploaded;
+                }
+            }
+        }
+        while offset < file_size {
+            let end = std::cmp::min(offset + self.chunk_size, file_size);
+            let chunk = &file[offset..end];
+            let content_range = format!("bytes {}-{}/{}", offset, end - 1, file_size);
+
+            let mut headers = HeaderMap::new();
+            headers.insert(
+                CONTENT_TYPE,
+                HeaderValue::from_str(
+                    format!("multipart/form-data; boundary={}", boundary).as_str(),
+                )?,
+            );
+            headers.insert(
+                "Content-Range",
+                HeaderValue::from_str(content_range.as_str())?,
+            );
+            let mut chunk_form = multipart::Form::new();
+            chunk_form = chunk_form.text("fileId", file_id.clone()).part(
+                "file",
+                Part::bytes(chunk.to_vec()).file_name(file_name.clone()),
+            );
+            if !first_upload {
+                headers.insert(
+                    "x-appwrite-id",
+                    x_appwrite_id
+                        .clone()
+                        .ok_or(Error::Custom("Failed to clone appwrite id".to_string()))?
+                        .as_str()
+                        .parse()
+                        .map_err(|_a| {
+                            Error::Custom(
+                            "Unable to parse string slice into value header [invalid header value]"
+                                .to_string(),
+                        )
+                        })?,
+                );
+            }
+
+            let response = self
+                .call(
+                    HttpMethod::POST,
+                    &api_path,
+                    headers,
+                    &params,
+                    Some(chunk_form),
+                )
+                .await?;
+
+            if response.status() != StatusCode::CREATED {
+                let err = response.json::<AppWriteError>().await?;
+                return Err(Error::AppWriteError {
+                    message: err.message,
+                    code: err.code,
+                    response: err.response,
+                    error_type: err.error_type,
+                });
+            }
+
+            match is_file {
+                true => {
+                    let file = response.json::<File>().await?;
+                    if first_upload {
+                        x_appwrite_id = Some(file.clone().id);
+                        first_upload = false;
+                    };
+                    let size_uploaded = std::cmp::min(offset, file_size);
+                    let progress = size_uploaded as f64 / file_size as f64;
+                    let chunks_uploaded = file.chunks_uploaded as u64;
+                    let chunks_total = file.chunks_total as u64;
+
+                    on_progress(ChunkProgress {
+                        chunks_uploaded,
+                        chunks_total,
+                        size_uploaded,
+                        progress,
+                        id: file.clone().id,
+                    });
+                    res = Some(UploadType::File(file));
+                }
+                false => {
+                    let deployment = response.json::<Deployment>().await?;
+                    if first_upload {
+                        x_appwrite_id = Some(deployment.clone().id);
+                        first_upload = false;
+                    };
+                    let size_uploaded = std::cmp::min(offset, file_size);
+                    let progress = size_uploaded as f64 / file_size as f64;
+                    let chunks_uploaded = deployment.chunks_uploaded as u64;
+                    let chunks_total = deployment.chunks_total as u64;
+
+                    on_progress(ChunkProgress {
+                        chunks_uploaded,
+                        chunks_total,
+                        size_uploaded,
+                        progress,
+                        id: deployment.clone().id,
+                    });
+                    res = Some(UploadType::Deployment(deployment));
+                }
+            }
+
+            offset += self.chunk_size;
+        }
+        Ok(res.ok_or(Error::Custom("No Upload Type".to_string()))?)
+
+        // !-> how to use
+        // let progress_callback = |progress: ChunkProgress| {
+        //     println!(
+        //         "Uploaded: {}/{} ({}%), ID: {}",
+        //         progress.size_uploaded,
+        //         (progress.chunks_total as usize) * progress.size_uploaded, // Approximate total size
+        //         (progress.progress * 100.0).round(),
+        //         progress.id,
+        //     );
+        // };
+        // upload_large_callback_image(
+        //     file_path,
+        //     "6773f8af000602e81619",
+        //     file_name.to_string(),
+        //     progress_callback,
+        // )
+        // .await?;
+    }
+
     pub async fn chunk_upload_file(
         &self,
         file_path: &str,
@@ -254,7 +470,7 @@ impl Client {
             match is_file {
                 true => {
                     let file = self
-                        .call(HttpMethod::POST, uri, headers, params.clone(), Some(form))
+                        .call(HttpMethod::POST, uri, headers, &params, Some(form))
                         .await?
                         .json::<File>()
                         .await?;
@@ -272,7 +488,7 @@ impl Client {
                 }
                 false => {
                     let deployment = self
-                        .call(HttpMethod::POST, uri, headers, params.clone(), Some(form))
+                        .call(HttpMethod::POST, uri, headers, &params, Some(form))
                         .await?
                         .json::<Deployment>()
                         .await?;
@@ -314,7 +530,7 @@ impl Client {
                             HttpMethod::GET,
                             format!("{}{}/{}", self.end_point, api_path, file_id).as_str(),
                             headers,
-                            params.clone(),
+                            &params,
                             None,
                         )
                         .await?
@@ -328,7 +544,7 @@ impl Client {
                             HttpMethod::GET,
                             format!("{}{}/{}", self.end_point, api_path, file_id).as_str(),
                             headers,
-                            params.clone(),
+                            &params,
                             None,
                         )
                         .await?
@@ -380,13 +596,7 @@ impl Client {
             //     "permissions": &[] as &[String]
             // });
             let response = self
-                .call(
-                    HttpMethod::POST,
-                    uri,
-                    headers,
-                    params.clone(),
-                    Some(chunk_form),
-                )
+                .call(HttpMethod::POST, uri, headers, &params, Some(chunk_form))
                 .await?;
             if response.status() != StatusCode::CREATED {
                 let err = response.json::<AppWriteError>().await?;
@@ -397,6 +607,7 @@ impl Client {
                     error_type: err.error_type,
                 });
             }
+            //dbg!(response.text().await?);
             match is_file {
                 true => {
                     let file = response.json::<File>().await?;
@@ -484,13 +695,7 @@ impl Client {
                 match is_file {
                     true => {
                         let file = self
-                            .call(
-                                HttpMethod::POST,
-                                uri.as_str(),
-                                headers,
-                                params.clone(),
-                                Some(form),
-                            )
+                            .call(HttpMethod::POST, uri.as_str(), headers, &params, Some(form))
                             .await?
                             .json::<File>()
                             .await?;
@@ -512,13 +717,7 @@ impl Client {
                     }
                     false => {
                         let deployment = self
-                            .call(
-                                HttpMethod::POST,
-                                uri.as_str(),
-                                headers,
-                                params.clone(),
-                                Some(form),
-                            )
+                            .call(HttpMethod::POST, uri.as_str(), headers, &params, Some(form))
                             .await?
                             .json::<Deployment>()
                             .await?;
@@ -563,7 +762,7 @@ impl Client {
                                 HttpMethod::GET,
                                 format!("{}{}/{}", self.end_point, api_path, file_id).as_str(),
                                 headers,
-                                params.clone(),
+                                &params,
                                 None,
                             )
                             .await?
@@ -577,7 +776,7 @@ impl Client {
                                 HttpMethod::GET,
                                 format!("{}{}/{}", self.end_point, api_path, file_id).as_str(),
                                 headers,
-                                params.clone(),
+                                &params,
                                 None,
                             )
                             .await?
@@ -633,7 +832,7 @@ impl Client {
                         HttpMethod::POST,
                         uri.as_str(),
                         headers,
-                        params.clone(),
+                        &params,
                         Some(chunk_form),
                     )
                     .await?;
@@ -671,6 +870,7 @@ impl Client {
                     }
                     false => {
                         let deployment = response.json::<Deployment>().await?;
+
                         if first_upload {
                             x_appwrite_id = Some(deployment.clone().id);
                             first_upload = false;
