@@ -5,12 +5,11 @@
 
 use std::collections::HashMap;
 
-use futures_util::Stream;
 use serde_json::Value;
 
 use crate::{
     app_json_header,
-    client::Client,
+    client::{ChunkProgress, Client},
     enumm::HttpMethod,
     error::Error,
     models::{
@@ -18,7 +17,6 @@ use crate::{
         execution_list::ExecutionList, function::Func, function_list::FunctionList,
         runtime_list::RuntimeList, variable::Variable, variable_list::VariableList, UploadType,
     },
-    upload_progress::UploadProgress,
     utils::get_content_header_value,
 };
 
@@ -219,25 +217,30 @@ impl Functions {
     ///* activate => bool
     ///* entrypoint => string?
     ///* commands => string?
-    pub async fn create_deployments(
+    pub async fn create_deployments<F>(
         client: &Client,
-        function_id: &str,
+        function_id: String,
         // code: InputFile,
-        file_path: &str,
+        file_path: String,
         file_name: String,
         args: HashMap<String, Value>,
-    ) -> Result<Deployment, Error> {
+        on_progress: F,
+    ) -> Result<Deployment, Error>
+    where
+        F: FnMut(ChunkProgress) + Send + 'static,
+    {
         //const API_PATH: &str = "/functions";
-        let api_path = "/functions/{functionId}/deployments".replace("{functionId}", function_id);
+        let api_path = "/functions/{functionId}/deployments".replace("{functionId}", &function_id);
 
         let res: UploadType = client
             .chunk_upload_file(
                 file_path,
-                api_path.as_str(),
-                function_id.to_string(),
+                api_path,
+                function_id,
                 args,
                 file_name,
                 false,
+                on_progress,
             )
             .await?;
 
@@ -245,45 +248,6 @@ impl Functions {
             UploadType::File(_) => Err(Error::WrongUploadType),
             UploadType::Deployment(res) => Ok(res),
         }
-    }
-
-    /// Create deployment
-    ///
-    /// Create a new function code deployment. Use this endpoint to upload a new
-    /// version of your code function. To execute your newly uploaded code, you"ll
-    /// need to update the function"s deployment to use your new deployment UID.
-    ///
-    /// This endpoint accepts a tar.gz file compressed with your code. Make sure to
-    /// include any dependencies your code has within the compressed file. You can
-    /// learn more about code packaging in the [Appwrite Cloud Functions
-    /// tutorial](https://appwrite.io/docs/functions).
-    ///
-    /// Use the "command" param to set the entrypoint used to execute your code.
-    ///
-    ///* activate => bool
-    ///* entrypoint => string?
-    ///* commands => string?
-    pub async fn create_deployments_streamed<'a>(
-        client: &'a Client,
-        function_id: &'a str,
-        // code: InputFile,
-        file_path: &'a str,
-        file_name: String,
-        args: HashMap<String, Value>,
-    ) -> impl Stream<Item = Result<(UploadType, UploadProgress), Error>> + 'a {
-        //const API_PATH: &str = "/functions";
-        let api_path = "/functions/{functionId}/deployments".replace("{functionId}", function_id);
-
-        client
-            .chunk_upload_file_streamed(
-                file_path,
-                api_path,
-                String::from(function_id),
-                args,
-                file_name,
-                true,
-            )
-            .await
     }
 
     /// Get deployment

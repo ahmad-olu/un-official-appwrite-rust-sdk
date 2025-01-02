@@ -18,7 +18,7 @@ use tokio::task;
 // use std::sync::{Arc, Mutex};
 // use tokio::task;
 use unofficial_appwrite::{
-    client::{Client, ClientBuilder},
+    client::{ChunkProgress, Client, ClientBuilder},
     error::{AppWriteError, Error},
     id::ID,
     query::Query as q,
@@ -27,7 +27,7 @@ use unofficial_appwrite::{
 };
 use uuid::Uuid;
 
-async fn upload_small_image(
+async fn _upload_small_image(
     file_path: &str,
     bucket_id: &str,
     file_name: String,
@@ -79,7 +79,7 @@ async fn upload_small_image(
     Ok(())
 }
 
-async fn upload_large_image(
+async fn _upload_large_image(
     file_path: &str,
     bucket_id: &str,
     file_name: String,
@@ -245,16 +245,7 @@ async fn upload_large_image(
     Ok(())
 }
 
-#[derive(Debug, Clone)]
-pub struct ChunkProgress {
-    pub chunks_uploaded: u64,
-    pub chunks_total: u64,
-    pub size_uploaded: usize,
-    pub progress: f64,
-    pub id: String,
-}
-
-async fn upload_large_callback_image<F>(
+async fn _upload_large_callback_image<F>(
     file_path: &str,
     bucket_id: &str,
     file_name: String,
@@ -439,24 +430,26 @@ async fn main() -> Result<(), Error> {
             //.set_self_signed(false)?
             .build()?;
 
-    let id = ID::unique(7);
+    let id = ID::unique_old().into();
     let a = Storage::create_files(
         &client,
-        "6773f8af000602e81619",
-        &id,
-        file_path,
+        "6773f8af000602e81619".to_string(),
+        id,
+        file_path.to_string(),
         file_name.to_string(),
         HashMap::<String, Value>::new(),
+        |progress| {
+            println!(
+                "Uploaded: {}/{} ({}%), ID: {}",
+                progress.size_uploaded,
+                (progress.chunks_total as usize) * progress.size_uploaded, // Approximate total size
+                (progress.progress * 100.0).round(),
+                progress.id,
+            );
+        },
     )
     .await?;
     dbg!(a);
-
-    // pin_mut!(a);
-    // while let Some(data) = a.next().await {
-    //     let res = data.unwrap();
-    //     let file = res.0;
-    //     println!("==>{:?}===>{:?}", file, res.1);
-    // }
 
     // upload_small_image(file_path, "6773f8af000602e81619", file_name.to_string()).await?;
 

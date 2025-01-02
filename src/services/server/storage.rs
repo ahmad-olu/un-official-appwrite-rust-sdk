@@ -9,7 +9,7 @@ use serde_json::Value;
 
 use crate::{
     app_json_header,
-    client::Client,
+    client::{ChunkProgress, Client},
     enumm::HttpMethod,
     error::Error,
     models::{
@@ -189,25 +189,30 @@ impl Storage {
     /// chunking logic will be managed by the SDK internally.
     ///
     ///* permissions => vec(string)?
-    pub async fn create_files(
+    pub async fn create_files<F>(
         client: &Client,
-        bucket_id: &str,
-        file_id: &str,
-        file_path: &str,
+        bucket_id: String,
+        file_id: String,
+        file_path: String,
         file_name: String,
         args: HashMap<String, Value>,
-    ) -> Result<File, Error> {
+        on_progress: F,
+    ) -> Result<File, Error>
+    where
+        F: FnMut(ChunkProgress) + Send + 'static,
+    {
         //const API_PATH: &str = "/functions";
-        let api_path = "/storage/buckets/{bucketId}/files".replace("{bucketId}", bucket_id);
+        let api_path = "/storage/buckets/{bucketId}/files".replace("{bucketId}", &bucket_id);
 
         let res: UploadType = client
             .chunk_upload_file(
                 file_path,
-                api_path.as_str(),
-                String::from(file_id),
+                api_path,
+                file_id,
                 args,
                 file_name,
                 true,
+                on_progress,
             )
             .await?;
 
