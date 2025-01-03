@@ -1102,3 +1102,133 @@ impl Users {
         Ok(res.json().await?)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+
+    use serde_json::{Map, Value};
+
+    use crate::{client::ClientBuilder, enums::password_hash::PasswordHash, error::Error, id::ID};
+
+    use super::Users;
+
+    // #[tokio::test]
+    async fn test_user() -> Result<(), Error> {
+        let client = ClientBuilder::default()
+            .set_endpoint("http://127.0.0.1/v1")?
+            .set_project("676c2b7b000c834e1fce")?
+            .set_key("standard_5d84014ebaf0de52308eff28946a43062921240c10b81c2fd037ab60b02f0257b7f0a53fe94065170fe7c7d0af2d4136d4cbf32a4055baeada3d27f2e323b70aeda87e97f676207cf10cbb18b7a80f8d1103803617454c89138f217dad701bbe9dc6950bc58853fdb2a0b4b67d2a8b8b6b7b9b2e6d9b94e0a2fcfee794688e2e")?
+            //.set_self_signed(false)?
+            .build()?;
+
+        // ! create user
+        let user_res = Users::create(
+            &client,
+            maplit::hashmap! {
+                "userId".into() => ID::unique(7).into(),
+                "email".into()=> "fakeEmail@Email.com".into(),
+                "password".into()=> "VeryVerySecurePassword@123456789".into(),
+                "name".into()=> "fakeEmail".into()
+            },
+        )
+        .await?;
+        assert_eq!(user_res.email, "fakeemail@email.com");
+
+        // ! update email
+        let update_email = Users::update_email(
+            &client,
+            &user_res.id,
+            maplit::hashmap! {
+                "email".into()=> "newEmail@Email.com".into(),
+            },
+        )
+        .await?;
+        assert_eq!(update_email.email, "newemail@email.com");
+
+        // ! update name
+        let update_name = Users::update_name(
+            &client,
+            &user_res.id,
+            maplit::hashmap! {
+                "name".into()=> "Micky".into(),
+            },
+        )
+        .await?;
+        assert_eq!(update_name.name, "Micky");
+
+        // ! update password
+        let update_password = Users::update_password(
+            &client,
+            &user_res.id,
+            maplit::hashmap! {
+                "password".into()=> "ChangedMyVerySecuredPassword".into(),
+            },
+        )
+        .await?;
+        assert_ne!(user_res.password_update, update_password.password_update);
+        assert_ne!(user_res.password, update_password.password);
+
+        // ! update preferences
+        let prefs_val: HashMap<String, Value> = maplit::hashmap! {
+            "is_king".into()=> true.into(),
+        };
+        // ? NOTE => because `serde_json::Value` does not directly implement `From<HashMap<String, Value>>`. You need to convert the `HashMap<String, Value>` into a `serde_json::Value` explicitly using `serde_json::Value::Object`.
+        let update_prefs = Users::update_prefs(
+            &client,
+            &user_res.id,
+            maplit::hashmap! {
+                "prefs".into()=> Value::Object(prefs_val.into_iter().collect::<Map<String, Value>>()),
+            },
+        )
+        .await?;
+        let ans = maplit::hashmap! {
+            "is_king".into()=> true.into(),
+        };
+        assert_eq!(update_prefs.data, ans);
+
+        // ! get preferences
+        let get_prefs = Users::get_prefs(&client, &user_res.id).await?;
+        let ans = maplit::hashmap! {
+            "is_king".into()=> true.into(),
+        };
+        assert_eq!(get_prefs.data, ans);
+
+        // ! delete user
+        let delete_user = Users::delete(&client, &user_res.id).await?;
+        assert_eq!(delete_user, ());
+
+        // ! create argon2 user
+        let argon2_user_res = Users::create_argon2_user(
+            &client,
+            maplit::hashmap! {
+                "userId".into() => ID::unique(7).into(),
+                "email".into()=> "argonEmail@Email.com".into(),
+                "password".into()=> "VeryVerySecurePassword@123456789".into(),
+            },
+        )
+        .await?;
+        assert_eq!(argon2_user_res.email, "argonemail@email.com");
+
+        // ! create sha user
+        let sha_user_res = Users::create_sha_user(
+            &client,
+            maplit::hashmap! {
+                "userId".into() => ID::unique(7).into(),
+                "email".into()=> "shaEmail@Email.com".into(),
+                "password".into()=> "VeryVerySecurePassword@123456789".into(),
+                "passwordVersion".into()=> PasswordHash::Sha3384.as_serialized().into(),
+            },
+        )
+        .await?;
+        assert_eq!(sha_user_res.email, "shaemail@email.com");
+
+        let delete_argon_user = Users::delete(&client, &argon2_user_res.id).await?;
+        assert_eq!(delete_argon_user, ());
+
+        let delete_sha_user = Users::delete(&client, &sha_user_res.id).await?;
+        assert_eq!(delete_sha_user, ());
+
+        Ok(())
+    }
+}

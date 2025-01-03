@@ -1332,3 +1332,117 @@ impl Databases {
         Ok(res.json().await?)
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use crate::{client::ClientBuilder, error::Error, id::ID, permission::Permission, role::Role};
+
+    use super::Databases;
+
+    //#[tokio::test]
+    async fn test_databases() -> Result<(), Error> {
+        let client = ClientBuilder::default()
+            .set_endpoint("http://127.0.0.1/v1")?
+            .set_project("676c2b7b000c834e1fce")?
+            .set_key("standard_5d84014ebaf0de52308eff28946a43062921240c10b81c2fd037ab60b02f0257b7f0a53fe94065170fe7c7d0af2d4136d4cbf32a4055baeada3d27f2e323b70aeda87e97f676207cf10cbb18b7a80f8d1103803617454c89138f217dad701bbe9dc6950bc58853fdb2a0b4b67d2a8b8b6b7b9b2e6d9b94e0a2fcfee794688e2e")?
+            //.set_self_signed(false)?
+            .build()?;
+
+        // ! create databases
+        let create_databases = Databases::create(
+            &client,
+            maplit::hashmap! {
+                "databaseId".into() => ID::unique(7).into(),
+                "name".into()=> "dev".into(),
+            },
+        )
+        .await?;
+        assert_eq!(create_databases.name, "dev");
+
+        // ! get database
+        let get_database = Databases::get(&client, &create_databases.id).await?;
+        assert_eq!(get_database.name, "dev");
+
+        // ! update database
+        let update_database = Databases::update(
+            &client,
+            &get_database.id,
+            maplit::hashmap! {
+                "name".into()=> "prod".into(),
+            },
+        )
+        .await?;
+        assert_eq!(update_database.name, "prod");
+
+        // ! list databases
+        let list_databases = Databases::list(&client, maplit::hashmap! {}).await?;
+        assert_ne!(list_databases.databases, []);
+
+        // ! create collection
+        let create_col = Databases::create_collection(
+            &client,
+            &update_database.id,
+            maplit::hashmap! {
+                "collectionId".into() => ID::unique(7).into(),
+                "name".into()=> "user".into(),
+                "permissions".into()=> [Permission::read(&Role::any())].into(),
+            },
+        )
+        .await?;
+        assert_eq!(create_col.name, "user");
+
+        // ! get collection
+        let get_col =
+            Databases::get_collection(&client, &update_database.id, &create_col.id).await?;
+        assert_eq!(get_col.name, "user");
+
+        // ! update collection
+        let update_col = Databases::update_collection(
+            &client,
+            &update_database.id,
+            &get_col.id,
+            maplit::hashmap! {
+                "name".into()=> "users".into(),
+                "permissions".into()=> [Permission::read(&Role::any()),Permission::delete(&Role::any()),].into(),
+            },
+        )
+        .await?;
+        assert_eq!(update_col.name, "users");
+
+        // ! list attribute
+        let list_att = Databases::list_attributes(
+            &client,
+            &update_database.id,
+            &get_col.id,
+            maplit::hashmap! {},
+        )
+        .await?;
+        assert_eq!(list_att.total, 0);
+
+        // ! create boolean att
+        let create_bool_att = Databases::create_boolean_attribute(
+            &client,
+            &update_database.id,
+            &get_col.id,
+            maplit::hashmap! {
+                "key".into()=> "isAdmin".into(),
+                "required".into()=> false.into(),
+                "default".into()=> false.into(),
+            },
+        )
+        .await?;
+        assert_eq!(create_bool_att.key, "isAdmin");
+
+        // ! delete collections
+        let delete_collection =
+            Databases::delete_collection(&client, &update_database.id, &get_col.id).await?;
+        assert_eq!(delete_collection, ());
+
+        // ! delete database
+        let delete_database = Databases::delete(&client, &update_database.id).await?;
+        assert_eq!(delete_database, ());
+
+        Ok(())
+    }
+}
