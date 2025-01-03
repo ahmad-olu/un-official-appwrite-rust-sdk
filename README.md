@@ -9,22 +9,6 @@ This is the Rust SDK for integrating with Appwrite from your Rust server-side co
 
 Appwrite is an open-source backend as a service server that abstract and simplify complex and repetitive development tasks behind a very simple to use REST API. Appwrite aims to help you develop your apps faster and in a more secure way. Use the Rust to integrate your app with the Appwrite server to easily start interacting with all of Appwrite backend APIs and tools. For full API documentation and tutorials go to <https://appwrite.io/docs>
 
-## Installation
-
------
-Add this to your package's `Cargo.toml` file:
-
-```toml
-[dependencies]
-unofficial_appwrite = "0.1.0"
-```
-
-You can install packages from the command line:
-
-```bash
-cargo add unofficial_appwrite serde_json
-```
-
 ## Getting Started
 
 -----

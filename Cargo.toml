@@ -1,6 +1,6 @@
 [package]
 name = "unofficial_appwrite"
-version = "0.2.3"
+version = "1.0.0"
 edition = "2021"
 description = "wrapper on appwrite api -> https://appwrite.io/docs"
 license = "MIT"
