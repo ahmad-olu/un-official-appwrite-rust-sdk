@@ -6,7 +6,6 @@ use std::{
 
 use std::sync::mpsc::{self, Sender};
 
-use futures::{pin_mut, FutureExt, Stream, StreamExt};
 use reqwest::{
     header::{HeaderMap, HeaderValue, CONTENT_TYPE},
     multipart::{self, Part},
@@ -430,26 +429,26 @@ async fn main() -> Result<(), Error> {
             //.set_self_signed(false)?
             .build()?;
 
-    let id = ID::unique_old().into();
-    let a = Storage::create_files(
-        &client,
-        "6773f8af000602e81619".to_string(),
-        id,
-        file_path.to_string(),
-        file_name.to_string(),
-        HashMap::<String, Value>::new(),
-        |progress| {
-            println!(
-                "Uploaded: {}/{} ({}%), ID: {}",
-                progress.size_uploaded,
-                (progress.chunks_total as usize) * progress.size_uploaded, // Approximate total size
-                (progress.progress * 100.0).round(),
-                progress.id,
-            );
-        },
-    )
-    .await?;
-    dbg!(a);
+    // let id = ID::unique_old().into();
+    // let a = Storage::create_files(
+    //     &client,
+    //     "6773f8af000602e81619".to_string(),
+    //     id,
+    //     file_path.to_string(),
+    //     file_name.to_string(),
+    //     HashMap::<String, Value>::new(),
+    //     |progress| {
+    //         println!(
+    //             "Uploaded: {}/{} ({}%), ID: {}",
+    //             progress.size_uploaded,
+    //             (progress.chunks_total as usize) * progress.size_uploaded, // Approximate total size
+    //             (progress.progress * 100.0).round(),
+    //             progress.id,
+    //         );
+    //     },
+    // )
+    // .await?;
+    // dbg!(a);
 
     // upload_small_image(file_path, "6773f8af000602e81619", file_name.to_string()).await?;
 
