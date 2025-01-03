@@ -4,7 +4,6 @@
 
 use std::collections::HashMap;
 
-use futures_util::Stream;
 use serde_json::Value;
 
 use crate::{
@@ -15,7 +14,6 @@ use crate::{
     models::{
         bucket::Bucket, bucket_list::BucketList, file::File, file_list::FileList, UploadType,
     },
-    upload_progress::UploadProgress,
     utils::get_content_header_value,
 };
 

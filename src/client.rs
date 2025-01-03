@@ -15,7 +15,6 @@ use crate::{
     enumm::HttpMethod,
     error::{AppWriteError, Error},
     models::{deployment::Deployment, file::File, UploadType},
-    upload_progress::UploadProgress,
 };
 
 #[derive(Debug, Clone)]
